@@ -30,7 +30,13 @@ code {
   outline-style: none;
 }
 
-.dropDown{
+.dropDownMenu{
+  position: absolute;
+  top: 100%; /* Position the dropdown menu below the button */
+  width: 33.5%;
+  z-index: 1000; /* Set a high z-index value */
+  border: 10px;
+  
 
 
 }
@@ -45,10 +51,25 @@ code {
 }
 .catButtons{
   height: 100%;
+  width: 100%;
+  background-color: lightslategray;
+  border: none;
   
 }
-.DropDownCatItem{
-  background-color: red;
+.catButtons:hover{
+  background-color: #e5e5e5;
+  cursor: pointer;
+}
+.DropDownMenuItem{
+  background-color: white;
+  width: 100%;
+  border-bottom: 1px solid  lightgray;
+  padding: 1px;
+
+}
+.DropDownMenuItem:hover{
+  background-color: #e5e5e5;
+  cursor: pointer;
 
 }
 
@@ -61,8 +82,9 @@ code {
   flex-direction: row;
   justify-content: space-between;
   height: 100%;
-  width: 80%;
+  width: 40%;
   background-color: aqua;
+  position: relative;
   
 }
 

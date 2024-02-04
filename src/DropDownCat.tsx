@@ -8,7 +8,7 @@ interface DropDownCat {
   }
 export default function DropDownCats(props: DropDownCat){
     return(
-         <div className="DropDownCatItem">
+         <div className="DropDownMenuItem">
             {props.catType}
           
             

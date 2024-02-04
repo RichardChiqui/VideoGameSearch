@@ -32,13 +32,10 @@ export default function CategoriesNavBar(){
            
            <div className='category-container'>
 
-                <div className='dropDownButton'>
-                    <button className='catButtons' onClick={displayDropDown} onBlur={(e: React.FocusEvent<HTMLButtonElement>): void => dismissHandler(e)}>Genre</button>
-                    {show && <DropDownMenu classNameProp='' categories={categoriesList}/>}
-                </div>
-                
-              
-              
+               {/* // <div className='catButtons'> */}
+                    <button className='catButtons'  onClick={displayDropDown} onBlur={(e: React.FocusEvent<HTMLButtonElement>): void => dismissHandler(e)}>Genre</button>
+                    {show && <DropDownMenu classNameProp='dropDownMenu' categories={categoriesList}/>}
+               {/* // </div> */}
                 <button className='catButtons'>Newest</button>
                 <button className='catButtons'>Popular</button>
            </div>
