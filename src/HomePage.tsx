@@ -4,6 +4,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 import CategoriesTab from './CategoriesNavBar';
 import HeaderNavBar from './HeaderNavBar';
+import SearchResults from './SearchResults';
 
 
 export default function HomePage(){
@@ -14,6 +15,8 @@ export default function HomePage(){
        
          <HeaderNavBar/>
          <CategoriesTab/>
+         <SearchResults/>
+         
         </div>
     )
 

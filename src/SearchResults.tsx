@@ -13,6 +13,7 @@ export default function SearchResults(){
         { id: 1, name: "OverWatch" },
         { id: 2, name: "Fornite" },
         { id: 3, name: "Modern Warfare 2" },
+        { id: 4, name: "Avator"}
       ];
     return(
          <div className='search-results'>

@@ -13,8 +13,11 @@ export default function SearchResultsItem(props:ChildProps){
 
     return(
          <div className='search-results-item'>
-          <button>{props.gameName}</button>
-          <button>Info</button>
+          <div className='button-container'>  
+            <button className='searchResults-btn'>{props.gameName}</button>
+            <button className='searchResults-btn'>Info</button>
+          </div>
+          
             
            
 

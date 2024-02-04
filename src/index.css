@@ -80,6 +80,7 @@ code {
 .homePage{
   height: 100vh;
   width: 100%;
+  text-align: center;
 }
 .category-container{
   display: flex;
@@ -116,4 +117,39 @@ code {
   align-items: center;
   height: 100%;
   width: 100%;
+}
+.search-results .search-results-item{
+  border: 1px solid black;
+  max-width: 100%; /* Ensure content doesn't exceed grid item width */
+  max-height: 100%;
+  background-color: red;
+  display: flex;
+  flex-direction: column-reverse;
+  /* justify-content: space-between; */
+  margin-top: 4%;
+  box-sizing: border-box;
+  /* flex: 1; */
+}
+.search-results{
+  background-color: lightgray;
+  width: 70%;
+  height: 100vh;
+  display: grid;
+  justify-items: center; /* Centers items horizontally */
+  grid-template-columns: repeat(3, minmax(20%, 30%)); /* Adjusted percentages for smaller cells */
+  grid-template-rows: repeat(3, minmax(50px, 100px)); /* Adjusted heights for smaller cells */
+  gap: 10px;
+  margin: 0 auto; /* Center horizontally */
+}
+
+.button-container{
+  width: 100%;
+  background-color: darkgray;
+  margin-left: auto
+
+}
+
+.searchResults-btn{
+  margin: 1%;
+  margin-left: 1%;
 }
