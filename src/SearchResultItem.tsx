@@ -1,9 +1,11 @@
 import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import {SearchResultsItemType} from './SearchResults';
 
 interface ChildProps {
-    gameTitle: string;
+    key:number;
+    gameName:String;
 
   }
 
@@ -11,8 +13,7 @@ export default function SearchResultsItem(props:ChildProps){
 
     return(
          <div className='search-results-item'>
-          <div className='item-card'> {props.gameTitle}</div>
-          <button>find friends</button>
+          <button>{props.gameName}</button>
           <button>Info</button>
             
            

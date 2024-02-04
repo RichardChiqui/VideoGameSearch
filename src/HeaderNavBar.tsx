@@ -11,21 +11,25 @@ export default function HeaderNavBar(){
 
        
             <div className="topNavbar">
-                {/* <SportsEsportsIcon/> */}
+             
 
-                <h1>Video Game Finder</h1>
-                <form>
+                <h1 className='WebsiteName'>Video Game Finder</h1>
+                <div className='searchLogin'>
+                {/* <form> */}
 
-                {/* <label for="tweet">Name: </label> */}
+         
+       
                 <input type="text"  
                         className="search-input" 
                         placeholder="Search...">
                     </input> 
 
 
-                </form>
-
-                <PersonIcon/>
+                {/* </form> */}
+                <button className='signinbutton'>SignUp/Login</button>
+                
+                </div>
+                
                 
 
             </div>
