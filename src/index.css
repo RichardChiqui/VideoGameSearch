@@ -1,0 +1,74 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.topNavbar{
+  background-color: lightblue;
+  width: 100%;
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-input{
+  /* background-color: red; */
+  width: 200%;
+  height: 15px;
+  border-radius: 7px;
+  outline-style: none;
+}
+
+.dropDown{
+
+
+}
+.categories-bar{
+  width: 100%;
+  height: 4%;
+  background-color: lightslategray;
+  display: flex;
+  justify-content: center; /* Horizontally center the inner div */
+  align-items: center;
+ 
+}
+.catButtons{
+  height: 100%;
+  
+}
+.DropDownCatItem{
+  background-color: red;
+
+}
+
+.homePage{
+  height: 100vh;
+  width: 100%;
+}
+.category-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  width: 80%;
+  background-color: aqua;
+  
+}
+
+.dropDownButton{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rebeccapurple;
+}
