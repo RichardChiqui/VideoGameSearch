@@ -120,32 +120,34 @@ code {
 }
 .search-results .search-results-item{
   border: 1px solid black;
-  max-width: 100%; /* Ensure content doesn't exceed grid item width */
-  max-height: 100%;
-  background-color: red;
+  flex: 0 0 calc(33.33% - 10px); /* Set each item to be one third of the container width minus the gap */
+ 
+ 
+  box-sizing: border-box; /* Include padding in item's width */
+  text-align: center;
+  height: 390px;
+
   display: flex;
-  flex-direction: column-reverse;
-  /* justify-content: space-between; */
-  margin-top: 4%;
-  box-sizing: border-box;
-  /* flex: 1; */
+  flex-direction: column;
 }
 .search-results{
   background-color: lightgray;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+  align-items: flex-start; /* Align items to the start of the cross axis */
+  gap: 9px; /* Adjust gap between items */
+  padding: 1%;
   width: 70%;
-  height: 100vh;
-  display: grid;
-  justify-items: center; /* Centers items horizontally */
-  grid-template-columns: repeat(3, minmax(20%, 30%)); /* Adjusted percentages for smaller cells */
-  grid-template-rows: repeat(3, minmax(50px, 100px)); /* Adjusted heights for smaller cells */
-  gap: 10px;
-  margin: 0 auto; /* Center horizontally */
+  height: min-content;
+  margin: 0 auto;
+
 }
 
 .button-container{
   width: 100%;
-  background-color: darkgray;
-  margin-left: auto
+  background-color: lightblue;
+  margin-top: auto;
 
 }
 
