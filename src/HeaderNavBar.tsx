@@ -1,12 +1,13 @@
 import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import Modal from 'react-modal';
 
 import CategoriesTab from './CategoriesNavBar';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
-    dismissHandlerClick: (event: React.FocusEvent<HTMLButtonElement>) => void; // Add dismissHandler
+    dismissHandlerClick: (event: React.FocusEvent<HTMLDivElement>) => void; // Add dismissHandler
     buttonClicked: boolean;
   }
 
@@ -19,6 +20,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
     const style= {filter: filterValue};
 
     const [show, setShow] = React.useState(false)
+    const [showLogin, setshowLogin] = React.useState(false)
 
     function displayDropDown(){
         setShow(!show);
@@ -46,7 +48,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
 
 
                 {/* </form> */}
-                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} onBlur={dismissHandlerClick}>SignUp/Login</button>
+                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>
                 
                 </div>
                 

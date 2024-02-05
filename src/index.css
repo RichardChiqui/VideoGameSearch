@@ -172,7 +172,7 @@ code {
 
 .LoginForm{
   background-color: white;
-  width: 70%;
+  width: 50%;
   height: 70%;
 
   height: 800px;
@@ -206,4 +206,16 @@ button:hover {
 .no-hover {
   pointer-events: none; /* Disable pointer events on the button */
   /* Additional styles to visually indicate the button is disabled */
+}
+
+.ReactModal__Overlay {
+  background: none;
+}
+
+/* Remove default content styles */
+.ReactModal__Content {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }

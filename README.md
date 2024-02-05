@@ -48,6 +48,9 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 My Changes: Used command: npx create-react-app my-app --template typescript to setup project with react and typescript
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 npm install react-bootstrap bootstrap
+npm install react-modal and then fix error with npm install --save-dev @types/react-modal
+
+
 
 Node Version: 14.17.6
 TypeScript: 4.9.5
