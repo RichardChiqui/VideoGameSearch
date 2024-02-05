@@ -8,14 +8,22 @@ import SearchResults from './SearchResults';
 
 
 export default function HomePage(){
+    const [buttonClicked, setButtonClicked] = React.useState(false);
+
+
+    const styles= {display: buttonClicked? "block":"none"}
+    const backdrop = {filter: buttonClicked? "brightness(50%)": "brightness(100%)"}
+    const handleButtonClick = () => {
+      setButtonClicked(!buttonClicked);
+    };
     return(
-        <div className='homePage'>
+        <div className='homePage' style={backdrop}>
 
        
        
-         <HeaderNavBar/>
+         <HeaderNavBar onButtonClick={handleButtonClick}/>
          <CategoriesTab/>
-         <SearchResults/>
+         <SearchResults buttonClicked={buttonClicked}/>
          
         </div>
     )

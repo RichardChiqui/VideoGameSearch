@@ -4,8 +4,12 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 import CategoriesTab from './CategoriesNavBar';
 
+interface HeaderNavbar {
+    onButtonClick: () => void;
+  }
 
-export default function HeaderNavBar(){
+export default function HeaderNavBar({ onButtonClick }: HeaderNavbar){
+ 
     return(
      
 
@@ -26,7 +30,7 @@ export default function HeaderNavBar(){
 
 
                 {/* </form> */}
-                <button className='signinbutton'>SignUp/Login</button>
+                <button className='signinbutton' onClick={onButtonClick}>SignUp/Login</button>
                 
                 </div>
                 

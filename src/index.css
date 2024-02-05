@@ -148,10 +148,37 @@ code {
   width: 100%;
   background-color: lightblue;
   margin-top: auto;
+  height: 9%;
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  align-items: center; 
 
 }
 
 .searchResults-btn{
   margin: 1%;
-  margin-left: 1%;
+  margin-left: 3%;
+  border-radius: 10px;
+  background-color: cyan;
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.searchResults-btn:hover {
+  transform: scale(1.3); /* Increase size on hover */
+  background-color: #0056b3; /* Example background color change */
+}
+
+.LoginForm{
+  background-color: peachpuff;
+  width: 70%;
+  height: 100vh;
+}
+
+.search-results-container{
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+ 
 }

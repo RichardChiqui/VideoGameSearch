@@ -7,7 +7,10 @@ export type  SearchResultsItemType = {
     id: number;
     name: string;
   }
-export default function SearchResults(){
+interface SearchResultsProps {
+    buttonClicked: boolean; // Define the type of the buttonClicked prop
+}
+export default function SearchResults({ buttonClicked }: SearchResultsProps){
 
     const categoriesList: SearchResultsItemType[] = [
         { id: 1, name: "OverWatch" },
@@ -15,14 +18,19 @@ export default function SearchResults(){
         { id: 3, name: "Modern Warfare 2" },
         { id: 4, name: "Avator"}
       ];
+      const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+      const style= {filter: filterValue};
     return(
-         <div className='search-results'>
-            
+      <div className='search-results-container' style={style}>
+        <div className='search-results'>
+                    
             {categoriesList.map(item => (
                     <SearchResultsItem key={item.id} gameName={item.name} />
                 ))}
 
-        </div>
+          </div>
+      </div>
+         
     )
 
    
