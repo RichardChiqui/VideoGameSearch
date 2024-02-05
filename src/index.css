@@ -171,9 +171,21 @@ code {
 }
 
 .LoginForm{
-  background-color: peachpuff;
+  background-color: white;
   width: 70%;
-  height: 100vh;
+  height: 70%;
+
+  height: 800px;
+  width: 750px;
+  border-radius: 20px;
+
+  position: absolute;
+ 
+  z-index: 2;
+  
+  margin-top: 4%;
+  margin-left: 600px;
+  filter: brightness(100%);
 }
 
 .search-results-container{
@@ -181,4 +193,17 @@ code {
   height: 100vh;
   background-color: white;
  
+}
+
+button:hover {
+  transform: scale(1.1); /* Increase size on hover */
+ 
+  /* Your CSS styles for all buttons */
+
+
+}
+
+.no-hover {
+  pointer-events: none; /* Disable pointer events on the button */
+  /* Additional styles to visually indicate the button is disabled */
 }

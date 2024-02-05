@@ -7,7 +7,11 @@ export type  GenreCategory = {
     id: number;
     name: string;
   }
-export default function CategoriesNavBar(){
+
+interface CategoriesNavBarProps {
+    buttonClicked: boolean;
+  }
+export default function CategoriesNavBar({ buttonClicked }: CategoriesNavBarProps){
     const customClassName = "catButtons";
 
     const [show, setShow] = React.useState(false)
@@ -27,8 +31,11 @@ export default function CategoriesNavBar(){
         { id: 2, name: "Action" },
         { id: 3, name: "Shooter" },
       ];
+
+      const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+    const style= {filter: filterValue};
     return(
-        <div className="categories-bar">
+        <div className="categories-bar"  style={style}>
            
            <div className='category-container'>
 
