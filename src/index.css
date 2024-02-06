@@ -46,7 +46,7 @@ code {
 .categories-bar{
   width: 100%;
   height: 4%;
-  background-color: red;
+  background-color: lightslategray;
   display: flex;
   justify-content: center; /* Horizontally center the inner div */
   align-items: center;
@@ -173,18 +173,18 @@ code {
 
 .LoginForm{
   background-color: white;
-  width: 50%;
+  width: 40%;
   height: 70%;
-
-  
   border-radius: 20px;
+  position: absolute;
+  z-index: 1000;
 
   position: absolute;
- 
-  z-index: 1000;
-  
-  margin-top: 4%;
-  margin-left: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
 }
 
 .search-results-container{
@@ -214,4 +214,63 @@ button:hover {
   border: none;
   box-shadow: none;
   padding: 0;
+}
+
+.loginForm-container{
+  width: 70%;
+  height: 70%;
+  
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login-title{
+ 
+  height: min-content;
+  width: min-content;
+  margin: 0 auto;
+}
+
+
+.login-form{
+ 
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+
+  margin: 0 auto;
+  margin-top: 14%;
+  
+}
+.login-input{
+  margin: 6%;
+  height: 20px;
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.login-btn{
+  border-radius: 15px;
+  background-color: #2D2DC1;
+  width: 70%;
+  height: 7%;
+  margin: 0 auto;
+  margin-top: 10%;
+  color: white;
+
+}
+
+.create-account-text{
+  margin-top: 30%;
+  text-align: center;
+  font-weight: normal;
+}
+
+.signupText{
+  font-weight: bold;
 }
