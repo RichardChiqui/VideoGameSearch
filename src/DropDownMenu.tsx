@@ -9,23 +9,7 @@ interface ChildProps {
 }
 
 export default function DropDownMenu(props: ChildProps){
-    const [show, setShow] = React.useState(false)
 
-    function displayDropDown(){
-        setShow(!show);
-    }
-
-    const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
-        if (event.currentTarget === event.target) {
-            setShow(false);
-        }
-      };
-
-    const categoriesList = [
-        { id: 1, name: "RPG" },
-        { id: 2, name: "Action" },
-        { id: 3, name: "Shooter" },
-      ];
     return(
             <div className={props.classNameProp}>
               {props.categories.map(item => (

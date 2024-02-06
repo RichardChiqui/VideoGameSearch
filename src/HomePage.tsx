@@ -26,7 +26,7 @@ export default function HomePage(){
     };
 
     const displayStyle= {display: buttonClicked? "block":"none"}
-    const backdrop = {filter: buttonClicked? "brightness(50%)": "brightness(100%)"}
+    const backdrop = {filter: buttonClicked? "brightness(100%)": "brightness(50%)"}
     const handleButtonClick = () => {
       setButtonClicked(!buttonClicked);
       openModal();

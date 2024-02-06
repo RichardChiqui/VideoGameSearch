@@ -18,6 +18,7 @@ export default function CategoriesNavBar({ buttonClicked }: CategoriesNavBarProp
 
     function displayDropDown(){
         setShow(!show);
+   
     }
 
     const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
@@ -32,7 +33,9 @@ export default function CategoriesNavBar({ buttonClicked }: CategoriesNavBarProp
         { id: 3, name: "Shooter" },
       ];
 
-      const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+    console.log("Current show value " + buttonClicked);
+    const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+    console.log("filterecaled is " + filterValue);
     const style= {filter: filterValue};
     return(
         <div className="categories-bar"  style={style}>

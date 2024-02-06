@@ -16,7 +16,9 @@ interface HeaderNavbar {
 export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar){
  
 
+    console.log("Current show value " + buttonClicked);
     const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+    console.log("filterecaled is " + filterValue);
     const style= {filter: filterValue};
 
     const [show, setShow] = React.useState(false)

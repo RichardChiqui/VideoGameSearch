@@ -21,7 +21,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps){
       const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
       const style= {filter: filterValue};
     return(
-      <div className='search-results-container' style={style}>
+      // <div className='search-results-container' style={style}>
         <div className='search-results'>
                     
             {categoriesList.map(item => (
@@ -29,7 +29,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps){
                 ))}
 
           </div>
-      </div>
+      // </div>
          
     )
 
