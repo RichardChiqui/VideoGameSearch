@@ -1,0 +1,298 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.WebsiteName{
+  color: white;
+}
+
+.topNavbar{
+  background-color: black;
+  width: 100%;
+  height: 10%;
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-input{
+  /* background-color: red; */
+  width: 50%;
+  height: 40px;
+  border-radius: 7px;
+  outline-style: none;
+}
+
+.dropDownMenu{
+  position: absolute;
+  top: 100%; /* Position the dropdown menu below the button */
+  width: 33.5%;
+  z-index: 3000; 
+  border: 10px;
+  background-color: red;
+  
+}
+.categories-bar{
+  width: 100%;
+  height: 4%;
+  background-color: lightslategray;
+  display: flex;
+  justify-content: center; /* Horizontally center the inner div */
+  align-items: center;
+  z-index: 2000;
+
+ 
+}
+.catButtons{
+  height: 100%;
+  width: 100%;
+  background-color: lightslategray;
+  border: none;
+  
+}
+.catButtons:hover{
+  background-color: #e5e5e5;
+  cursor: pointer;
+}
+.DropDownMenuItem{
+  background-color: white;
+  width: 100%;
+  border-bottom: 1px solid  lightgray;
+  padding: 1px;
+
+}
+.DropDownMenuItem:hover{
+  background-color: #e5e5e5;
+  cursor: pointer;
+
+}
+
+.homePage{
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+}
+.category-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  width: 40%;
+  background-color: aqua;
+  position: relative;
+  
+}
+
+.dropDownButton{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rebeccapurple;
+}
+
+.signinbutton{
+  background-color: yellow;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 2%;
+  justify-content: center; /* Horizontally center the inner div */
+  align-items: center;
+  width: max-content;
+  height: 40px;
+}
+.searchLogin{
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Horizontally center the inner div */
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+.search-results .search-results-item{
+  border: 1px solid black;
+  flex: 0 0 calc(33.33% - 10px); /* Set each item to be one third of the container width minus the gap */
+ 
+ 
+  box-sizing: border-box; /* Include padding in item's width */
+  text-align: center;
+  height: 390px;
+
+  display: flex;
+  flex-direction: column;
+}
+.search-results{
+  background-color: lightgray;
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  justify-content: space-between; /* Distribute items evenly along the main axis */
+  align-items: flex-start; /* Align items to the start of the cross axis */
+  gap: 9px; /* Adjust gap between items */
+  padding: 1%;
+  width: 70%;
+  height: min-content;
+  margin: 0 auto;
+
+}
+
+.button-container{
+  width: 100%;
+  background-color: lightblue;
+  margin-top: auto;
+  height: 9%;
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  align-items: center; 
+
+}
+
+.searchResults-btn{
+  margin: 1%;
+  margin-left: 3%;
+  border-radius: 10px;
+  background-color: cyan;
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.searchResults-btn:hover {
+  transform: scale(1.3); /* Increase size on hover */
+  background-color: #0056b3; /* Example background color change */
+}
+
+.LoginForm{
+  background-color: white;
+  width: 40%;
+  height: 70%;
+  border-radius: 20px;
+  position: absolute;
+  z-index: 1000;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+}
+
+.search-results-container{
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+ 
+}
+
+button:hover {
+  transform: scale(1.1); /* Increase size on hover */
+ 
+  /* Your CSS styles for all buttons */
+
+
+}
+
+
+
+.ReactModal__Overlay {
+  background: none;
+}
+
+/* Remove default content styles */
+.ReactModal__Content {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.loginForm-container{
+  width: 70%;
+  height: 70%;
+  
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login-title{
+ 
+  height: min-content;
+  width: min-content;
+  margin: 0 auto;
+}
+
+
+.login-form{
+ 
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+
+  margin: 0 auto;
+  margin-top: 14%;
+  
+}
+.login-input{
+  margin: 6%;
+  height: 20px;
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+}
+
+.login-btn{
+  border-radius: 15px;
+  background-color: #2D2DC1;
+  width: 70%;
+  height: 7%;
+  margin: 0 auto;
+  margin-top: 10%;
+  color: white;
+
+}
+
+.create-account-text{
+  margin-top: 30%;
+  text-align: center;
+  font-weight: normal;
+}
+
+.signupText{
+  font-weight: bold;
+}
+
+.signupText:hover{
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.forgotpassword-text{
+  font-weight: lighter;
+  width: max-content;
+  align-self:flex-end;
+  margin-right: 20%;
+  height: min-content;
+  margin-top: -3%;
+}
+
+.forgotpassword-text:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+  font-weight: bold;
+
+}
