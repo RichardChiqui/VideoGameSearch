@@ -296,3 +296,17 @@ button:hover {
   font-weight: bold;
 
 }
+
+.error-message{
+ 
+    margin: 0px;
+    color: red;
+    height: min-content;
+    width: max-content;
+    font-size: 10px;
+    margin-left: 19%;
+
+    margin-top: -3%;
+
+  
+}

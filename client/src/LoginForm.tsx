@@ -14,6 +14,8 @@ export default function LoginForm(){
     const [password, setPassword] = React.useState({password: ""})
     const[userNamePassWordJsonFields, setuserNamePassWordJsonFields] = React.useState(userNamePassWordJson)
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
+    const [foundAccount, setFoundAccount] = React.useState(true)
+
 
 
     const { username: usernameValue } = username;
@@ -58,8 +60,10 @@ export default function LoginForm(){
             setResponseData(data);
           
             if(data.length <= 0){
+                setFoundAccount(false)
                 console.log("No data received from the server");
             } else{
+                setFoundAccount(true);
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
             }
@@ -89,6 +93,7 @@ export default function LoginForm(){
 
                 </form>
                 <h6 className='forgotpassword-text'>Forgot Password?</h6>
+                {!foundAccount && <div className='error-message'>Password and Email combination not found!</div>}
                 <button className='login-btn' onClick={handleSubmit}>Login</button>
                 
                 <h6 className='create-account-text'>Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong> </Link></h6>
