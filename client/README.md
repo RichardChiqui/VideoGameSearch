@@ -49,6 +49,8 @@ My Changes: Used command: npx create-react-app my-app --template typescript to s
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 npm install react-bootstrap bootstrap
 npm install react-modal and then fix error with npm install --save-dev @types/react-modal
+npm install react-router-dom
+
 
 
 

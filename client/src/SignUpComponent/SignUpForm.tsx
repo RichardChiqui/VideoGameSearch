@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './signup.css';
 
 
-interface FormData {
+interface SignUpForm {
     username: string;
     password:String;
 }
 
-export default function LoginForm(){
+export default function SignUpForm(){
 
     const userNamePassWordJson = [{key:"Name", on:false, text: "Name"},{key:"Email",on:false, text:"Email"}]
     const [username, setUserName] = React.useState({username: ""})
@@ -34,7 +35,7 @@ export default function LoginForm(){
 
        
         console.log("what is username " + userNamePassWordJson[0].text + " and password " + userNamePassWordJson[1].text);
-        const postData: FormData = {
+        const postData: SignUpForm = {
             username:usernameValue,
             password:passwordValue
 
@@ -72,34 +73,10 @@ export default function LoginForm(){
 
 
     return(
-         <div className='LoginForm'>
-            <div className='loginForm-container'>
-                <h1 className='login-title'>Login</h1>
-                <form className='login-form' >  
-                    <label htmlFor="Username"></label>
-                    <input type="text" id="Username" name="Username"
-                     placeholder="Username" className='login-input' onChange={handleChange}></input>
+         <div className='signup-page'>
+            hello
 
-                    <label htmlFor="Password"></label>
-                    <input type="text" id="Password" 
-                    name="Password" placeholder="Password" 
-                    className='login-input' 
-                   onChange={handleChange}></input>
-
-
-                </form>
-                <h6 className='forgotpassword-text'>Forgot Password?</h6>
-                <button className='login-btn' onClick={handleSubmit}>Login</button>
-                
-                <h6 className='create-account-text'>Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong> </Link></h6>
-             
-            </div>
-
-            
-
-            
-        
-        </div>
+         </div>
     )
 
    
