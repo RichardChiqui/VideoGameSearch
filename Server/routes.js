@@ -8,4 +8,5 @@ router.get('/',(req,res) =>{
 })
 
 router.post('/homepage/login', controller.validateUser)
+router.post('/addUser', controller.addUser)
 module.exports = router;

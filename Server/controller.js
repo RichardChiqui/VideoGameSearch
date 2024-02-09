@@ -10,7 +10,16 @@ const validateUser = (req,res) => {
     })
 }
 
+const addUser = (req,res) =>{
+    const {username, password, email} = req.body
+    pool.query(queries.addUser, [username,password,email], (error, results) =>{
+        if (error) throw error;
+        res.status(200).json(results.rows);
+    })
+}
+
 
 module.exports ={
-    validateUser
+    validateUser,
+    addUser
 }

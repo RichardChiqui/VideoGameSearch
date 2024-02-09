@@ -6,27 +6,45 @@ import './signup.css';
 interface SignUpForm {
     username: string;
     password:String;
+    email:String;
+
 }
 
 export default function SignUpForm(){
 
-    const userNamePassWordJson = [{key:"Name", on:false, text: "Name"},{key:"Email",on:false, text:"Email"}]
+    const [passwordMatch, setPasswordMatch] = React.useState(true)
     const [username, setUserName] = React.useState({username: ""})
     const [password, setPassword] = React.useState({password: ""})
-    const[userNamePassWordJsonFields, setuserNamePassWordJsonFields] = React.useState(userNamePassWordJson)
+    const [confirmPassword, setConfirmPassword] = React.useState({confirmPassword: ""})
+    const [email, setEmail] = React.useState({email: ""})
+   
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
 
 
     const { username: usernameValue } = username;
     const { password: passwordValue } = password;
+    const { confirmPassword: confirmPasswordValue } = confirmPassword;
+    const { email: emailValue } = email;
+  
       
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
         console.log("value for name " + name + " and value " + value);
-        if (name === "Username") {
-            setUserName({ username: value });
-        } else if (name === "Password") {
-            setPassword({ password: value });
+        switch (name) {
+            case "Username":
+                setUserName({ username: value });
+                break;
+            case "Password":
+                setPassword({ password: value });
+                break;
+            case "ConfirmPassword":
+                setConfirmPassword({ confirmPassword: value });
+                break;
+            case "Email":
+                setEmail({ email: value });
+                break;
+            default:
+                break;
         }
     }
 
@@ -34,14 +52,15 @@ export default function SignUpForm(){
         event.preventDefault();
 
        
-        console.log("what is username " + userNamePassWordJson[0].text + " and password " + userNamePassWordJson[1].text);
+  
         const postData: SignUpForm = {
             username:usernameValue,
-            password:passwordValue
+            password:passwordValue,
+            email:emailValue
 
         };
 
-        fetch('http://localhost:5000/homepage/login', {
+        fetch('http://localhost:5000/addUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,10 +90,48 @@ export default function SignUpForm(){
         });
     }
 
+    function handleConfirmPasswordBlur(event: React.FocusEvent<HTMLInputElement>) {
+        console.log("Clicked off input field:", event.target.name);
+        console.log("current password " + passwordValue + " and the confirm apssword " + confirmPasswordValue);
+        if(passwordValue === confirmPasswordValue){
+            console.log("Passwords are the same are good");
+            setPasswordMatch(true);
+        } else{
+            setPasswordMatch(false);
+
+        }
+        // Add your logic here for when the user clicks off the input field
+    }
+    const style = passwordMatch? 'createaccount-inputs':'errorInput';
+
 
     return(
          <div className='signup-page'>
-            hello
+            <div className='signup-container'>
+
+                <form className='signup-form'>
+                    <h1 className='createaccount-text'>Create Account</h1>
+                    <label htmlFor="Email"></label>
+                        <input type="text" id="Email" name="Email"
+                        placeholder="Email" className='createaccount-inputs' onChange={handleChange}></input>
+                    <label htmlFor="Username"></label>
+                        <input type="text" id="Username" name="Username"
+                        placeholder="Username" className='createaccount-inputs' onChange={handleChange}></input>
+                    <label htmlFor="Password"></label>
+                        <input type="text" id="Password" name="Password"
+                        placeholder="Password" className={style} onChange={handleChange} onBlur={handleConfirmPasswordBlur}></input>
+                    <label htmlFor="ConfirmPassword"></label>
+                        <input type="text" id="ConfirmPassword" name="ConfirmPassword"
+                        placeholder="Confirm Password" className={style} onBlur={handleConfirmPasswordBlur} onChange={handleChange}></input>
+                        {!passwordMatch && <div className='input-error-message'>Passwords do not match</div>  }
+                    <label htmlFor="How would you describe your gaming stlye?"></label>
+                        <input type="text" id="gamingStyle" name="gamingStyle"
+                        placeholder="How would you describe your gaming stlye?" className='createaccount-inputs' onChange={handleChange}></input>
+                    <button className='create-account-btn' onClick={handleSubmit}>Create Account</button>
+
+                </form>
+
+            </div>
 
          </div>
     )

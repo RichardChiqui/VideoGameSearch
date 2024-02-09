@@ -17,4 +17,92 @@ body {
 
   .signup-page{
     background-color: blue;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient( #ffcccb, #ADD8E6);
+
+    display: flex;
+    justify-content: center; /* Horizontally center the container */
+    align-items: center;
+  }
+
+  .signup-container{
+    background-color: white;
+    height: 70%;
+    width: 30%;
+
+    display: flex;
+    justify-content: center; /* Horizontally center the container */
+    align-items: center;
+   
+  }
+
+  .signup-form{
+    height: max-content;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Horizontally center the container */
+    align-items: center;
+
+   
+  
+  }
+
+  .createaccount-text{
+    text-align: center;
+  }
+
+  .createaccount-inputs{
+
+    border: none;
+    background-color: lightgray;
+    margin: 3%;
+    height: 30px;
+    border-radius: 3px;
+    padding-left: 2%;
+    width: 70%;
+
+  }
+  .create-account-btn{
+
+
+    border: 1px solid black;
+    background-color: #008FC4;
+    width: 40%;
+   
+    border-radius: 9px;
+    margin: auto;
+    margin-top: 9%;
+    height: 25px;
+    color: white;
+
+  }
+
+  .errorInput{
+   
+    border: 1px solid red;
+    background-color: lightgray;
+    margin: 3%;
+    height: 30px;
+    border-radius: 3px;
+    padding-left: 2%;
+    width: 70%;
+    outline: none;
+  }
+
+  .errorInput::placeholder{
+    color: red;
+  }
+  .input-error-message{
+    margin: 0px;
+    color: red;
+    
+    height: min-content;
+    width: max-content;
+    font-size: 10px;
+    margin-left: 0;
+    margin-right: 35%;
+    margin-top: -3%;
+
   }
