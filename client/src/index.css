@@ -13,25 +13,68 @@ code {
 }
 .WebsiteName{
   color: white;
+  margin-left: 5%;
 }
 
 .topNavbar{
-  background-color: black;
+  z-index: 15;
   width: 100%;
   height: 10%;
-  
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-image: url('https://images7.alphacoders.com/737/737638.jpg');
+  background-size: contain; /* Cover the entire container */
+  
 }
 
-.search-input{
-  /* background-color: red; */
+.homePage{
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+}
+
+/* .search-input{
   width: 50%;
   height: 40px;
-  border-radius: 7px;
   outline-style: none;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.searchResultsButton{
+  background-color: yellow;
+  border: 1px solid black;
+  align-items: center;
+  height: 45.5px;
+  right: 5%;
+
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+} */
+
+.search-input {
+  width: calc(50% - 2px); /* Adjust width to account for border */
+  height: 42.5px; /* Set height to match the button */
+  outline: none;
+  border: 1px solid black;
+  border-right: none; /* Remove right border to match button's rounded corner */
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  padding: 0 10px; /* Add padding to give some space inside the input */
+}
+
+.searchResultsButton {
+  background-color: yellow;
+  border: 1px solid black;
+  align-items: center;
+  width: 9%;
+  height: 45.5px; /* Set the same height as the input */
+  right: 5%;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .dropDownMenu{
@@ -46,23 +89,33 @@ code {
 .categories-bar{
   width: 100%;
   height: 4%;
-  background-color: lightslategray;
   display: flex;
   justify-content: center; /* Horizontally center the inner div */
   align-items: center;
   z-index: 2000;
 
+
  
+}
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0 0; /* Start position */
+  }
+  100% {
+    background-position: 100% 0; /* End position */
+  }
 }
 .catButtons{
   height: 100%;
   width: 100%;
-  background-color: lightslategray;
   border: none;
+
+  animation: gradientAnimation 5s linear infinite;
+  font-family: roboto;
+  font-size: medium;
   
 }
 .catButtons:hover{
-  background-color: #e5e5e5;
   cursor: pointer;
 }
 .DropDownMenuItem{
@@ -78,18 +131,14 @@ code {
 
 }
 
-.homePage{
-  height: 100vh;
-  width: 100%;
-  text-align: center;
-}
+
 .category-container{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   height: 100%;
   width: 40%;
-  background-color: aqua;
+ 
   position: relative;
   
 }
@@ -98,7 +147,6 @@ code {
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: rebeccapurple;
 }
 
 .signinbutton{
@@ -111,6 +159,7 @@ code {
   width: max-content;
   height: 40px;
 }
+
 .searchLogin{
   display: flex;
   flex-direction: row;
@@ -119,41 +168,45 @@ code {
   height: 100%;
   width: 100%;
 }
-.search-results .search-results-item{
+.search-results {
+ 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(17.66% - 10px), 1fr)); /* Automatically adjust the number of columns */
+  grid-auto-rows: 390px; /* Set the height of each row */
+  gap: 3%; /* Adjust gap between items */
+  padding: 1%;
+  width: 70%;
+  margin: 0 auto;
+  
+}
+
+.search-results .search-results-item {
   border: 1px solid black;
-  flex: 0 0 calc(33.33% - 10px); /* Set each item to be one third of the container width minus the gap */
- 
- 
   box-sizing: border-box; /* Include padding in item's width */
   text-align: center;
-  height: 390px;
-
+  height: 100%; /* Set height to fill the row */
   display: flex;
   flex-direction: column;
 }
-.search-results{
-  background-color: lightgray;
-  display: flex;
-  flex-wrap: wrap; /* Allow items to wrap to the next line */
-  justify-content: space-between; /* Distribute items evenly along the main axis */
-  align-items: flex-start; /* Align items to the start of the cross axis */
-  gap: 9px; /* Adjust gap between items */
-  padding: 1%;
-  width: 70%;
-  height: min-content;
-  margin: 0 auto;
 
-}
 
 .button-container{
   width: 100%;
   background-color: lightblue;
-  margin-top: auto;
   height: 9%;
   display: flex;
+  margin-top: auto;
+  bottom: 0;
   justify-content: center; /* Center the buttons horizontally */
-  align-items: center; 
+  
 
+}
+
+/* Adjust the number of items per row for smaller screens */
+@media screen and (max-width: 1024px) {
+  .search-results {
+    grid-template-columns: repeat(auto-fill, minmax(calc(20% - 10px), 1fr)); /* For smaller screens, display 5 items per row */
+  }
 }
 
 .searchResults-btn{

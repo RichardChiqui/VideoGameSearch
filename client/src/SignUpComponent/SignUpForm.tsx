@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './signup.css';
+import { send } from 'process';
 
 
 interface SignUpForm {
@@ -13,12 +14,16 @@ interface SignUpForm {
 export default function SignUpForm(){
 
     const [passwordMatch, setPasswordMatch] = React.useState(true)
+    const [missingFields, setMissingFields] = React.useState(false)
     const [username, setUserName] = React.useState({username: ""})
     const [password, setPassword] = React.useState({password: ""})
     const [confirmPassword, setConfirmPassword] = React.useState({confirmPassword: ""})
     const [email, setEmail] = React.useState({email: ""})
-   
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
+
+    const [missingEmail, setMissingEmail] = React.useState(true);
+    const [missingPassword, setMissingPassword] = React.useState(true);
+    const [missingUsername, setMissingUsername] = React.useState(true);
 
 
     const { username: usernameValue } = username;
@@ -29,7 +34,7 @@ export default function SignUpForm(){
       
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
-        console.log("value for name " + name + " and value " + value);
+        console.log("within handle changes param value for name " + name + " and value " + value);
         switch (name) {
             case "Username":
                 setUserName({ username: value });
@@ -51,8 +56,67 @@ export default function SignUpForm(){
     function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         event.preventDefault();
 
-       
+        console.log("Before submitting, here is email " + emailValue + ", password " + passwordValue + " and username " + usernameValue);
+        console.log("and here is booleans for email " + missingEmail + ', password ' + missingPassword + " and usernamew " + missingUsername);
+        if(missingEmail || missingPassword || missingPassword){
+            console.log("not all fields have been filled out");
+            setMissingFields(true);
+
+        } else{
+              //sendSubmit();
+        }
+     
   
+       
+    }
+
+    function handleFieldUpdates(event: React.FocusEvent<HTMLInputElement>){
+        const { name, value } = event.target;
+        console.log("within check for uypdates value for name " + name + " and value " + value);
+        switch (name) {
+            case "Username":
+                if(value.length == 0){
+                    setMissingUsername(true);
+                } else{
+                    setMissingUsername(false);
+                }
+                break;
+            case "Password":
+                if(value.length == 0){
+                    setMissingPassword(true);
+                } else{
+                    setMissingPassword(false);
+                }
+                break;
+            case "Email":
+                if(value.length == 0){
+                    setMissingEmail(true);
+                } else{
+                    setMissingEmail(false);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    function handleConfirmPasswordBlur(event: React.FocusEvent<HTMLInputElement>) {
+        console.log("Clicked off input field:", event.target.name);
+        console.log("current password " + passwordValue + " and the confirm apssword " + confirmPasswordValue);
+        if(passwordValue === confirmPasswordValue){
+            console.log("Passwords are the same are good");
+            setPasswordMatch(true);
+        } else{
+            setPasswordMatch(false);
+
+        }
+        // Add your logic here for when the user clicks off the input field
+    }
+    const style = passwordMatch? 'createaccount-inputs':'errorInput';
+    const missingFieldStyles = missingFields? 'createaccount-inputs':'errorInput';
+
+    function sendSubmit(){
+
         const postData: SignUpForm = {
             username:usernameValue,
             password:passwordValue,
@@ -90,20 +154,6 @@ export default function SignUpForm(){
         });
     }
 
-    function handleConfirmPasswordBlur(event: React.FocusEvent<HTMLInputElement>) {
-        console.log("Clicked off input field:", event.target.name);
-        console.log("current password " + passwordValue + " and the confirm apssword " + confirmPasswordValue);
-        if(passwordValue === confirmPasswordValue){
-            console.log("Passwords are the same are good");
-            setPasswordMatch(true);
-        } else{
-            setPasswordMatch(false);
-
-        }
-        // Add your logic here for when the user clicks off the input field
-    }
-    const style = passwordMatch? 'createaccount-inputs':'errorInput';
-
 
     return(
          <div className='signup-page'>
@@ -113,20 +163,24 @@ export default function SignUpForm(){
                     <h1 className='createaccount-text'>Create Account</h1>
                     <label htmlFor="Email"></label>
                         <input type="text" id="Email" name="Email"
-                        placeholder="Email" className='createaccount-inputs' onChange={handleChange}></input>
+                        placeholder="Email" className={missingEmail && missingFields?'errorInput':'createaccount-inputs'} onChange={handleChange} onBlur={handleFieldUpdates}></input>
+
+                        {missingFields && missingEmail && <div className='input-error-message'>Please enter email</div>  }
                     <label htmlFor="Username"></label>
                         <input type="text" id="Username" name="Username"
-                        placeholder="Username" className='createaccount-inputs' onChange={handleChange}></input>
+                        placeholder="Username" className={missingUsername && missingFields?'errorInput':'createaccount-inputs'} onChange={handleChange}></input>
+                         {missingFields && missingEmail && <div className='input-error-message'>Please enter a username</div>  }
                     <label htmlFor="Password"></label>
                         <input type="text" id="Password" name="Password"
                         placeholder="Password" className={style} onChange={handleChange} onBlur={handleConfirmPasswordBlur}></input>
+                         {missingFields && missingEmail && <div className='input-error-message'>Please enter a password</div>  }
                     <label htmlFor="ConfirmPassword"></label>
                         <input type="text" id="ConfirmPassword" name="ConfirmPassword"
                         placeholder="Confirm Password" className={style} onBlur={handleConfirmPasswordBlur} onChange={handleChange}></input>
                         {!passwordMatch && <div className='input-error-message'>Passwords do not match</div>  }
-                    <label htmlFor="How would you describe your gaming stlye?"></label>
+                    <label htmlFor="How would you describe your gaming style?"></label>
                         <input type="text" id="gamingStyle" name="gamingStyle"
-                        placeholder="How would you describe your gaming stlye?" className='createaccount-inputs' onChange={handleChange}></input>
+                        placeholder="How would you describe your gaming style?" className='createaccount-inputs' onChange={handleChange}></input>
                     <button className='create-account-btn' onClick={handleSubmit}>Create Account</button>
 
                 </form>

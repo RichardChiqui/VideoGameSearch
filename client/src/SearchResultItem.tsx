@@ -15,7 +15,6 @@ export default function SearchResultsItem(props:ChildProps){
          <div className='search-results-item'>
           <div className='button-container'>  
             <button className='searchResults-btn'>{props.gameName}</button>
-            <button className='searchResults-btn'>Info</button>
             <button className='searchResults-btn'>Search People</button>
             <button className='searchResults-btn'>Search Groups</button>
           </div>

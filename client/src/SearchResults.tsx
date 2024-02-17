@@ -16,7 +16,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps){
         { id: 1, name: "OverWatch" },
         { id: 2, name: "Fornite" },
         { id: 3, name: "Modern Warfare 2" },
-        { id: 4, name: "Avator"}
+        { id: 4, name: "Avatar"}
       ];
       const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
       const style= {filter: filterValue};

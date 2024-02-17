@@ -37,7 +37,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
             <div className="topNavbar"  style={style}>
              
 
-                <h1 className='WebsiteName'>Video Game Finder</h1>
+                <h1 className='WebsiteName'>SQUAD SEEKER</h1>
                 <div className='searchLogin'>
                 {/* <form> */}
 
@@ -50,10 +50,10 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
 
 
                 {/* </form> */}
-                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>
+                <button className={`searchResultsButton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >Search</button>
                 
                 </div>
-                
+                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>
                 
 
             </div>
