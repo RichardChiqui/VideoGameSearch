@@ -55,6 +55,11 @@ export default function HomePage(){
     
         {/* {buttonClicked && <LoginForm />} */}
          <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
+         <div className='homepage-description'>
+          <h1>Ready To Play? </h1>
+          <h6>Find your next teammate, squad or game to play. Use filters to search</h6>
+         </div>
+         
          <CategoriesTab buttonClicked={buttonClicked}/>
          <SearchResults buttonClicked={buttonClicked}/>
          

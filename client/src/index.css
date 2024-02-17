@@ -24,16 +24,21 @@ code {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-image: url('https://images7.alphacoders.com/737/737638.jpg');
-  background-size: contain; /* Cover the entire container */
+  /* background-image: url('https://images7.alphacoders.com/737/737638.jpg'); */
+  background: linear-gradient(to right,#2A0A4B,#65378B );
+
   
 }
 
 .homePage{
-  height: 100vh;
+  height: 100%;
   width: 100%;
-  text-align: center;
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 /* .search-input{
@@ -67,7 +72,7 @@ code {
 }
 
 .searchResultsButton {
-  background-color: yellow;
+ 
   border: 1px solid black;
   align-items: center;
   width: 9%;
@@ -75,6 +80,11 @@ code {
   right: 5%;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
+  background: #BF139B;
+}
+
+.homepage-description{
+  align-self: auto;
 }
 
 .dropDownMenu{
@@ -87,32 +97,28 @@ code {
   
 }
 .categories-bar{
-  width: 100%;
+  width: 70%;
   height: 4%;
   display: flex;
   justify-content: center; /* Horizontally center the inner div */
   align-items: center;
   z-index: 2000;
+  border-top: 1px solid black;
 
 
  
 }
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0 0; /* Start position */
-  }
-  100% {
-    background-position: 100% 0; /* End position */
-  }
-}
 .catButtons{
   height: 100%;
   width: 100%;
-  border: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
 
-  animation: gradientAnimation 5s linear infinite;
   font-family: roboto;
   font-size: medium;
+  background-color: white;
   
 }
 .catButtons:hover{
