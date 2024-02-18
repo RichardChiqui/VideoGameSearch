@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import HomePage from './HomePage';
+import HomePage from './HomePageComponent/HomePage';
 import RouterComponent from './Routes';
 
 

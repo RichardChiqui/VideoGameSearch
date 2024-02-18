@@ -1,0 +1,44 @@
+.search-results-container{
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+   
+  }
+
+  .searchResults-btn{
+    margin: 1%;
+    margin-left: 3%;
+    border-radius: 10px;
+    background-color: cyan;
+    color: black;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .searchResults-btn:hover {
+    transform: scale(1.3); /* Increase size on hover */
+    background-color: #0056b3; /* Example background color change */
+  }
+
+  .search-results {
+ 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(17.66% - 10px), 1fr)); /* Automatically adjust the number of columns */
+    grid-auto-rows: 390px; /* Set the height of each row */
+    gap: 3%; /* Adjust gap between items */
+    padding: 1%;
+    width: 70%;
+    margin: 0 auto;
+    
+  }
+  
+  .search-results .search-results-item {
+    border: 1px solid black;
+    box-sizing: border-box; 
+    text-align: center;
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+  }
+
+  

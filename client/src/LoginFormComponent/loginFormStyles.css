@@ -1,0 +1,110 @@
+.loginForm-container{
+    width: 70%;
+    height: 70%;
+    
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .login-title{
+   
+    height: min-content;
+    width: min-content;
+    margin: 0 auto;
+  }
+  
+  
+  .login-form{
+   
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+  
+    margin: 0 auto;
+    margin-top: 14%;
+    
+  }
+  .login-input{
+    margin: 6%;
+    height: 20px;
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+  }
+  
+  .login-btn{
+    border-radius: 15px;
+    background-color: #2D2DC1;
+    width: 70%;
+    height: 7%;
+    margin: 0 auto;
+    margin-top: 10%;
+    color: white;
+  
+  }
+  
+  .create-account-text{
+    margin-top: 30%;
+    text-align: center;
+    font-weight: normal;
+  }
+  
+  .signupText{
+    font-weight: bold;
+  }
+  
+  .signupText:hover{
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .forgotpassword-text{
+    font-weight: lighter;
+    width: max-content;
+    align-self:flex-end;
+    margin-right: 20%;
+    height: min-content;
+    margin-top: -3%;
+  }
+  
+  .forgotpassword-text:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+    font-weight: bold;
+  
+  }
+  
+  .error-message{
+   
+      margin: 0px;
+      color: red;
+      height: min-content;
+      width: max-content;
+      font-size: 10px;
+      margin-left: 19%;
+  
+      margin-top: -3%;
+  
+    
+  }
+
+  .LoginForm{
+    background-color: white;
+    width: 40%;
+    height: 70%;
+    border-radius: 20px;
+    position: absolute;
+    z-index: 1000;
+  
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+  }

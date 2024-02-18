@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SignUpForm from './SignUpComponent/SignUpForm';
-import HomePage from './HomePage';
+import HomePage from './HomePageComponent/HomePage';
 
 
 function RouterComponent() {

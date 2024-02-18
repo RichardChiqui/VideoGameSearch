@@ -2,12 +2,12 @@ import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
-import CategoriesTab from './CategoriesNavBar';
-import HeaderNavBar from './HeaderNavBar';
-import SearchResults from './SearchResults';
-import LoginForm from './LoginForm';
+import CategoriesTab from '../CategoriesComponent/CategoriesNavBar';
+import HeaderNavBar from '../HeaderNavbarComponent/HeaderNavBar';
+import SearchResults from '../SearchResultsComponent/SearchResults';
+import LoginForm from '../LoginFormComponent/LoginForm';
 import Modal from 'react-modal';
-
+import HomePageMainContent from './HomePageMainContent';
 
 export default function HomePage(){
     const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -46,22 +46,17 @@ export default function HomePage(){
         <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
-                className="ReactModal__Content" // Add custom class name
+                className="ReactModal__Content" 
                 
              
             > 
             <LoginForm />
             </Modal>
     
-        {/* {buttonClicked && <LoginForm />} */}
+       
+
          <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
-         <div className='homepage-description'>
-          <h1>Ready To Play? </h1>
-          <h6>Find your next teammate, squad or game to play. Use filters to search</h6>
-         </div>
-         
-         <CategoriesTab buttonClicked={buttonClicked}/>
-         <SearchResults buttonClicked={buttonClicked}/>
+         <HomePageMainContent buttonClicked={buttonClicked}/>
          
         </div>
     )

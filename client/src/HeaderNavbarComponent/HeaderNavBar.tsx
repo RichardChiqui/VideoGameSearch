@@ -3,7 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import Modal from 'react-modal';
 
-import CategoriesTab from './CategoriesNavBar';
+import CategoriesTab from '../CategoriesComponent/CategoriesNavBar';
 
 interface HeaderNavbar {
     onButtonClick: () => void;

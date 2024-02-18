@@ -2,6 +2,7 @@ import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import SearchResultsItem from './SearchResultItem';
+import './searchResultsStyles.css';
 
 export type  SearchResultsItemType = {
     id: number;

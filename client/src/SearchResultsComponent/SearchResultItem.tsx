@@ -2,6 +2,7 @@ import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import {SearchResultsItemType} from './SearchResults';
+import './searchResultsStyles.css';
 
 interface ChildProps {
     key:number;
