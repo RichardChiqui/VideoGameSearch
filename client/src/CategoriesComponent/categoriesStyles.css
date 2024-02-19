@@ -1,0 +1,67 @@
+.dropDownMenu{
+    position: absolute;
+    top: 100%; /* Position the dropdown menu below the button */
+    width: 33.5%;
+    z-index: 3000; 
+    border: 10px;
+    background-color: red;
+    
+  }
+  .categories-bar{
+    width: 70%;
+    height: 4%;
+    display: flex;
+    justify-content: center; /* Horizontally center the inner div */
+    align-items: center;
+    z-index: 2000;
+    border-top: 1px solid black;
+  
+  
+   
+  }
+  .catButtons{
+    height: 100%;
+    width: 100%;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  
+    font-family: roboto;
+    font-size: medium;
+    background-color: white;
+    
+  }
+  .catButtons:hover{
+    cursor: pointer;
+  }
+  .DropDownMenuItem{
+    background-color: white;
+    width: 100%;
+    border-bottom: 1px solid  lightgray;
+    padding: 1px;
+  
+  }
+  .DropDownMenuItem:hover{
+    background-color: #e5e5e5;
+    cursor: pointer;
+  
+  }
+  
+  
+  .category-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+    width: 40%;
+   
+    position: relative;
+    
+  }
+  
+  .dropDownButton{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }

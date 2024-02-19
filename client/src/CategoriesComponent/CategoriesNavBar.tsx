@@ -2,6 +2,8 @@ import React from 'react';
 import DropDownItems from './DropDownCat';
 import DropDownMenu from './DropDownMenu';
 
+import './categoriesStyles.css';
+
 
 export type  GenreCategory = {
     id: number;

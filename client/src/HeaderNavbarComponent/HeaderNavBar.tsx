@@ -4,6 +4,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import Modal from 'react-modal';
 
 import CategoriesTab from '../CategoriesComponent/CategoriesNavBar';
+import './headerNavBarStyles.css';
 
 interface HeaderNavbar {
     onButtonClick: () => void;

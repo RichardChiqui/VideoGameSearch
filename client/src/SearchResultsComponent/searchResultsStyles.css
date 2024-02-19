@@ -20,6 +20,19 @@
     background-color: #0056b3; /* Example background color change */
   }
 
+  .button-container{
+    width: 100%;
+    background-color: lightblue;
+    height: 9%;
+    display: flex;
+    margin-top: auto;
+    bottom: 0;
+    justify-content: center; /* Center the buttons horizontally */
+    
+  
+  }
+  
+
   .search-results {
  
     display: grid;

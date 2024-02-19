@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CategoriesNavBar from '../CategoriesComponent/CategoriesNavBar';
 import SearchResults from '../SearchResultsComponent/SearchResults';
 import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
+import './homePageStyles.css';
 
 
 interface SignUpForm {

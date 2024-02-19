@@ -1,6 +1,7 @@
 import React from 'react';
 import DropDownItems from './DropDownCat';
 import { GenreCategory } from './CategoriesNavBar';
+import './categoriesStyles.css';
 
 interface ChildProps {
     classNameProp: string;
