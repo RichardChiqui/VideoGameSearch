@@ -4,6 +4,8 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import SearchResultsItem from './SearchResultItem';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
 import './searchResultsStyles.css';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Store';
 
 export type  SearchResultsItemType = {
     id: number;
@@ -13,6 +15,10 @@ interface SearchResultsProps {
     buttonClicked: boolean; // Define the type of the buttonClicked prop
 }
 export default function SearchResults({ buttonClicked }: SearchResultsProps){
+
+    const mainFilter = useSelector((state:RootState) => state.mainfilter.value);
+    console.log("Testing if this actuall worked:" + mainFilter);
+    
 
     const categoriesList: SearchResultsItemType[] = [
         { id: 1, name: "OverWatch" },

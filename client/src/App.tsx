@@ -4,7 +4,7 @@ import './App.css';
 import HomePage from './HomePageComponent/HomePage';
 import RouterComponent from './Routes';
 import { Provider } from 'react-redux'; // Import Provider from react-redux
-import store from './Store'; // Import the Redux store
+import { store } from './Store'; // Import the Redux store
 
 function App() {
   return (

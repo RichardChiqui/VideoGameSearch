@@ -6,6 +6,9 @@ import Modal from 'react-modal';
 import CategoriesTab from '../CategoriesComponent/CategoriesNavBar';
 import './headerNavBarStyles.css';
 import { BreakfastDining } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../Store';
+import { changeMainFilter } from './HeaderFilterSlice';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -15,9 +18,14 @@ interface HeaderNavbar {
 
 
 
+
+
 export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar){
  
 
+    const mainFilter = useSelector((state:RootState) => state.mainfilter.value);
+    const dispatch = useDispatch();
+    
     console.log("Current show value " + buttonClicked);
     const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
     console.log("filterecaled is " + filterValue);
@@ -42,16 +50,19 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                 setPeoleFilter(true);
                 setGroupFilter(false);
                 setTitleFilter(false);
+                dispatch(changeMainFilter("People"))
                 break;
             case "Title":
                 setPeoleFilter(false);
                 setGroupFilter(false);
                 setTitleFilter(true);
+                dispatch(changeMainFilter("Title"))
                 break;
              case "Group":
                 setPeoleFilter(false);
                 setGroupFilter(true);
                 setTitleFilter(false);
+                dispatch(changeMainFilter("Group"))
                 break;
         }
         console.log("People filter:" + peopleFilter + ", group filter:" + groupFilter + " and titlefitler:" + titleFilter);
