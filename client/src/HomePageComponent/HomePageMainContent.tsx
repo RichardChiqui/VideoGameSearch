@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import CategoriesNavBar from '../CategoriesComponent/CategoriesNavBar';
 import SearchResults from '../SearchResultsComponent/SearchResults';
 import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
-import './homePageStyles.css';
+import './homePageStyles.css';                                                                             
 
 
 interface SignUpForm {
@@ -21,14 +21,14 @@ export default function HomePageMainContent({ buttonClicked }: CategoriesNavBarP
 
     return(
         <>
-            <div className='homepage-description'>
-            <h1>Ready To Play? </h1>
-            <h6>Find your next teammate, squad or game to play. Use filters to search</h6>
-            </div>
+            {/* <div className='homepage-description'>
+              
+              <h6>Find your next teammate, squad or game to play. Use filters to search</h6>
+            </div> */}
             
-            <CategoriesNavBar buttonClicked={buttonClicked}/>
+            {/* <CategoriesNavBar buttonClicked={buttonClicked}/> */}
 
-            <div>
+            <div className='maincontent'>
                 <FiltersNavBar />
                 <SearchResults buttonClicked={buttonClicked}/>
             </div>

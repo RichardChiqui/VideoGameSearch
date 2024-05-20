@@ -54,4 +54,9 @@
     flex-direction: column;
   }
 
+  .searchresultscontainer{
+    display: flex;
+    flex-direction: row;
+  }
+
   

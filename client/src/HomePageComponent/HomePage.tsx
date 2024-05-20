@@ -51,7 +51,7 @@ export default function HomePage(){
              
             > 
             <LoginForm />
-            </Modal>
+          </Modal>
     
        
 

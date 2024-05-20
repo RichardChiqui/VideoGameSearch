@@ -56,5 +56,27 @@
   }
 
   .homepage-description{
-    align-self: auto;
+
+    text-align: left;
+    background-color: rebeccapurple;
+    
+  }
+  .topNav-currpageinfo{
+    background-color: red;
+    display: flex;
+  }
+
+  .topNav-currPageFitler{
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .topnav-cats{
+    font-size: 15px;
+    font-weight: lighter;
+    margin: 10px;
+  }
+
+  .topnav-cats:hover{
+    background-color: lightgray;
   }

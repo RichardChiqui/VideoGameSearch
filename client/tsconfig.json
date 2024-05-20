@@ -18,7 +18,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": [
+      "node", // Include node types
+      "react", // Include react types
+      "react-dom", // Include react-dom types
+      "react-redux" // Include react-redux types
+    ]
   },
   "include": [
     "src"

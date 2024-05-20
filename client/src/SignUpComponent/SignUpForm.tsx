@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './signup.css';
 import { send } from 'process';
+import { useNavigate } from 'react-router-dom';
 
 
 interface SignUpForm {
@@ -30,6 +31,7 @@ export default function SignUpForm(){
     const { password: passwordValue } = password;
     const { confirmPassword: confirmPasswordValue } = confirmPassword;
     const { email: emailValue } = email;
+    const navigate = useNavigate();
   
       
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -58,12 +60,13 @@ export default function SignUpForm(){
 
         console.log("Before submitting, here is email " + emailValue + ", password " + passwordValue + " and username " + usernameValue);
         console.log("and here is booleans for email " + missingEmail + ', password ' + missingPassword + " and usernamew " + missingUsername);
+        navigate('/accountinfo');
         if(missingEmail || missingPassword || missingPassword){
             console.log("not all fields have been filled out");
             setMissingFields(true);
 
         } else{
-              //sendSubmit();
+           //   sendSubmit();
         }
      
   
@@ -146,6 +149,8 @@ export default function SignUpForm(){
             } else{
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
+                //success, now lets send to create account details
+                navigate('/accountinfo');
             }
             
         })
@@ -182,6 +187,9 @@ export default function SignUpForm(){
                         <input type="text" id="gamingStyle" name="gamingStyle"
                         placeholder="How would you describe your gaming style?" className='createaccount-inputs' onChange={handleChange}></input>
                     <button className='create-account-btn' onClick={handleSubmit}>Create Account</button>
+                    {/* <h6 className='create-account-text'>Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong> </Link></h6>
+              */}
+
 
                 </form>
 

@@ -50,6 +50,13 @@ npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 npm install react-bootstrap bootstrap
 npm install react-modal and then fix error with npm install --save-dev @types/react-modal
 npm install react-router-dom
+npm install @mui/material @emotion/react @emotion/styled
+npm install redux
+npm install redux-thunk
+npm install @types/react-redux
+npm install @reduxjs/toolkit
+
+
 
 
 
