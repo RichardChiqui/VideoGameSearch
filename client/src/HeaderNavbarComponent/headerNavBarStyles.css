@@ -7,7 +7,7 @@
     justify-content: space-between;
     align-items: center;
     /* background-image: url('https://images7.alphacoders.com/737/737638.jpg'); */
-    background: linear-gradient(to right,#2A0A4B,#65378B );
+    background: #437bbc;
   
     
   }
@@ -58,11 +58,11 @@
   .homepage-description{
 
     text-align: left;
-    background-color: rebeccapurple;
+  
     
   }
   .topNav-currpageinfo{
-    background-color: red;
+  
     display: flex;
   }
 

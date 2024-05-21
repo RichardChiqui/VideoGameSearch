@@ -7,7 +7,9 @@
     /* align-items: center; */
     margin: 0;
     padding: 0;
-    background-color: lightgray;
+    background-color:linear-gradient( #ea8015, #887779);
+     /* #ea8015; //#887779 */
+    
   }
 
   .maincontent{
