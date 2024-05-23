@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './loginFormStyles.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../Store';
+import { userLoggedIn } from '../HomePageComponent/LoggedInSlice';
 
 
 interface FormData {
@@ -16,6 +19,11 @@ export default function LoginForm(){
     const[userNamePassWordJsonFields, setuserNamePassWordJsonFields] = React.useState(userNamePassWordJson)
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
     const [foundAccount, setFoundAccount] = React.useState(true)
+
+    const isUserLoggedIn = useSelector((state:RootState) => state.userLoggedIn.value);
+    //console.log("during first load user should not be loggedin:" + userLoggedIn);
+    const dispatch = useDispatch();
+
 
 
 
@@ -67,6 +75,7 @@ export default function LoginForm(){
                 setFoundAccount(true);
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
+                dispatch(userLoggedIn(true));
             }
             
         })

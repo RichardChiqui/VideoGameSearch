@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import headerFilterSlice from './HeaderNavbarComponent/HeaderFilterSlice';
+import userLoggedInReducer from './HomePageComponent/LoggedInSlice'
 
 export const store = configureStore({
   reducer: {
-    mainfilter: headerFilterSlice
+    mainfilter: headerFilterSlice,
+    userLoggedIn : userLoggedInReducer
   }
 })
 

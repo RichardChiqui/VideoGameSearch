@@ -11,6 +11,7 @@ interface ChildProps {
   }
 
 export default function SearchResultsItem(props:ChildProps){
+    console.log("Are we sure we went into here:" + props.gameName);
 
     return(
          <div className='search-results-item'>

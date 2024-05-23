@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import Modal from 'react-modal';
@@ -25,6 +25,18 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
 
     const mainFilter = useSelector((state:RootState) => state.mainfilter.value);
     const dispatch = useDispatch();
+
+    const isUserLoggedIn = useSelector((state:RootState) => state.userLoggedIn.value);
+    //console.log("during first load user should not be loggedin:" + isUserLoggedIn);
+
+    
+    useEffect(() => {
+      if (isUserLoggedIn) {
+        console.log('Element is visible');
+      } else {
+        console.log('Element is hidden');
+      }
+    }, [isUserLoggedIn]);
     
     console.log("Current show value " + buttonClicked);
     const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
@@ -102,7 +114,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                     <button className={`searchResultsButton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >Search</button>
                 
                 </div>
-                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>
+               {isUserLoggedIn? <><PersonIcon /> </> : <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>} 
                 
 
             </div>

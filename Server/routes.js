@@ -9,6 +9,8 @@ router.get('/',(req,res) =>{
 
 router.post('/homepage/login', controller.validateUser)
 router.post('/addUser', controller.addUser)
+router.get('/homepage/loadUsers', controller.loadUsers)
+
 module.exports = router;
 
 //very bad habit

@@ -2,9 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './filtersNavBar.css';            
 
-import { send } from 'process';
-
-
 interface SignUpForm {
     username: string;
     password:String;
