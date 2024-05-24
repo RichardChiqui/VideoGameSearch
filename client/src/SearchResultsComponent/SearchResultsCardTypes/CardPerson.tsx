@@ -2,7 +2,8 @@ import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
-import './searchResultsStyles.css';
+import '../searchResultsStyles.css';
+//import './loginFormStyles.css';
 
 interface ChildProps {
     key:number;

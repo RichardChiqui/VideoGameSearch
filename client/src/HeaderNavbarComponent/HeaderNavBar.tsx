@@ -89,11 +89,8 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
             <div className="topNavbar"  style={style}>
              
 
-                <h1 className='WebsiteName'>SQUAD SEEKER</h1>
+                <h1 className='WebsiteName'>GameLink</h1>
                 <div className='topNav-currpageinfo'>
-                    
-                    
-                        <div className='topNav-currPageFitler'>GameTitle</div>
                         <div className='topnav-cats'style={peopleFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "People")}>People</div>
                         <div className='topnav-cats'style={groupFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
                         <div className='topnav-cats'style={titleFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "Title")}>Title</div>

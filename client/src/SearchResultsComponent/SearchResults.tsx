@@ -9,6 +9,7 @@ import { RootState } from '../Store';
 import { MainFiltersEnum } from '../ENUMS';
 import { loadUsers } from '../FetchCalls/loadUsers';
 import { Email } from '@mui/icons-material';
+import CardPerson from './SearchResultsCardTypes/CardPerson';
 
 export type  SearchResultsItemType = {
     id: number;
@@ -67,11 +68,13 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps){
             };
 
             fetchUsers();
+        } else{
+          setSuccessFullyLoadedUsers(false);
         }
     }, [mainFilter]);
       
       const style= {filter: filterValue};
-      console.log("This wont work will it:" + successFullyLoadedUsers );
+
     return(
       // <div className='search-results-container' style={style}>
         // <div className='search-results'>
@@ -91,7 +94,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps){
               <CardContent>
                 <Typography variant="h5">{item.name}</Typography>
                 {/* You can place the SearchResultsItem here if it contains more complex structure */}
-                <SearchResultsItem  key={item.id} gameName={item.email} />
+                <CardPerson  key={item.id} gameName={item.email} />
               </CardContent>
             </Card>
           </Grid>
