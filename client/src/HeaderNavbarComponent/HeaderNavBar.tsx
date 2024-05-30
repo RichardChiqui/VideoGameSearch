@@ -1,123 +1,105 @@
 import React, { useEffect } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import Modal from 'react-modal';
-
-import CategoriesTab from '../CategoriesComponent/CategoriesNavBar';
-import './headerNavBarStyles.css';
-import { BreakfastDining } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
+import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from './HeaderFilterSlice';
+import './headerNavBarStyles.css'; // Make sure you have custom styles if needed
 
 interface HeaderNavbar {
     onButtonClick: () => void;
-    dismissHandlerClick: (event: React.FocusEvent<HTMLDivElement>) => void; // Add dismissHandler
+    dismissHandlerClick: (event: React.FocusEvent<HTMLDivElement>) => void;
     buttonClicked: boolean;
-  }
+}
 
-
-
-
-
-export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar){
- 
-
-    const mainFilter = useSelector((state:RootState) => state.mainfilter.value);
+export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar) {
+    const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
     const dispatch = useDispatch();
 
-    const isUserLoggedIn = useSelector((state:RootState) => state.userLoggedIn.value);
-    //console.log("during first load user should not be loggedin:" + isUserLoggedIn);
+    const isUserLoggedIn = useSelector((state: RootState) => state.userLoggedIn.value);
 
-    
     useEffect(() => {
-      if (isUserLoggedIn) {
-        console.log('Element is visible');
-      } else {
-        console.log('Element is hidden');
-      }
+        if (isUserLoggedIn) {
+            console.log('Element is visible');
+        } else {
+            console.log('Element is hidden');
+        }
     }, [isUserLoggedIn]);
-    
-    console.log("Current show value " + buttonClicked);
-    const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
-    console.log("filterecaled is " + filterValue);
-    const style= {filter: filterValue};
 
     const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
-    const [show, setShow] = React.useState(false)
-    const [showLogin, setshowLogin] = React.useState(false)
+    const [peopleFilter, setPeopleFilter] = React.useState(false);
+    const [groupFilter, setGroupFilter] = React.useState(false);
+    const [titleFilter, setTitleFilter] = React.useState(true);
 
-    const [peopleFilter, setPeoleFilter] = React.useState(false)
-    const [groupFilter, setGroupFilter] = React.useState(false)
-    const [titleFilter, setTitleFilter] = React.useState(true)
-    function displayDropDown(){
-        setShow(!show);
-    }
     function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>, filterType: string) {
-        // Use myString parameter in the function body
-        console.log("we entering bolding method or....:" + filterType);
-        switch(filterType){
+        switch (filterType) {
             case "People":
-                setPeoleFilter(true);
+                setPeopleFilter(true);
                 setGroupFilter(false);
                 setTitleFilter(false);
-                dispatch(changeMainFilter("People"))
+                dispatch(changeMainFilter("People"));
                 break;
             case "Title":
-                setPeoleFilter(false);
+                setPeopleFilter(false);
                 setGroupFilter(false);
                 setTitleFilter(true);
-                dispatch(changeMainFilter("Title"))
+                dispatch(changeMainFilter("Title"));
                 break;
-             case "Group":
-                setPeoleFilter(false);
+            case "Group":
+                setPeopleFilter(false);
                 setGroupFilter(true);
                 setTitleFilter(false);
-                dispatch(changeMainFilter("Group"))
+                dispatch(changeMainFilter("Group"));
                 break;
         }
-        console.log("People filter:" + peopleFilter + ", group filter:" + groupFilter + " and titlefitler:" + titleFilter);
     }
 
-
-    
-    return(
-     
-
-       
-            <div className="topNavbar"  style={style}>
-             
-
-                <h1 className='WebsiteName'>GameLink</h1>
-                <div className='topNav-currpageinfo'>
-                        <div className='topnav-cats'style={peopleFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "People")}>People</div>
-                        <div className='topnav-cats'style={groupFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
-                        <div className='topnav-cats'style={titleFilter ? { ...boldStyle } : {}} onClick={(e) => onClick(e, "Title")}>Title</div>
-                   
-                </div>
-                <div className='searchLogin'>
-                    {/* <form> */}
-
-            
-        
-                    <input type="text"  
-                            className="search-input" 
-                            placeholder="Search...">
-                        </input> 
-
-
-                    {/* </form> */}
-                    <button className={`searchResultsButton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >Search</button>
-                
-                </div>
-               {isUserLoggedIn? <><PersonIcon /> </> : <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>} 
-                
-
+    return (
+        <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
+            <div className="navbar-brand">
+                <a className="navbar-item" href="/">
+                    <strong>GameLink</strong>
+                </a>
+                <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu" onClick={() => {
+                    const burger = document.querySelector('.navbar-burger');
+                    const menu = document.getElementById('navbarMenu');
+                    burger?.classList.toggle('is-active');
+                    menu?.classList.toggle('is-active');
+                }}>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
             </div>
-         
-    )
 
-   
+            <div id="navbarMenu" className="navbar-menu">
+                <div className="navbar-start">
+                    <div className='navbar-item topnav-cats' style={peopleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "People")}>People</div>
+                    <div className='navbar-item topnav-cats' style={groupFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
+                    <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Title</div>
+                </div>
 
+                <div className="navbar-end">
+                    <div className="navbar-item">
+                        <div className="field">
+                            <div className="control has-icons-left">
+                                <input className="input" type="text" placeholder="Search" />
+                                <span className="icon is-left">
+                                    <i className="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="navbar-item">
+                        <div className="buttons">
+                            {isUserLoggedIn && <button className="button is-primary">Create Group</button>}
+                            {isUserLoggedIn? <><PersonIcon /> </> : <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>} 
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
 }

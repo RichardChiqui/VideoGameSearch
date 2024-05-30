@@ -184,8 +184,8 @@ export default function SignUpForm(){
                         placeholder="Confirm Password" className={style} onBlur={handleConfirmPasswordBlur} onChange={handleChange}></input>
                         {!passwordMatch && <div className='input-error-message'>Passwords do not match</div>  }
                     <label htmlFor="How would you describe your gaming style?"></label>
-                        <input type="text" id="gamingStyle" name="gamingStyle"
-                        placeholder="How would you describe your gaming style?" className='createaccount-inputs' onChange={handleChange}></input>
+                        {/* <input type="text" id="gamingStyle" name="gamingStyle"
+                        placeholder="How would you describe your gaming style?" className='createaccount-inputs' onChange={handleChange}></input> */}
                     <button className='create-account-btn' onClick={handleSubmit}>Create Account</button>
                     {/* <h6 className='create-account-text'>Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong> </Link></h6>
               */}

@@ -1,22 +1,28 @@
 .leftsidefilters{
-    background-color: white;
-    height: 100vh;
-    width: 14%;
+    background-color: red;
+
+    top: 100px;
+    width: 50%;
     padding-left: 1%;
     border-right: solid lightgrey 1px;
     font-family: 'Roboto', sans-serif;
+    color: black;
  
     
 }
-.filterTypes{
-    text-align: left;
-    font-size: 16px;
-    font-weight: normal;
-    margin-left: 4%;
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure the sidebar fills the height of its container */
 }
 
-  
-.filterTypes:hover {
-    /* transform: scale(1.3); Increase size on hover */
-    background-color: lightgray; /* Example background color change */
-  }
+.menu-with-border {
+    border-right: 1px solid black;
+}
+
+.menu-content {
+    flex-grow: 1; /* Allow the content area to expand and fill the remaining space */
+    overflow-y: auto; /* Add scroll functionality if content exceeds the height */
+}
+

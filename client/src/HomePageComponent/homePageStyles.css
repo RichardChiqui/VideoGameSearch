@@ -1,14 +1,7 @@
 .homePage{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    /* align-items: center; */
-    margin: 0;
-    padding: 0;
-    background-color:linear-gradient( #ea8015, #887779);
-     /* #ea8015; //#887779 */
+
+  height: 100vh;
+  width: 100%;
     
   }
 

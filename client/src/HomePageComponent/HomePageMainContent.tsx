@@ -20,20 +20,13 @@ interface CategoriesNavBarProps {
 export default function HomePageMainContent({ buttonClicked }: CategoriesNavBarProps){
 
     return(
-        <>
-            {/* <div className='homepage-description'>
-              
-              <h6>Find your next teammate, squad or game to play. Use filters to search</h6>
-            </div> */}
-            
-            {/* <CategoriesNavBar buttonClicked={buttonClicked}/> */}
-
-            <div className='maincontent'>
+        <div className='maincontent'>
+        
                 <FiltersNavBar />
                 <SearchResults buttonClicked={buttonClicked}/>
-            </div>
             
-        </>
+            
+        </div>
     )
    
 

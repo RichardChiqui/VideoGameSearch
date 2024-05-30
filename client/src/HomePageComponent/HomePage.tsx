@@ -10,6 +10,8 @@ import Modal from 'react-modal';
 import HomePageMainContent from './HomePageMainContent';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
+import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
+import LeftSidebar from '../FiltersLeftSideComponent/FitlersNavBar';
 
 export default function HomePage(){
     const [buttonClicked, setButtonClicked] = React.useState(false);
@@ -57,25 +59,28 @@ export default function HomePage(){
     };
     //Pass button clicked to each prop individually, this way the popup login page does not also inherit css styles
     return(
-        <div className='homePage'>
+      
 
-       
-        <Modal
+      
+      <div className='homePage'>
+            <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 className="ReactModal__Content" 
                 
              
             > 
-            <LoginForm />
-          </Modal>
-    
-       
-
-         <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
-         <HomePageMainContent buttonClicked={buttonClicked}/>
+              <LoginForm />
+            </Modal>
+            <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
+            <HomePageMainContent buttonClicked={buttonClicked}/>
+      </div>
+           
+        
+          
          
-        </div>
+         
+       
     )
 
    
