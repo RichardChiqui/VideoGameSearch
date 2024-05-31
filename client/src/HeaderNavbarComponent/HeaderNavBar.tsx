@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
 import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from './HeaderFilterSlice';
 import './headerNavBarStyles.css'; // Make sure you have custom styles if needed
+import Avatar from './ProfileNotificationsCounter';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -14,6 +15,7 @@ interface HeaderNavbar {
 
 export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar) {
     const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
+    const numofNotifcations = useSelector((state: RootState) => state.notifications.value);
     const dispatch = useDispatch();
 
     const isUserLoggedIn = useSelector((state: RootState) => state.userLoggedIn.value);
@@ -31,6 +33,8 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
     const [peopleFilter, setPeopleFilter] = React.useState(false);
     const [groupFilter, setGroupFilter] = React.useState(false);
     const [titleFilter, setTitleFilter] = React.useState(true);
+
+    const [dropdownVisible, setDropdownVisible] = useState(false);
 
     function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>, filterType: string) {
         switch (filterType) {
@@ -77,7 +81,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                 <div className="navbar-start">
                     <div className='navbar-item topnav-cats' style={peopleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "People")}>People</div>
                     <div className='navbar-item topnav-cats' style={groupFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
-                    <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Title</div>
+                    <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Game</div>
                 </div>
 
                 <div className="navbar-end">
@@ -94,8 +98,34 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                     <div className="navbar-item">
                         <div className="buttons">
                             {isUserLoggedIn && <button className="button is-primary">Create Group</button>}
-                            {isUserLoggedIn? <><PersonIcon /> </> : <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>} 
-                
+                            {isUserLoggedIn ? (
+                                <>
+                                    <div className="dropdown is-right is-hoverable">
+                                        <div className="dropdown-trigger" onClick={() => setDropdownVisible(!dropdownVisible)}>
+                                            <Avatar />
+                                        </div>
+                                        <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>
+                                            <div className="dropdown-content">
+                                                <a href="#" className="dropdown-item">
+                                                    Profile
+                                                </a>
+                                                <a href="#" className="dropdown-item">
+                                                    Settings
+                                                </a>
+                                                <a href="#" className="dropdown-item">
+                                                    Friend Requests {numofNotifcations > 0 ? `(${numofNotifcations})` : ''}
+                                                </a>
+                                                <hr className="dropdown-divider" />
+                                                <a href="#" className="dropdown-item">
+                                                    Logout
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <button className={`signinbutton ${buttonClicked ? 'no-hover' : ''}`} onClick={onButtonClick} >SignUp/Login</button>
+                            )}
                         </div>
                     </div>
                 </div>
