@@ -11,6 +11,8 @@ router.post('/homepage/login', controller.validateUser)
 router.post('/addUser', controller.addUser)
 router.get('/homepage/loadUsers', controller.loadUsers)
 
+router.post('/friend_request',controller.sendFriendRequest)
+
 module.exports = router;
 
 //very bad habit

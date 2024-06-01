@@ -56,6 +56,8 @@ npm install redux-thunk
 npm install @types/react-redux
 npm install @reduxjs/toolkit
 npm install bulma
+npm install socket.io-client
+
 
 
 

@@ -18,7 +18,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
     const numofNotifcations = useSelector((state: RootState) => state.notifications.value);
     const dispatch = useDispatch();
 
-    const isUserLoggedIn = useSelector((state: RootState) => state.userLoggedIn.value);
+    const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
 
     useEffect(() => {
         if (isUserLoggedIn) {

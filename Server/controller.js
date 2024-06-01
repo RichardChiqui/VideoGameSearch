@@ -35,9 +35,37 @@ const loadUsers = (req, res) =>{
 
 }
 
+const sendFriendRequest = (req, res) =>{
+    //for only loading first 100 users(or all users which ever is smaller)
+    console.log("making sure we made it into here for sending rquests");
+    const {senderid, recieverId} = req.body
+    pool.query(queries.sendFriendRequest,[senderid,recieverId], (error, results) => {
+        if (error) {
+            // Handle the error gracefully, e.g., send an error response
+            console.error("Error sending link request:", error);
+            res.status(500).json({ error: "Failed to load users" });
+        } else {
+            // If there are no errors, send the users data in the response
+            const users = results.rows;
+            res.status(200).json({ users });
+        }
+    });
+
+}
+
+// const addUser = (req,res) =>{
+//     const {username, password, email} = req.body
+//     pool.query(queries.addUser, [username,password,email], (error, results) =>{
+//         if (error) throw error;
+//         res.status(200).json(results.rows);
+//     })
+// }
+
+
 
 module.exports ={
     validateUser,
     addUser,
-    loadUsers
+    loadUsers,
+    sendFriendRequest
 }

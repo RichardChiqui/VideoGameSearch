@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import headerFilterSlice from './HeaderNavbarComponent/HeaderFilterSlice';
-import userLoggedInReducer from './HomePageComponent/LoggedInSlice'
+import userLoggedInReducer from './HomePageComponent/UserstateSlice'
 import NotificationsSlice from './HeaderNavbarComponent/NotificationsSlice';
 
 export const store = configureStore({
   reducer: {
     mainfilter: headerFilterSlice,
-    userLoggedIn : userLoggedInReducer,
+    user : userLoggedInReducer,
     notifications: NotificationsSlice
   }
 })

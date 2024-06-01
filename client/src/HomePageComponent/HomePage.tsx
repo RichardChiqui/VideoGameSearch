@@ -20,7 +20,7 @@ export default function HomePage(){
 
     
    
-    const isUserLoggedIn = useSelector((state:RootState) => state.userLoggedIn.value);
+    const isUserLoggedIn = useSelector((state:RootState) => state.user.isAuthenticated);
     //console.log("during first load user should not be loggedin:" + isUserLoggedIn);
 
     

@@ -1,8 +1,11 @@
 import React, { useEffect, CSSProperties } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
 import { MainFiltersEnum } from '../ENUMS';
 import { loadUsers } from '../FetchCalls/loadUsers';
+import { userLoggedIn, receiveFriendRequest } from '../HomePageComponent/UserstateSlice';
+
+
 import './searchResultsStyles.css';
 
 export type SearchResultsItemType = {
@@ -22,9 +25,14 @@ interface SearchResultsProps {
 
 export default function SearchResults({ buttonClicked }: SearchResultsProps) {
   const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
+  const userId = useSelector((state: RootState) => state.user.userId);
+  const socketLoaded =useSelector((state: RootState) => state.user.socket);
+  const dispatch = useDispatch();
+  console.log("but this is null?:" + socketLoaded);
 
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
+  const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
   const categoriesList: SearchResultsItemType[] = [
     { id: 1, name: 'OverWatch' },
@@ -60,6 +68,59 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
     }
   }, [mainFilter]);
 
+
+
+  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
+    //console.log("attempting to send friend request from:" + userId + " to:" + recevieverId + " and issocket:" + socketLoaded);
+    console.log("attmepting to use socket.io");
+
+
+    // if (socketLoaded) {
+    //   console.log("ok so strange");
+    //   // Example: Send a JSON object representing the friend request
+    //   const friendRequestData = {
+    //     type:"friend_request",
+    //     senderId: userId, // Replace with the sender's ID
+    //     recipientId: recevieverId // Use the provided userId
+    //   };
+
+    //   // Convert the friend request data to a string and send it over the WebSocket connection
+    //   socketLoaded.send(JSON.stringify(friendRequestData));
+    // }
+  }
+  useEffect(() => {
+    console.log("why didnt we go in here:" + userId);
+    if (userId != 0) {
+      const newSocket = new WebSocket('ws://localhost:5000/');
+
+      newSocket.onopen = () => {
+        console.log('WebSocket connection established');
+        const registrationData = {
+          type: 'register',
+          userId: userId
+        };
+        newSocket.send(JSON.stringify(registrationData));
+        setSocket(newSocket);
+      };
+
+      newSocket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+          case 'friend_request':
+            console.log('Received friend request from:', message.sender);
+            dispatch(receiveFriendRequest(1)); // Replace 1 with the actual data if needed
+            break;
+          default:
+            console.log('Unknown message type:', message.type);
+        }
+      };
+
+      newSocket.onclose = () => {
+        console.log('WebSocket connection closed');
+        setSocket(null);
+      };
+    }
+  }, [userId, socketLoaded, dispatch]);
   const style: CSSProperties = { filter: filterValue };
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
@@ -80,7 +141,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
                     </div>
                   </div>
                   <footer className="card-footer">
-                    <button className="button card-footer-item">Send Link Request</button>
+                    <button className="button card-footer-item" onClick={(event) => handleLinkRequest(event, item.id)}>Send Link Request</button>
                     <button className="button card-footer-item">Profile</button>
                   </footer>
                 </div>

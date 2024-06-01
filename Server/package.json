@@ -15,7 +15,9 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "pg": "^8.11.3",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "socket.io": "^4.7.5",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

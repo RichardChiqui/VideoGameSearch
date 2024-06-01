@@ -6,10 +6,13 @@ const addUser = "INSERT INTO public.\"Users\" (username, password, email) VALUES
 const loadUsers = "SELECT * FROM " + table.Users;
 console.log("I wonder if I can log query:" + loadUsers);
 
+const sendFriendRequest = "INSERT INTO " + table.FriendRequest + "(fk_senderUserId, fk_recieverUserId) VALUES ($1, $2) "
+
 
 
 module.exports = {
     validateUser,
     addUser,
-    loadUsers
+    loadUsers,
+    sendFriendRequest
 }

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import './loginFormStyles.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
-import { userLoggedIn } from '../HomePageComponent/LoggedInSlice';
+import { userLoggedIn, receiveFriendRequest } from '../HomePageComponent/UserstateSlice';
+
 
 
 interface FormData {
@@ -20,10 +21,13 @@ export default function LoginForm(){
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
     const [foundAccount, setFoundAccount] = React.useState(true)
 
-    const isUserLoggedIn = useSelector((state:RootState) => state.userLoggedIn.value);
+    const isUserLoggedIn = useSelector((state:RootState) => state.user.isAuthenticated);
+    const userId = useSelector((state:RootState) => state.user.userId);
+    console.log("userid:" + userId);
     //console.log("during first load user should not be loggedin:" + userLoggedIn);
     const dispatch = useDispatch();
 
+    const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
 
 
@@ -75,7 +79,44 @@ export default function LoginForm(){
                 setFoundAccount(true);
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
-                dispatch(userLoggedIn(true));
+                dispatch(userLoggedIn({isAuthenticated:true,userId:id, socket: null,numberOfCurrentFriendRequests : 0}));
+            //    if(id != 0){
+
+            //     const newSocket = new WebSocket('ws://localhost:5000/'); // Replace with your WebSocket server URL
+            //     setSocket(newSocket);
+            
+            //     // Clean up on unmount
+            //     newSocket.onopen = () => {
+            //         console.log('WebSocket connection established withuserId:' + id);
+            //         // Send a registration message to the WebSocket server
+            //         const registrationData = {
+            //             type: 'register',
+            //             userId: id // Send the user ID obtained from the login response
+            //         };
+            //         newSocket.send(JSON.stringify(registrationData));
+                   
+                    
+                    
+                   
+                        
+            //     };
+            //     console.log("how is my newsocklet null:" + newSocket);
+            //     dispatch(userLoggedIn({isAuthenticated:true,userId:id, socket: newSocket, numberOfCurrentFriendRequests : 0}));
+            //     newSocket.onmessage = (event) => {
+            //         console.log("have we recevied any message");
+            //         const message = JSON.parse(event.data);
+            //         switch (message.type) {
+            //           case 'friend_request':
+            //             console.log('Received friend request from:', message.sender);
+            //             dispatch(receiveFriendRequest(1));
+            //             break;
+            //           default:
+            //             console.log('Unknown message type:', message.type);
+            //         }
+            //       };
+            // }
+                
+
             }
             
         })
@@ -83,6 +124,32 @@ export default function LoginForm(){
             console.error('Error submitting data:', error);
         });
     }
+
+    // React.useEffect(() => {
+    //     // Establish WebSocket connection
+    //     if(userId != 0){
+
+    //         const newSocket = new WebSocket('ws://localhost:5000/'); // Replace with your WebSocket server URL
+    //         setSocket(newSocket);
+        
+    //         // Clean up on unmount
+    //         newSocket.onopen = () => {
+    //             console.log('WebSocket connection established withuserId:' + userId);
+    //             // Send a registration message to the WebSocket server
+    //             const registrationData = {
+    //                 type: 'register',
+    //                 userId: userId // Send the user ID obtained from the login response
+    //             };
+    //             newSocket.send(JSON.stringify(registrationData));
+               
+    //             dispatch(userLoggedIn({isAuthenticated:true,userId:userId, socket: newSocket}));
+                
+               
+                    
+    //         };
+    //     }
+       
+    //   }, [isUserLoggedIn]);
 
 
     return(
