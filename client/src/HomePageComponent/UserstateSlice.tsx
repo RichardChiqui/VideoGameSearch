@@ -1,11 +1,10 @@
-// loggedInSlice.ts
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { act } from "react-dom/test-utils";
+import { io, Socket } from "socket.io-client";
 
 interface UserState {
   isAuthenticated: boolean;
   userId: number;
-  socket: WebSocket | null; // Add WebSocket connection
+  socket: Socket | null; // Use Socket.IO connection
   numberOfCurrentFriendRequests: number;
 }
 
@@ -13,27 +12,26 @@ const initialState: UserState = {
   isAuthenticated: false,
   userId: 0,
   socket: null,
-  numberOfCurrentFriendRequests:0,
+  numberOfCurrentFriendRequests: 0,
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    userLoggedIn: (state, action: PayloadAction<UserState>) => {
+    userLoggedIn: (state, action: PayloadAction<{ isAuthenticated: boolean; userId: number; socket: Socket }>) => {
       state.isAuthenticated = action.payload.isAuthenticated;
       state.userId = action.payload.userId;
       state.socket = action.payload.socket;
     },
-    setSocket: (state, action: PayloadAction<WebSocket>) => {
-      state.socket = action.payload;
-    },
+    // setSocket: (state, action: PayloadAction<Socket | null>) => {
+    //   state.socket = action.payload;
+    // },
     receiveFriendRequest: (state, action: PayloadAction<number>) => {
       state.numberOfCurrentFriendRequests = action.payload;
     },
   },
 });
 
-
-export const { userLoggedIn, setSocket,receiveFriendRequest } = userSlice.actions;
+export const { userLoggedIn, receiveFriendRequest } = userSlice.actions;
 export default userSlice.reducer;

@@ -26,7 +26,8 @@ interface SearchResultsProps {
 export default function SearchResults({ buttonClicked }: SearchResultsProps) {
   const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
   const userId = useSelector((state: RootState) => state.user.userId);
-  const socketLoaded =useSelector((state: RootState) => state.user.socket);
+  const socketLoaded = useSelector((state: RootState) => state.user.socket);
+  const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
   console.log("but this is null?:" + socketLoaded);
 
@@ -72,7 +73,11 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
 
   function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
     //console.log("attempting to send friend request from:" + userId + " to:" + recevieverId + " and issocket:" + socketLoaded);
-    console.log("attmepting to use socket.io");
+    console.log("attmepting to use socket.io:" + userLoggedIn);
+    if(userLoggedIn){
+      console.log("user has been logged in, lets try socketio");
+      
+    }
 
 
     // if (socketLoaded) {
