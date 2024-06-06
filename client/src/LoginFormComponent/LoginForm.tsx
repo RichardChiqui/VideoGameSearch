@@ -79,7 +79,7 @@ export default function LoginForm(){
                 setFoundAccount(true);
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
-                dispatch(userLoggedIn({isAuthenticated:true,userId:id, socket: null,numberOfCurrentFriendRequests : 0}));
+                dispatch(userLoggedIn({isAuthenticated:true,userId:id,numberOfCurrentFriendRequests : 0}));
             //    if(id != 0){
 
             //     const newSocket = new WebSocket('ws://localhost:5000/'); // Replace with your WebSocket server URL

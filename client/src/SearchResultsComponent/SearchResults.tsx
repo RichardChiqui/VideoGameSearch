@@ -4,7 +4,7 @@ import { RootState } from '../Store';
 import { MainFiltersEnum } from '../ENUMS';
 import { loadUsers } from '../FetchCalls/loadUsers';
 import { userLoggedIn, receiveFriendRequest } from '../HomePageComponent/UserstateSlice';
-
+import { useSocket } from '../Routes'
 
 import './searchResultsStyles.css';
 
@@ -26,14 +26,13 @@ interface SearchResultsProps {
 export default function SearchResults({ buttonClicked }: SearchResultsProps) {
   const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
   const userId = useSelector((state: RootState) => state.user.userId);
-  const socketLoaded = useSelector((state: RootState) => state.user.socket);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
-  console.log("but this is null?:" + socketLoaded);
+  const socket = useSocket();
 
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
-  const [socket, setSocket] = React.useState<WebSocket | null>(null);
+  //const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
   const categoriesList: SearchResultsItemType[] = [
     { id: 1, name: 'OverWatch' },
@@ -75,7 +74,9 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
     //console.log("attempting to send friend request from:" + userId + " to:" + recevieverId + " and issocket:" + socketLoaded);
     console.log("attmepting to use socket.io:" + userLoggedIn);
     if(userLoggedIn){
-      console.log("user has been logged in, lets try socketio");
+      console.log("user has been logged in, lets try socketio, what is userid:" + userId + " and socketid:");
+      socket?.emit('send-link-request', userId , recevieverId);
+      console.log("completed with socketio")
       
     }
 
@@ -93,39 +94,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
     //   socketLoaded.send(JSON.stringify(friendRequestData));
     // }
   }
-  useEffect(() => {
-    console.log("why didnt we go in here:" + userId);
-    if (userId != 0) {
-      const newSocket = new WebSocket('ws://localhost:5000/');
 
-      newSocket.onopen = () => {
-        console.log('WebSocket connection established');
-        const registrationData = {
-          type: 'register',
-          userId: userId
-        };
-        newSocket.send(JSON.stringify(registrationData));
-        setSocket(newSocket);
-      };
-
-      newSocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        switch (message.type) {
-          case 'friend_request':
-            console.log('Received friend request from:', message.sender);
-            dispatch(receiveFriendRequest(1)); // Replace 1 with the actual data if needed
-            break;
-          default:
-            console.log('Unknown message type:', message.type);
-        }
-      };
-
-      newSocket.onclose = () => {
-        console.log('WebSocket connection closed');
-        setSocket(null);
-      };
-    }
-  }, [userId, socketLoaded, dispatch]);
   const style: CSSProperties = { filter: filterValue };
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };

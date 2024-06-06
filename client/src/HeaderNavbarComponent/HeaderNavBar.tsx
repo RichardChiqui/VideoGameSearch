@@ -20,13 +20,13 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
 
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
 
-    useEffect(() => {
-        if (isUserLoggedIn) {
-            console.log('Element is visible');
-        } else {
-            console.log('Element is hidden');
-        }
-    }, [isUserLoggedIn]);
+    // useEffect(() => {
+    //     if (isUserLoggedIn) {
+    //         console.log('Element is visible');
+    //     } else {
+    //         console.log('Element is hidden');
+    //     }
+    // }, [isUserLoggedIn]);
 
     const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
