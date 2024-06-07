@@ -31,12 +31,6 @@ function RouterComponent() {
                 }
                 newSocket.emit("user-connected", userId, newSocket.id);
             })
-             // Add listener for receive-friend-request event
-            // newSocket.on("receive-friend-request", (data) => {
-            //     console.log("hm we in here?");
-            //     console.log("Received friend request:", data);
-            //     // Dispatch an action or update state to handle the friend request
-            // });
             setSocket(newSocket); // Set the socket
             console.log("init socket connection");
         }

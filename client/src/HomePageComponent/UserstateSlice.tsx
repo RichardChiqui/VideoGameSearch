@@ -29,8 +29,11 @@ const userSlice = createSlice({
     setSocketId: (state, action: PayloadAction<string>) => { // Define setSocketId action
       state.socketId = action.payload;
     },
+    userLoggingOut : (state) =>{
+      state.isAuthenticated = false;
+    },
   },
 });
 
-export const { userLoggedIn, receiveFriendRequest, setSocketId } = userSlice.actions;
+export const { userLoggedIn, receiveFriendRequest, setSocketId, userLoggingOut } = userSlice.actions;
 export default userSlice.reducer;

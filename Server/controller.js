@@ -37,9 +37,10 @@ const loadUsers = (req, res) =>{
 
 const sendFriendRequest = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
-    console.log("making sure we made it into here for sending rquests");
-    const {senderid, recieverId} = req.body
-    pool.query(queries.sendFriendRequest,[senderid,recieverId], (error, results) => {
+    console.log("making sure we made it into here for sending rquests:" + req.body);
+    const {senderId, receiverId} = req.body
+    console.log("Correct senderid?:" + senderId + " and correct reciever:" + receiverId);
+    pool.query(queries.sendFriendRequest,[senderId,receiverId], (error, results) => {
         if (error) {
             // Handle the error gracefully, e.g., send an error response
             console.error("Error sending link request:", error);

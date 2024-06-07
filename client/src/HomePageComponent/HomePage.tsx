@@ -26,11 +26,8 @@ export default function HomePage(){
     
     useEffect(() => {
       if (isUserLoggedIn) {
-        console.log('Element is visible');
         closeModal();
-      } else {
-        console.log('Element is hidden');
-      }
+      } 
     }, [isUserLoggedIn]);
     // Function to open the modal
     const openModal = () => {

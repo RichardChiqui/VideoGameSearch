@@ -6,6 +6,7 @@ import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from './HeaderFilterSlice';
 import './headerNavBarStyles.css'; // Make sure you have custom styles if needed
 import Avatar from './ProfileNotificationsCounter';
+import { userLoggingOut } from '../HomePageComponent/UserstateSlice';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -19,15 +20,6 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
     const dispatch = useDispatch();
 
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
-
-    // useEffect(() => {
-    //     if (isUserLoggedIn) {
-    //         console.log('Element is visible');
-    //     } else {
-    //         console.log('Element is hidden');
-    //     }
-    // }, [isUserLoggedIn]);
-
     const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
     const [peopleFilter, setPeopleFilter] = React.useState(false);
@@ -57,6 +49,10 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                 dispatch(changeMainFilter("Group"));
                 break;
         }
+    }
+
+    function handleLogOut(){
+        dispatch(userLoggingOut());
     }
 
     return (
@@ -116,7 +112,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                                                     Friend Requests {numofNotifcations > 0 ? `(${numofNotifcations})` : ''}
                                                 </a>
                                                 <hr className="dropdown-divider" />
-                                                <a href="#" className="dropdown-item">
+                                                <a href="#" className="dropdown-item" onClick={() => handleLogOut()} >
                                                     Logout
                                                 </a>
                                             </div>

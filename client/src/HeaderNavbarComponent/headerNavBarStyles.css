@@ -17,13 +17,22 @@
 
 .signinbutton {
  
-  border: 1px solid black;
-  border-radius: 20px;
+  /* border: 1px solid black;
+  background-color: red; */
+  /* border-radius: 20px; */
   width: max-content;
   margin: 2%;
   /* width: max-content; */
   height: 40px;
   font-family: 'Roboto', sans-serif;
+  padding: 5px;
+}
+
+
+
+/* Hover effect: Gray square */
+.signinbutton:hover {
+  background-color: gray; /* Change background color to gray on hover */
 }
 
 .search-input {

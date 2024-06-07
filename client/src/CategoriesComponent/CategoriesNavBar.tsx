@@ -35,9 +35,8 @@ export default function CategoriesNavBar({ buttonClicked }: CategoriesNavBarProp
         { id: 3, name: "Shooter" },
       ];
 
-    console.log("Current show value " + buttonClicked);
+
     const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
-    console.log("filterecaled is " + filterValue);
     const style= {filter: filterValue};
     return(
         <div className="categories-bar"  style={style}>

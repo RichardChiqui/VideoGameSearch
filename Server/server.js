@@ -1,8 +1,13 @@
+
 const express = require('express');
 const routes = require('./routes');
 const controller = require('./controller');
 const cors = require('cors');
 const http = require('http');
+
+
+// Your code...
+
 
 const app = express();
 app.use(cors());
@@ -47,6 +52,9 @@ socketIo.on("connection", socket => {
         socketIo.to(receiverSocketId).emit("receive-friend-request", { senderId, recevieverId });
     } else {
         console.log(`Receiver ${recevieverId} is not connected`);
+        const senderIdSocketId = userSocketMap.get(senderId);
+        socketIo.to(senderIdSocketId).emit("offline-reciever", { senderId, recevieverId });
+      
     }
     // You can process the data and emit an event back if needed
     // socket.emit("response-event", { some: "data" });

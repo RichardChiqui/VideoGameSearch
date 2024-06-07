@@ -77,23 +77,56 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
       console.log("user has been logged in, lets try socketio, what is userid:" + userId + " and socketid:");
       socket?.emit('send-link-request', userId , recevieverId);
       console.log("completed with socketio")
-      
+        // Add listener for receive-friend-request event
     }
-
-
-    // if (socketLoaded) {
-    //   console.log("ok so strange");
-    //   // Example: Send a JSON object representing the friend request
-    //   const friendRequestData = {
-    //     type:"friend_request",
-    //     senderId: userId, // Replace with the sender's ID
-    //     recipientId: recevieverId // Use the provided userId
-    //   };
-
-    //   // Convert the friend request data to a string and send it over the WebSocket connection
-    //   socketLoaded.send(JSON.stringify(friendRequestData));
-    // }
   }
+  React.useEffect(() => {
+    if (socket) {
+        socket.on("offline-reciever", (data) => {
+            console.log("Received friend request:", data);
+          //   const postData: FormData = {
+          //     username:data.senderId,
+          //     password:data.senderId
+  
+          // };
+  
+          fetch('http://localhost:5000/friend_request', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({senderId: data.senderId, receiverId : data.recevieverId})
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Failed to submit data');
+              }
+            
+              return response.json();
+          })
+          .then(data => {
+             // setResponseData(data);
+            
+              if(data.length <= 0){
+                 // setFoundAccount(false)
+                  console.log("No data received from the server");
+              } else{
+                 // setFoundAccount(true);
+                  const { id,username, password } = data[0]; // Use the updated data object from the response
+                  console.log("response data " + username + " and test " + password + " and database id " + id);
+                  //dispatch(userLoggedIn({isAuthenticated:true,userId:id,numberOfCurrentFriendRequests : 0}));
+       
+  
+              }
+              
+          })
+          .catch(error => {
+              console.error('Error submitting data:', error);
+          });
+            // Dispatch an action or update state to handle the friend request
+        });
+    }
+}, [socket]);
 
   const style: CSSProperties = { filter: filterValue };
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
