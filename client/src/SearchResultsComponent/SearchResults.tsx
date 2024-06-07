@@ -79,6 +79,24 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
       console.log("completed with socketio")
         // Add listener for receive-friend-request event
     }
+<<<<<<< HEAD
+=======
+  
+
+
+    // if (socketLoaded) {
+    //   console.log("ok so strange");
+    //   // Example: Send a JSON object representing the friend request
+    //   const friendRequestData = {
+    //     type:"friend_request",
+    //     senderId: userId, // Replace with the sender's ID
+    //     recipientId: recevieverId // Use the provided userId
+    //   };
+
+    //   // Convert the friend request data to a string and send it over the WebSocket connection
+    //   socketLoaded.send(JSON.stringify(friendRequestData));
+    // }
+>>>>>>> 9e3ad81d470bd2f857dab29816b3e94d4c7bec5d
   }
   React.useEffect(() => {
     if (socket) {
