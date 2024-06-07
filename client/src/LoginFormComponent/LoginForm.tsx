@@ -43,6 +43,7 @@ export default function LoginForm(){
             setPassword({ password: value });
         }
     }
+    
 
     function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         event.preventDefault();
@@ -80,42 +81,7 @@ export default function LoginForm(){
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
                 dispatch(userLoggedIn({isAuthenticated:true,userId:id,numberOfCurrentFriendRequests : 0}));
-            //    if(id != 0){
-
-            //     const newSocket = new WebSocket('ws://localhost:5000/'); // Replace with your WebSocket server URL
-            //     setSocket(newSocket);
-            
-            //     // Clean up on unmount
-            //     newSocket.onopen = () => {
-            //         console.log('WebSocket connection established withuserId:' + id);
-            //         // Send a registration message to the WebSocket server
-            //         const registrationData = {
-            //             type: 'register',
-            //             userId: id // Send the user ID obtained from the login response
-            //         };
-            //         newSocket.send(JSON.stringify(registrationData));
-                   
-                    
-                    
-                   
-                        
-            //     };
-            //     console.log("how is my newsocklet null:" + newSocket);
-            //     dispatch(userLoggedIn({isAuthenticated:true,userId:id, socket: newSocket, numberOfCurrentFriendRequests : 0}));
-            //     newSocket.onmessage = (event) => {
-            //         console.log("have we recevied any message");
-            //         const message = JSON.parse(event.data);
-            //         switch (message.type) {
-            //           case 'friend_request':
-            //             console.log('Received friend request from:', message.sender);
-            //             dispatch(receiveFriendRequest(1));
-            //             break;
-            //           default:
-            //             console.log('Unknown message type:', message.type);
-            //         }
-            //       };
-            // }
-                
+     
 
             }
             

@@ -5,5 +5,5 @@ npm install nodemon
 npm i pg
 npm install ws
 npm install socket.io
-
+npm install node-fetch
 
