@@ -63,30 +63,6 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
         dispatch(userLoggingOut());
     }
 
-    function handleCreateGroupClick() {
-        if (!isUserLoggedIn) {
-            onButtonClick();
-        } else {
-            setIsModalOpen(true);
-        }
-    }
-
-    function closeModal() {
-        setIsModalOpen(false);
-        setPlaystyleDropdownOpen(false);
-        setGameDropdownOpen(false);
-    }
-
-    function handlePlaystyleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setPlaystyle(event.target.value);
-        setPlaystyleDropdownOpen(true);
-    }
-
-    function handleGameChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setGame(event.target.value);
-        setGameDropdownOpen(true);
-    }
-
     return (
         <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -158,11 +134,6 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     </div>
                 </div>
             </div>
-
-            {/* {isModalOpen && ( */}
-                {/* <CreateGroup /> */}
-               
-             {/* )} */}
         </nav>
     );
 }
