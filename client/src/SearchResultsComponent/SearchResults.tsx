@@ -5,6 +5,7 @@ import { MainFiltersEnum } from '../ENUMS';
 import { loadUsers } from '../FetchCalls/loadUsers';
 import { userLoggedIn, receiveFriendRequest } from '../HomePageComponent/UserstateSlice';
 import { useSocket } from '../Routes'
+import { displayPopUpMethod } from '../LoginSlices/LoginSlice';
 
 import './searchResultsStyles.css';
 
@@ -15,15 +16,16 @@ export type SearchResultsItemType = {
 
 interface UserData {
   id: number;
-  name: string;
+  username: string;
   email: string;
 }
 
 interface SearchResultsProps {
+  onButtonClick: () => void;
   buttonClicked: boolean;
 }
 
-export default function SearchResults({ buttonClicked }: SearchResultsProps) {
+export default function SearchResults({ onButtonClick, buttonClicked }: SearchResultsProps) {
   const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
   const userId = useSelector((state: RootState) => state.user.userId);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
@@ -52,8 +54,9 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
             const formattedUsers = usersData.users.map((user: UserData) => ({
               id: user.id,
               email: user.email,
-              name: user.name
+              username: user.username
             }));
+            console.log("Formatted Users:", formattedUsers);
             setPeoplesList(formattedUsers);
             setSuccessFullyLoadedUsers(true);
           }
@@ -69,9 +72,20 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
   }, [mainFilter]);
 
 
+  const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
+
 
   function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
     //console.log("attempting to send friend request from:" + userId + " to:" + recevieverId + " and issocket:" + socketLoaded);
+    console.log("are we in here:" + userLoggedIn);
+    if(!userLoggedIn){
+      console.log("so true then");
+      dispatch(displayPopUpMethod(false));
+      console.log("sweitching yea:" + displayPopUpVal);
+      dispatch(displayPopUpMethod(true));
+      console.log("sweitching pt2:" + displayPopUpVal);
+      return;
+    }
     console.log("attmepting to use socket.io:" + userLoggedIn);
     if(userLoggedIn){
       console.log("user has been logged in, lets try socketio, what is userid:" + userId + " and socketid:");
@@ -79,24 +93,7 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
       console.log("completed with socketio")
         // Add listener for receive-friend-request event
     }
-<<<<<<< HEAD
-=======
   
-
-
-    // if (socketLoaded) {
-    //   console.log("ok so strange");
-    //   // Example: Send a JSON object representing the friend request
-    //   const friendRequestData = {
-    //     type:"friend_request",
-    //     senderId: userId, // Replace with the sender's ID
-    //     recipientId: recevieverId // Use the provided userId
-    //   };
-
-    //   // Convert the friend request data to a string and send it over the WebSocket connection
-    //   socketLoaded.send(JSON.stringify(friendRequestData));
-    // }
->>>>>>> 9e3ad81d470bd2f857dab29816b3e94d4c7bec5d
   }
   React.useEffect(() => {
     if (socket) {
@@ -158,15 +155,16 @@ export default function SearchResults({ buttonClicked }: SearchResultsProps) {
               <div className="column is-one-quarter" key={item.id}>
                 <div className="card" style={cardStyle}>
                   <header className="card-header">
-                    <p className="card-header-title">{item.name}</p>
+                    <p className="card-header-title">{item.username}</p>
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
-                      <p>Email: {item.email}</p>
+                      {/* <p>Email: {item.email}</p> */}
                     </div>
                   </div>
                   <footer className="card-footer">
-                    <button className="button card-footer-item" onClick={(event) => handleLinkRequest(event, item.id)}>Send Link Request</button>
+                   {userLoggedIn? <button className="button card-footer-item" onClick={(event) => handleLinkRequest(event, item.id)}>Send Link Request</button> : 
+                   <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button> }
                     <button className="button card-footer-item">Profile</button>
                   </footer>
                 </div>

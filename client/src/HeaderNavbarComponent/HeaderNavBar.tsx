@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import PersonIcon from '@mui/icons-material/Person';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Store';
 import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from './HeaderFilterSlice';
-import './headerNavBarStyles.css'; // Make sure you have custom styles if needed
+import './headerNavBarStyles.css';
 import Avatar from './ProfileNotificationsCounter';
 import { userLoggingOut } from '../HomePageComponent/UserstateSlice';
+import CreateGroup from './CreateGroup';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -14,7 +14,7 @@ interface HeaderNavbar {
     buttonClicked: boolean;
 }
 
-export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,buttonClicked }: HeaderNavbar) {
+export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, buttonClicked }: HeaderNavbar) {
     const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
     const numofNotifcations = useSelector((state: RootState) => state.notifications.value);
     const dispatch = useDispatch();
@@ -22,11 +22,19 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
     const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
-    const [peopleFilter, setPeopleFilter] = React.useState(false);
-    const [groupFilter, setGroupFilter] = React.useState(false);
-    const [titleFilter, setTitleFilter] = React.useState(true);
+    const [peopleFilter, setPeopleFilter] = useState(false);
+    const [groupFilter, setGroupFilter] = useState(false);
+    const [titleFilter, setTitleFilter] = useState(true);
 
     const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [groupName, setGroupName] = useState('');
+    const [playstyle, setPlaystyle] = useState('');
+    const [game, setGame] = useState('');
+    const [playstyleDropdownOpen, setPlaystyleDropdownOpen] = useState(false);
+    const [gameDropdownOpen, setGameDropdownOpen] = useState(false);
+    const [playstyleOptions] = useState(['Casual', 'Competitive', 'Role-Playing']);
+    const [gameOptions] = useState(['Game 1', 'Game 2', 'Game 3']);
 
     function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>, filterType: string) {
         switch (filterType) {
@@ -51,8 +59,32 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
         }
     }
 
-    function handleLogOut(){
+    function handleLogOut() {
         dispatch(userLoggingOut());
+    }
+
+    function handleCreateGroupClick() {
+        if (!isUserLoggedIn) {
+            onButtonClick();
+        } else {
+            setIsModalOpen(true);
+        }
+    }
+
+    function closeModal() {
+        setIsModalOpen(false);
+        setPlaystyleDropdownOpen(false);
+        setGameDropdownOpen(false);
+    }
+
+    function handlePlaystyleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setPlaystyle(event.target.value);
+        setPlaystyleDropdownOpen(true);
+    }
+
+    function handleGameChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setGame(event.target.value);
+        setGameDropdownOpen(true);
     }
 
     return (
@@ -93,7 +125,7 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                     </div>
                     <div className="navbar-item">
                         <div className="buttons">
-                            {isUserLoggedIn && <button className="button is-primary">Create Group</button>}
+                            {isUserLoggedIn && <CreateGroup />}
                             {isUserLoggedIn ? (
                                 <>
                                     <div className="dropdown is-right is-hoverable">
@@ -126,6 +158,11 @@ export default function HeaderNavBar({ onButtonClick,dismissHandlerClick ,button
                     </div>
                 </div>
             </div>
+
+            {/* {isModalOpen && ( */}
+                {/* <CreateGroup /> */}
+               
+             {/* )} */}
         </nav>
     );
 }

@@ -14,16 +14,17 @@ interface SignUpForm {
 }
 
 interface CategoriesNavBarProps {
+    onButtonClick: () => void;
     buttonClicked: boolean;
   }
 
-export default function HomePageMainContent({ buttonClicked }: CategoriesNavBarProps){
+export default function HomePageMainContent({onButtonClick, buttonClicked }: CategoriesNavBarProps){
 
     return(
         <div className='maincontent'>
         
                 <FiltersNavBar />
-                <SearchResults buttonClicked={buttonClicked}/>
+                <SearchResults  onButtonClick={onButtonClick} buttonClicked={buttonClicked}/>
             
             
         </div>

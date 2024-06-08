@@ -21,6 +21,9 @@ export default function HomePage(){
     
    
     const isUserLoggedIn = useSelector((state:RootState) => state.user.isAuthenticated);
+
+    const displayPopUp = useSelector((state: RootState) => state.displayPopUp.displayPopup);
+    console.log("sweitching yea:" + displayPopUp);
     //console.log("during first load user should not be loggedin:" + isUserLoggedIn);
 
     
@@ -48,6 +51,7 @@ export default function HomePage(){
       openModal();
     };
     
+   
     const dismissHandler = (event: React.FocusEvent<HTMLDivElement>): void => {
         // Check if the event target is outside the LoginForm component
         if (!event.currentTarget.contains(event.relatedTarget as Node)) {
@@ -70,7 +74,7 @@ export default function HomePage(){
               <LoginForm />
             </Modal>
             <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
-            <HomePageMainContent buttonClicked={buttonClicked}/>
+            <HomePageMainContent onButtonClick={handleButtonClick} buttonClicked={buttonClicked}/>
       </div>
            
         
