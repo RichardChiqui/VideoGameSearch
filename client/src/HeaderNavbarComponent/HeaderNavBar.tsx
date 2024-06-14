@@ -23,9 +23,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
     const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
-    const [peopleFilter, setPeopleFilter] = useState(false);
+    const [peopleFilter, setPeopleFilter] = useState(true);
     const [groupFilter, setGroupFilter] = useState(false);
-    const [titleFilter, setTitleFilter] = useState(true);
+    const [titleFilter, setTitleFilter] = useState(false);
 
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>, filterType: string) {
         switch (filterType) {
             case "People":
-                setPeopleFilter(true);
+                setPeopleFilter(true);       
                 setGroupFilter(false);
                 setTitleFilter(false);
                 dispatch(changeMainFilter("People"));
