@@ -13,6 +13,8 @@ router.get('/homepage/loadUsers', controller.loadUsers)
 
 router.post('/friend_request',controller.sendFriendRequest)
 
+router.post('/create-group', controller.createNewGroup);
+
 module.exports = router;
 
 //very bad habit

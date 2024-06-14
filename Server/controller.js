@@ -18,6 +18,15 @@ const addUser = (req,res) =>{
     })
 }
 
+const createNewGroup = (req,res) =>{
+    console.log("Creating new group");
+    const {username, password, email} = req.body
+    pool.query(queries.createNewGrouyp, [username,password,email], (error, results) =>{
+        if (error) throw error;
+        res.status(200).json(results.rows);
+    })
+}
+
 const loadUsers = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
     console.log("making sure we made it into here");
@@ -34,6 +43,8 @@ const loadUsers = (req, res) =>{
     });
 
 }
+
+
 
 const sendFriendRequest = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
@@ -68,5 +79,6 @@ module.exports ={
     validateUser,
     addUser,
     loadUsers,
-    sendFriendRequest
+    sendFriendRequest,
+    createNewGroup
 }

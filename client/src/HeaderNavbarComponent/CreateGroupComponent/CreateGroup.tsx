@@ -4,12 +4,28 @@ import '../headerNavBarStyles.css'; // Ensure this includes your new CSS
 import GameInput from './VideoGameInput'; // Adjust the path as necessary
 import PlaystyleInput from './PlayStyleInput'; // Adjust the path as necessary
 
+import {sendCreateGroup} from '../../createCalls/createGroupsCall';
+
 export default function CreateGroup(): JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [groupName, setGroupName] = useState('');
 
     function closeModal(): void {
         setIsModalOpen(false);
+    }
+
+    async function createGroup(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        // Empty method for creating group logic
+        event.preventDefault();
+
+       
+        const groupData = {
+            fk_adminId: 1, // example value
+            groupName: "test", // example value
+            groupGame: "blops6", // example value
+            groupPlayStyle: ['playstyle1', 'playstyle2'] // example value
+        };
+        const usersData = await sendCreateGroup(groupData);
     }
 
     return (
@@ -35,7 +51,14 @@ export default function CreateGroup(): JSX.Element {
                             </div>
                             <PlaystyleInput />
                             <GameInput />
-                            <button className="button is-primary" onClick={closeModal}>Close</button>
+                            <div className="field is-grouped is-grouped-centered">
+                                <div className="control">
+                                    <button className="button is-primary" onClick={createGroup}>Create Group</button>
+                                </div>
+                                <div className="control">
+                                    <button className="button is-light" onClick={closeModal}>Cancel</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button className="modal-close is-large" aria-label="close" onClick={closeModal}></button>
