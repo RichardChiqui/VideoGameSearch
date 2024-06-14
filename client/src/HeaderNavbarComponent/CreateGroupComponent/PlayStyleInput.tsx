@@ -54,11 +54,19 @@ export default function PlaystyleInput(): JSX.Element {
             </div>
             <div className="field-body">
                 <div className="field">
-                    <div className={`dropdown ${playstyleDropdownOpen ? 'is-active' : ''}`} onBlur={handlePlaystyleInputBlur}>
-                        <div className="dropdown-trigger" ref={playstyleInputRef}>
-                            <input className="input" type="text" placeholder="Search playstyles" value={playstyle} onChange={handlePlaystyleChange} onFocus={() => setPlaystyleDropdownOpen(true)} onKeyDown={(e) => handleKeyDown(e, handlePlaystyleInputBlur)} />
-                        </div>
-                        {playstyleDropdownOpen && (
+                    <div className="control">
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Search playstyles"
+                            value={playstyle}
+                            onChange={handlePlaystyleChange}
+                            onFocus={() => setPlaystyleDropdownOpen(true)}
+                            onKeyDown={(e) => handleKeyDown(e, handlePlaystyleInputBlur)}
+                        />
+                    </div>
+                    {playstyleDropdownOpen && (
+                        <div className="dropdown is-active" onBlur={handlePlaystyleInputBlur}>
                             <div className="dropdown-menu" style={{ width: '100%' }}>
                                 <div className="dropdown-content">
                                     {playstyleOptions.filter(option => option.toLowerCase().includes(playstyle.toLowerCase())).map((option, index) => (
@@ -68,18 +76,22 @@ export default function PlaystyleInput(): JSX.Element {
                                     ))}
                                 </div>
                             </div>
-                        )}
-                    </div>
-                    {selectedPlaystyles.length > 0 && (
-                        <div className="tags">
-                            {selectedPlaystyles.map((item, index) => (
-                                <span key={index} className="tag is-info is-light">
-                                    {item}
-                                    <button className="delete is-small" onClick={() => removeSelectedPlaystyle(index)}></button>
-                                </span>
-                            ))}
                         </div>
                     )}
+                </div>
+                <div className="field">
+                    <div className="control">
+                        {selectedPlaystyles.length > 0 && (
+                            <div className="tags">
+                                {selectedPlaystyles.map((item, index) => (
+                                    <span key={index} className="tag is-info is-light">
+                                        {item}
+                                        <button className="delete is-small" onClick={() => removeSelectedPlaystyle(index)}></button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
