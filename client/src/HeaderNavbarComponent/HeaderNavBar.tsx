@@ -6,7 +6,7 @@ import { changeMainFilter } from './HeaderFilterSlice';
 import './headerNavBarStyles.css';
 import Avatar from './ProfileNotificationsCounter';
 import { userLoggingOut } from '../HomePageComponent/UserstateSlice';
-import CreateGroup from './CreateGroup';
+import CreateGroup from './CreateGroupComponent/CreateGroup';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
