@@ -7,6 +7,7 @@ import './headerNavBarStyles.css';
 import Avatar from './ProfileNotificationsCounter';
 import { userLoggingOut } from '../HomePageComponent/UserstateSlice';
 import CreateGroup from './CreateGroupComponent/CreateGroup';
+import NotificationsIconComponent from './NotificationsIcon'; // Import the new component
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -102,10 +103,11 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     <div className="navbar-item">
                         <div className="buttons">
                             {isUserLoggedIn && <CreateGroup />}
+                            {isUserLoggedIn && <NotificationsIconComponent />}
                             {isUserLoggedIn ? (
                                 <>
                                     <div className="dropdown is-right is-hoverable">
-                                        <div className="dropdown-trigger" onClick={() => setDropdownVisible(!dropdownVisible)}>
+                                        <div className="dropdown-trigger" onClick={() => setDropdownVisible(!dropdownVisible)} style={{ fontSize: '1.5em' }}>
                                             <Avatar />
                                         </div>
                                         <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>

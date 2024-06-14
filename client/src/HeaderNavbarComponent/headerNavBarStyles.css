@@ -93,3 +93,70 @@
   font-family: 'Roboto', sans-serif;
   margin-right: 20px; /* Add some margin to the right for spacing */
 }
+
+.notifications-icon-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.notifications-icon {
+  transition: transform 0.2s;
+}
+
+.notifications-icon:hover {
+  transform: scale(1.2);
+}
+
+.notif-window {
+  position: absolute;
+  top: calc(100% + 10px); /* Positioned further down below the header navbar */
+  right: 0; /* Align the right edge of the window with the right edge of the icon */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 1;
+  width: 250px; /* Slightly reduced width */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notif-header {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.notif-content {
+  max-height: 150px; /* Limited height for the content area */
+  overflow-y: auto;
+}
+
+.notif-item {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.notif-item:hover {
+  background-color: #f9f9f9;
+}
+
+.notif-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notif-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.notif-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.notif-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
