@@ -6,7 +6,7 @@ import { loadUsers } from '../FetchCalls/loadUsers';
 import { userLoggedIn, receiveFriendRequest } from '../HomePageComponent/UserstateSlice';
 import { useSocket } from '../Routes'
 import { displayPopUpMethod } from '../LoginSlices/LoginSlice';
-import MessageBubble from './MessageBubble'; // Import the MessageBubble component
+import ChatWindow from './MessageComponent/MessageBubble'; // Import the MessageBubble component
 
 import './searchResultsStyles.css';
 
@@ -149,6 +149,8 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const cardContentStyle: CSSProperties = { flex: '1' };
 
   return (
+    <>
+
     <div className="container" style={style}>
       <div className="columns is-multiline">
         {successFullyLoadedUsers
@@ -190,7 +192,9 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
               </div>
             ))}
       </div>
-      <MessageBubble /> {/* Include the MessageBubble component here */}
+    
     </div>
+     {userLoggedIn && <ChatWindow />} 
+    </>
   );
 }

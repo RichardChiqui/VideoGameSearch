@@ -8,6 +8,7 @@ import Avatar from './ProfileNotificationsCounter';
 import { userLoggingOut } from '../HomePageComponent/UserstateSlice';
 import CreateGroup from './CreateGroupComponent/CreateGroup';
 import NotificationsIconComponent from './NotificationsIcon'; // Import the new component
+import ChatIcon from '@mui/icons-material/Chat';
 
 interface HeaderNavbar {
     onButtonClick: () => void;

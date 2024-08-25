@@ -62,12 +62,14 @@
 
   .message-bubble-container {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    bottom: 20px; /* Adjust as needed */
+    right: 350px;  /* Reduce right value to ensure it stays on screen */
+    transform: translateX(0); /* Ensures it doesn't shift further right */
     display: inline-block;
     cursor: pointer;
     z-index: 1000; /* Ensure it's on top of other elements */
 }
+
 
 
 
@@ -82,17 +84,44 @@
 }
 
 .message-window {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4ecdc4;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    width: 300px;
-    z-index: 1;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  height: 600px;
+  transform: translateX(-50%);
+  background-color: #4ecdc4;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 700px; /* Increase the width for a larger window */
+  z-index: 1;
+  display: flex; /* Enable flexbox layout for two columns */
 }
+
+.chat-column {
+ 
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.chat-column.left {
+  background-color:white  ; /* Keep original background for left column */
+  width: 30%;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.chat-column.right {
+  background-color: #d3d3d3; /* Slightly greyer background for right column */
+  width: 70%;
+}
+
+.chat-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center; /* Center the title text */
+}
+
 
 .user-list {
     float: left;
@@ -101,42 +130,72 @@
 
 .user {
     padding: 10px;
-    color: #fff;
+    color: black;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .user:hover {
     background-color: #369d9b;
+    width: max-content;
+}
+
+.chat-column.right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Aligns the input area to the bottom */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.chat-column-username {
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: left;
+  width: 100%; /* Adjust width to fit content */
+ 
+  border-bottom:  lightgray solid 1px;
+  padding: 10px;
+  box-sizing: border-box;
+  color: white; /* Ensure text is visible on the red background */
+  font-weight: bold;
+  font-size: 16px;
+
 }
 
 .message-input {
-    float: left;
-    width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .message-input input {
-    width: calc(100% - 60px);
-    padding: 8px;
-    margin-right: 10px;
-    border-radius: 5px;
-    border: none;
+  flex: 1;
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
 }
 
 .message-input button {
-    padding: 8px 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #fff;
-    color: #4ecdc4;
-    cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4ecdc4;
+  color: #fff;
+  cursor: pointer;
 }
 
 .message-input button:hover {
-    background-color: #369d9b;
-    color: #fff;
+  background-color: #369d9b;
+  color: #fff;
 }
-
 
 
   
