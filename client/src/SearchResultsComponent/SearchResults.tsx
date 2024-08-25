@@ -144,7 +144,11 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     }
 }, [socket]);
 
-  const style: CSSProperties = { filter: filterValue };
+const style: CSSProperties = { 
+  filter: filterValue,
+  marginTop: '30px' // Adjust this value based on your needs
+};
+
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
 

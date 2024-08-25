@@ -22,7 +22,10 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     const dispatch = useDispatch();
 
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
-    const boldStyle: React.CSSProperties = { fontWeight: 'bold' };
+    const boldStyle: React.CSSProperties = {
+        fontWeight: 'bold'
+        
+    };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
     const [peopleFilter, setPeopleFilter] = useState(true);
     const [groupFilter, setGroupFilter] = useState(false);
@@ -119,9 +122,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                                 <a href="#" className="dropdown-item">
                                                     Settings
                                                 </a>
-                                                <a href="#" className="dropdown-item">
+                                                {/* <a href="#" className="dropdown-item">
                                                     Friend Requests {numofNotifcations > 0 ? `(${numofNotifcations})` : ''}
-                                                </a>
+                                                </a> */}
                                                 <hr className="dropdown-divider" />
                                                 <a href="#" className="dropdown-item" onClick={() => handleLogOut()} >
                                                     Logout

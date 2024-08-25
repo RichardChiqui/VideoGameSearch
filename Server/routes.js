@@ -15,6 +15,13 @@ router.post('/friend_request',controller.sendFriendRequest)
 
 router.post('/create-group', controller.createNewGroup);
 
+router.post('/loadUserFriendsRequests', controller.loadUserFriendRequests);
+
+router.delete('/deleteFriendRequest', controller.deleteFriendRequest);
+
+
+router.post('/create-new-friend', controller.insertNewFriend);
+
 module.exports = router;
 
 //very bad habit

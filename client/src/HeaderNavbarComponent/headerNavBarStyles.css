@@ -4,9 +4,61 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #437bbc;
+  background: #FFDAB9 ;
   font-family: 'Roboto', sans-serif;
   padding: 0 20px; /* Add padding for some space on the sides */
+}
+
+.button.is-primary{
+  background-color:#3273dc ;
+  color: white ;
+}
+/* headerNavBarStyles.css */
+.fr-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribute space between username and buttons */
+  padding: 10px;
+  background-color: #f5f5f5; /* Light background */
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.username {
+  margin: 0;
+  font-size: 16px;
+  color: #333; /* Dark text for readability */
+}
+
+.button-group {
+  display: flex;
+  gap: 8px; /* Space between buttons */
+}
+
+.accept-button, .reject-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.accept-button {
+  background-color: #3273dc; /* Green for accept */
+  color: #FFFFFF; /* White text */
+}
+
+.accept-button:hover {
+  background-color: #3273dc; /* Darker green on hover */
+}
+
+.reject-button {
+  background-color: #f44336; /* Red for reject */
+  color: #FFFFFF; /* White text */
+}
+
+.reject-button:hover {
+  background-color: #d32f2f; /* Darker red on hover */
 }
 
 /* .navLeft {
@@ -35,6 +87,14 @@
   max-height: 90vh;  /* Adjust the height as needed */
   overflow-y: auto;  /* Enable scrolling if content exceeds the height */
 }
+
+.navbar.is-primary {
+  background-color: #FF7F50; /* Teal background color */
+}
+.card-header{
+  background-color:#F5F5DC ;
+}
+
 
 
 /* Hover effect: Gray square */
@@ -83,10 +143,11 @@
   font-weight: lighter;
   margin: 10px;
   color: white;
+  
 }
 
 .topnav-cats:hover {
-  background-color: lightgray;
+  background-color: #3273dc;
 }
 
 .WebsiteName {
@@ -116,7 +177,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   z-index: 1;
-  width: 250px; /* Slightly reduced width */
+  width: 390px; /* Slightly reduced width */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
