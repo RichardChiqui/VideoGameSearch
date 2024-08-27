@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import headerFilterSlice from './HeaderNavbarComponent/HeaderFilterSlice';
-import userLoggedInReducer from './HomePageComponent/UserstateSlice'
-import NotificationsSlice from './HeaderNavbarComponent/NotificationsSlice';
-import LoginSlice from './LoginSlices/LoginSlice';
+import headerFilterSlice from './ReduxStore/HeaderFilterSlice';
+import userLoggedInReducer from './ReduxStore/UserstateSlice'
+import NotificationsSlice from './ReduxStore/NotificationsSlice';
+import LoginSlice from './ReduxStore/LoginSlice';
 
 export const store = configureStore({
   reducer: {

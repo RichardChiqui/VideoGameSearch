@@ -48,9 +48,9 @@ const loadUsers = (req, res) =>{
 
 const sendFriendRequest = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
-    console.log("making sure we made it into here for sending rquests:" + req.body);
+  
     const {senderId, receiverId} = req.body
-    console.log("Correct senderid?:" + senderId + " and correct reciever:" + receiverId);
+    console.log("Entering 'sendFriendRequest'" + " for sender " + senderId + " and recevierid " + receiverId);
     pool.query(queries.sendFriendRequest,[senderId,receiverId], (error, results) => {
         if (error) {
             // Handle the error gracefully, e.g., send an error response
@@ -96,10 +96,10 @@ const loadUserFriendRequests = (req, res) =>{
 
 const deleteFriendRequest = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
-    console.log("making sure we made it into here for sending rquests:" + req.body);
-    const {fromuserid, touserid} = req.body
-    console.log( " and correct reciever, we only want receiveer:" + receiverId);
-    pool.query(queries.insertNewFriend,[fromuserid,touserid], (error, results) => {
+    console.log("making sure we made it into here for deleting fr" + req.body);
+    const { userId} = req.body
+    console.log( " and correct reciever, we only want receiveer:" + userId);
+    pool.query(queries.deleteFriendRequest,[userId], (error, results) => {
         if (error) {
             // Handle the error gracefully, e.g., send an error response
             console.error("Error sending link request:", error);
@@ -116,10 +116,29 @@ const deleteFriendRequest = (req, res) =>{
 
 const insertNewFriend = (req, res) =>{
     //for only loading first 100 users(or all users which ever is smaller)
-    console.log("Attemptiong to delete fr" + req.body);
-    const {receiverId} = req.body
-    console.log( " and correct reciever, we only want receiveer:" + receiverId);
-    pool.query(queries.deleteFriendRequest,[receiverId], (error, results) => {
+    console.log("Attemptiong to create new friend" + req.body);
+    const {fromUserId,toUserId} = req.body
+    console.log("fromuserid" + fromUserId + " and correct reciever, we only want receiveer:" + toUserId);
+    pool.query(queries.insertNewFriend,[fromUserId,toUserId], (error, results) => {
+        if (error) {
+            // Handle the error gracefully, e.g., send an error response
+            console.error("Error sending link request:", error);
+            res.status(500).json({ error: "Failed to load users" });
+        } else {
+            // If there are no errors, send the users data in the response
+            const users = results.rows;
+            console.log("all good dleteing friend request from db" + users);
+            res.status(200).json({ users });
+          
+        }
+    });
+}
+
+const loadUserFriends = (req, res) =>{
+    //for only loading first 100 users(or all users which ever is smaller)
+    const {userId} = req.body
+    console.log( "Entering 'loadUserFriends' with userid:" + userId);
+    pool.query(queries.loadUserFriends,[userId], (error, results) => {
         if (error) {
             // Handle the error gracefully, e.g., send an error response
             console.error("Error sending link request:", error);
@@ -142,5 +161,6 @@ module.exports ={
     createNewGroup,
     loadUserFriendRequests,
     deleteFriendRequest,
-    insertNewFriend
+    insertNewFriend,
+    loadUserFriends
 }

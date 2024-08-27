@@ -22,6 +22,10 @@ router.delete('/deleteFriendRequest', controller.deleteFriendRequest);
 
 router.post('/create-new-friend', controller.insertNewFriend);
 
+router.post('/loadUserFriends', controller.loadUserFriends);
+
+//router.post('/send-friendrequest'. controller.sendFriendRequest)
+
 module.exports = router;
 
 //very bad habit

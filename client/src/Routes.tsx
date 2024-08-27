@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import SignUpForm from './SignUpComponent/SignUpForm';
-import HomePage from './HomePageComponent/HomePage';
-import AccountInfo from './SignUpComponent/AdditionalInfoForm';
+import SignUpForm from './Components/SignUpComponent/SignUpForm';
+import HomePage from './Components/HomePageComponent/HomePage';
+import AccountInfo from './Components/SignUpComponent/AdditionalInfoForm';
 import { useSelector,useDispatch } from 'react-redux';
 import { RootState } from './Store';
 import { io, Socket } from "socket.io-client";
-import { setSocketId,receiveFriendRequest } from './HomePageComponent/UserstateSlice';
+import { setSocketId,receiveFriendRequest } from './ReduxStore/UserstateSlice';
+import {Logger, LogLevel} from './Logger/Logger'
 
 
 
@@ -25,22 +26,22 @@ function RouterComponent() {
         if (isUserLoggedIn) {
             const newSocket = io('http://localhost:5000'); // Create a new socket
             newSocket.on("connect",() =>{
-                console.log("Connected to socketid:" + newSocket.id);
+                Logger("UserId:" + userId + " attempting to connect with socketid:" + newSocket.id,LogLevel.Debug);
+
                 if (newSocket.id) { // Check if newSocket.id is not undefined
                     dispatch(setSocketId(newSocket.id));
                 }
                 newSocket.emit("user-connected", userId, newSocket.id);
             })
-            setSocket(newSocket); // Set the socket
-            console.log("init socket connection");
+            setSocket(newSocket);
+            Logger("UserId:" + userId + " successful",LogLevel.Debug)
         }
     }, [isUserLoggedIn]);
 
-     // Add listener for receive-friend-request event
      React.useEffect(() => {
         if (socket) {
             socket.on("receive-friend-request", (data) => {
-                console.log("Received friend request:", data);
+                Logger("Received friend request:"+ data, LogLevel.Debug);
                 dispatch(receiveFriendRequest(1))
                 // Dispatch an action or update state to handle the friend request
             });
