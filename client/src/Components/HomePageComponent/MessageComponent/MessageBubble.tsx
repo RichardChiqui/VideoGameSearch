@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ChatIcon from '@mui/icons-material/Chat';
 import { loadUserFriends } from '../../../NetworkCalls/FetchCalls/loadUserFriends';
-import '../searchResultsStyles.css';
+import '../../../StylingSheets/headerNavBarStyles.css';
 import { userLoggedIn } from '../../../ReduxStore/UserstateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../Store';

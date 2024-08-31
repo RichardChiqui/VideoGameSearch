@@ -8,7 +8,8 @@ import { useSocket } from '../../Routes'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
 
-import './searchResultsStyles.css';
+import '../../StylingSheets/searchResultsStyles.css';
+import { Logger, LogLevel } from '../../Logger/Logger';
 
 export type SearchResultsItemType = {
   id: number;
@@ -27,7 +28,7 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ onButtonClick, buttonClicked }: SearchResultsProps) {
-  const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
+  const discoverFilter = useSelector((state: RootState) => state.mainfilter.discoverSubFilter);
   const userId = useSelector((state: RootState) => state.user.userId);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
@@ -47,21 +48,16 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const filterValue = buttonClicked ? 'brightness(50%)' : 'brightness(100%)';
 
   useEffect(() => {
-    if (mainFilter === MainFiltersEnum.People) {
+    if (discoverFilter === MainFiltersEnum.People) {
       const fetchUsers = async () => {
         try {
-          const usersData = await loadAllUsers();
-            const formattedUsers = usersData.users.map((user: UserData) => ({
-              id: user.id,
-              email: user.email,
-              username: user.username
-            }));
-            console.log("Formatted Users:", formattedUsers);
-            setPeoplesList(formattedUsers);
+          const allUsersData = await loadAllUsers();
+            const allUsersMap = allUsersData.users.map((user: UserData) => ({id: user.id,email: user.email,username: user.username}));
+            setPeoplesList(allUsersMap);
             setSuccessFullyLoadedUsers(true);
         
         } catch (err) {
-          console.log('Failed to load users:', err);
+          Logger('Failed to load all users:'+ err, LogLevel.Error);
         }
       };
 
@@ -69,15 +65,13 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     } else {
       setSuccessFullyLoadedUsers(false);
     }
-  }, [mainFilter]);
+  }, [discoverFilter]);
 
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
 
 
   function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
-    //console.log("attempting to send friend request from:" + userId + " to:" + recevieverId + " and issocket:" + socketLoaded);
-  
     if(!userLoggedIn){
       dispatch(displayPopUpMethod(false));
       dispatch(displayPopUpMethod(true));
@@ -85,7 +79,9 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     }
  
     if(userLoggedIn){
-      console.log("user has been logged in, lets try socketio, what is userid:" + userId + " and socketid:");
+      Logger('user has been logged in, lets try socketio, what is userid:' + userId + ' and socketid:', LogLevel.Debug);
+     
+    
       socket?.emit('send-link-request', userId , recevieverId);
     }
   
@@ -93,13 +89,8 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   React.useEffect(() => {
     if (socket) {
         socket.on("offline-reciever", (data) => {
-            console.log("Received friend request, attempting to post now:", data);
-          //   const postData: FormData = {
-          //     username:data.senderId,
-          //     password:data.senderId
-  
-          // };
-  
+          Logger("Received friend request, attempting to post now:"+ data.senderId + " to " + data.recevieverId, LogLevel.Debug);
+          
           fetch('http://localhost:5000/friend_request', {
               method: 'POST',
               headers: {
@@ -111,27 +102,17 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
               if (!response.ok) {
                   throw new Error('Failed to submit data');
               }
-            
               return response.json();
           })
           .then(data => {
-             // setResponseData(data);
-            
-              if(data.length <= 0){
-                 // setFoundAccount(false)
-                  console.log("No data received from the server");
-              } else{
-                 // setFoundAccount(true);
-                  const { id,username, password } = data[0]; // Use the updated data object from the response
-                  console.log("response data " + username + " and test " + password + " and database id " + id);
-                  //dispatch(userLoggedIn({isAuthenticated:true,userId:id,numberOfCurrentFriendRequests : 0}));
-       
+                const { id,username, password } = data[0]; 
+                console.log("response data " + username + " and test " + password + " and database id " + id);
+                  
   
-              }
               
           })
           .catch(error => {
-              console.error('Error submitting data:', error);
+             Logger('Error submitting data:'+ error, LogLevel.Error);
           });
             // Dispatch an action or update state to handle the friend request
         });
@@ -150,6 +131,7 @@ const style: CSSProperties = {
     <>
 
     <div className="container" style={style}>
+  
       <div className="columns is-multiline">
         {successFullyLoadedUsers
           ? peoplesList.map((item: UserData) => (

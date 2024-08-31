@@ -1,6 +1,6 @@
 import React from 'react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import '../headerNavBarStyles.css';
+import '../../StylingSheets/headerNavbarStyles.css';
 
 interface FriendRequestComponentProps {
   username: string;

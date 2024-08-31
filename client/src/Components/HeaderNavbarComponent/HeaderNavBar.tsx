@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from '../../ReduxStore/HeaderFilterSlice';
-import './headerNavBarStyles.css';
+import '../../StylingSheets/headerNavBarStyles.css';
 import Avatar from './ProfileNotificationsCounter';
 import { userLoggingOut } from '../../ReduxStore/UserstateSlice';
 import CreateGroup from './CreateGroupComponent/CreateGroup';
@@ -27,7 +27,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
         
     };
     const normalStyle: React.CSSProperties = { fontWeight: 'light' };
-    const [peopleFilter, setPeopleFilter] = useState(true);
+    const [peopleFilter, setPeopleFilter] = useState(false);
+    const [socialFilter, setSocialFilter] = useState(false);
+    const [discoverFilter, setDiscoverFilter] = useState(true);
     const [groupFilter, setGroupFilter] = useState(false);
     const [titleFilter, setTitleFilter] = useState(false);
 
@@ -43,24 +45,17 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
 
     function onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>, filterType: string) {
         switch (filterType) {
-            case "People":
-                setPeopleFilter(true);       
-                setGroupFilter(false);
-                setTitleFilter(false);
-                dispatch(changeMainFilter("People"));
+            case "social":
+                setSocialFilter(true);
+                setDiscoverFilter(false);
+                dispatch(changeMainFilter("social"));
                 break;
-            case "Title":
-                setPeopleFilter(false);
-                setGroupFilter(false);
-                setTitleFilter(true);
-                dispatch(changeMainFilter("Title"));
+            case "discover":
+                setSocialFilter(false);
+                setDiscoverFilter(true);
+                dispatch(changeMainFilter("discover"));
                 break;
-            case "Group":
-                setPeopleFilter(false);
-                setGroupFilter(true);
-                setTitleFilter(false);
-                dispatch(changeMainFilter("Group"));
-                break;
+          
         }
     }
 
@@ -88,9 +83,11 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
 
             <div id="navbarMenu" className="navbar-menu">
                 <div className="navbar-start">
-                    <div className='navbar-item topnav-cats' style={peopleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "People")}>People</div>
+                    {/* <div className='navbar-item topnav-cats' style={peopleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "People")}>People</div>
                     <div className='navbar-item topnav-cats' style={groupFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
-                    <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Game</div>
+                    <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Game</div> */}
+                    <div className='navbar-item topnav-cats' style={socialFilter ? boldStyle : {}} onClick={(e) => onClick(e, "social")}>Social</div>
+                    <div className='navbar-item topnav-cats' style={discoverFilter ? boldStyle : {}} onClick={(e) => onClick(e, "discover")}>Discover</div>
                 </div>
 
                 <div className="navbar-end">

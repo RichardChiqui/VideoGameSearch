@@ -9,8 +9,6 @@ import Modal from 'react-modal';
 import HomePageMainContent from './HomePageMainContent';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Store';
-import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
-import LeftSidebar from '../FiltersLeftSideComponent/FitlersNavBar';
 
 export default function HomePage(){
     const [buttonClicked, setButtonClicked] = React.useState(false);

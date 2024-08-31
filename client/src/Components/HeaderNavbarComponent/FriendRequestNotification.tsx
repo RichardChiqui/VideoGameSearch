@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import './headerNavBarStyles.css';
+import '../../StylingSheets/headerNavBarStyles.css';
 import FriendRequestComponent from './FriendRequestComponent/FriendRequest';
 import { loadUserFriendRequests } from '../../NetworkCalls/FetchCalls/loadUserFriendRequests';
 import { decrementFriendRequest, incrementNumOfFriends, userLoggedIn } from '../../ReduxStore/UserstateSlice';

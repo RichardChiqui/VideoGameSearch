@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bulma/css/bulma.min.css';
 
+
 const LeftSidebar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
 

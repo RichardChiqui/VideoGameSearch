@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './loginFormStyles.css';
+import '../../StylingSheets/loginFormStyles.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import { userLoggedIn } from '../../ReduxStore/UserstateSlice';

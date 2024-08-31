@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bulma/css/bulma.min.css';
-import '../headerNavBarStyles.css'; // Ensure this includes your new CSS
+import '../../../StylingSheets/headerNavBarStyles.css';
 import GameInput from './VideoGameInput'; // Adjust the path as necessary
 import PlaystyleInput from './PlayStyleInput'; // Adjust the path as necessary
 

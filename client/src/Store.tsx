@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import headerFilterSlice from './ReduxStore/HeaderFilterSlice';
+import headerFilterSlice, { changeDiscoverSubFilter } from './ReduxStore/HeaderFilterSlice';
 import userLoggedInReducer from './ReduxStore/UserstateSlice'
 import NotificationsSlice from './ReduxStore/NotificationsSlice';
 import LoginSlice from './ReduxStore/LoginSlice';
