@@ -17,7 +17,12 @@ const deleteFriendRequest = "DELETE from " + table.FriendRequest + " where fk_re
 
 const insertNewFriend = "INSERT INTO " + table.Friends + "( fk_fromuserid, fk_touserid) VALUES ($1, $2);"
 
-const loadUserFriends = "SELECT u.id,u.username FROM " + table.Friends +" f inner join " + table.Users + " u ON u.id = f.fk_fromuserid where f.fk_touserid = $1"
+const loadUserFriends = "SELECT DISTINCT u.id,u.username FROM " + table.Friends +" f  join " + table.Users +
+                        " u ON u.id = f.fk_fromuserid OR u.id = f.fk_touserid where (f.fk_fromuserid = $1 OR f.fk_touserid = $1) and u.id != $1"
+
+const loadMessages = "SELECT * FROM " + table.Messages + " WHERE fk_fromuserid = $1 and fk_touserid = $2";
+
+const insertNewMessage = "INSERT INTO " + table.Messages + " (fk_fromuserid, fk_touserid, textmessage) VALUES ($1, $2, $3)";
 
 
 
@@ -29,5 +34,7 @@ module.exports = {
     loadUserFriendRequests,
     deleteFriendRequest,
     insertNewFriend,
-    loadUserFriends
+    loadUserFriends,
+    loadMessages,
+    insertNewMessage
 }

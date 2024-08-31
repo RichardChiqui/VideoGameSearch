@@ -23,6 +23,8 @@ router.delete('/deleteFriendRequest', controller.deleteFriendRequest);
 router.post('/create-new-friend', controller.insertNewFriend);
 
 router.post('/loadUserFriends', controller.loadUserFriends);
+router.post('/loadMessages', controller.loadMessages);
+router.post('/insertNewMessage', controller.insertNewMessage);
 
 //router.post('/send-friendrequest'. controller.sendFriendRequest)
 

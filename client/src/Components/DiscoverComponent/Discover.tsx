@@ -4,7 +4,7 @@ import CategoriesNavBar from '../CategoriesComponent/CategoriesNavBar';
 import SearchResults from '../SearchResultsComponent/SearchResults';
 import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
 import '../../StylingSheets/homePageStyles.css';   
-import DiscoverFilters from './DiscoverTab';                                                                        
+import DiscoverFilters from './Discover';                                                                        
 import { useDispatch } from 'react-redux';
 import { changeDiscoverSubFilter } from '../../ReduxStore/HeaderFilterSlice';
 

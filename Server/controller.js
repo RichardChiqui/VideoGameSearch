@@ -1,9 +1,10 @@
+const { Json } = require("sequelize/lib/utils");
 const pool = require("./db");
 const queries = require("./queries");
 
 const validateUser = (req,res) => {
     const {username, password } = req.body
-    console.log("I am in controller ");
+    console.log("Entering 'validateUser' with username:" + username + " and password:" + password);
     pool.query(queries.validateUser, [username,password], (error, results) =>{
         if (error) throw error;
         res.status(200).json(results.rows);
@@ -153,6 +154,44 @@ const loadUserFriends = (req, res) =>{
     });
 }
 
+const insertNewMessage = (req, res) =>{
+    //for only loading first 100 users(or all users which ever is smaller)
+    const {fromUserId, toUserId, message} = req.body
+    console.log( "Entering 'insertNewMessage' with userid:" + fromUserId + " and toUserId:" + toUserId + " and message:" + message);
+    pool.query(queries.insertNewMessage,[fromUserId,toUserId,message], (error, results) => {
+        if (error) {
+            // Handle the error gracefully, e.g., send an error response
+            console.error("Error sending link request:", error);
+            res.status(500).json({ error: "Failed to load users" });
+        } else {
+            // If there are no errors, send the users data in the response
+            const users = results.rows;
+            console.log("all good creating message"  +users);
+            res.status(200).json({ users });
+          
+        }
+    });
+}
+
+const loadMessages = (req, res) =>{
+    //for only loading first 100 users(or all users which ever is smaller)
+    const {fromUserId, toUserId} = req.body
+    console.log( "Entering 'loadUserFriends' with userid:" + fromUserId, toUserId);
+    pool.query(queries.loadMessages,[fromUserId,toUserId], (error, results) => {
+        if (error) {
+            // Handle the error gracefully, e.g., send an error response
+            console.error("Error sending link request:", error);
+            res.status(500).json({ error: "Failed to load users" });
+        } else {
+            // If there are no errors, send the users data in the response
+            const users = results.rows;
+            console.log("all good dleteing friend request from db" + users);
+            res.status(200).json({ users });
+          
+        }
+    });
+}
+
 module.exports ={
     validateUser,
     addUser,
@@ -162,5 +201,7 @@ module.exports ={
     loadUserFriendRequests,
     deleteFriendRequest,
     insertNewFriend,
-    loadUserFriends
+    loadUserFriends,
+    insertNewMessage,
+    loadMessages
 }

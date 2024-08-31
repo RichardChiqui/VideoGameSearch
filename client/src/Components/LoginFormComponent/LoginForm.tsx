@@ -32,15 +32,16 @@ const LoginForm = () => {
         }
     };
 
-    const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
-
+        Logger("entered handleSubmit", LogLevel.Debug);
         try {
             const userData = await loadUser(username, password);
-
+            Logger("User data: " + JSON.stringify(userData), LogLevel.Debug);
+            const userId = userData[0].id;
             dispatch(userLoggedIn({
                 isAuthenticated: true,
-                userId: userData.id,
+                userId: userData[0].id,
                 numberOfCurrentFriendRequests: 0
             }));
             setFoundAccount(true);
@@ -52,38 +53,38 @@ const LoginForm = () => {
 
     return (
         <div className='LoginForm'>
-            <div className='loginForm-container'>
-                <h1 className='login-title'>Login</h1>
-                <form className='login-form'>
-                    <label htmlFor="Username"></label>
-                    <input
-                        type="text"
-                        id="Username"
-                        name="Username"
-                        placeholder="Username"
-                        className='login-input'
-                        value={username}
-                        onChange={handleChange}
-                    />
-                    <label htmlFor="Password"></label>
-                    <input
-                        type="password"
-                        id="Password"
-                        name="Password"
-                        placeholder="Password"
-                        className='login-input'
-                        value={password}
-                        onChange={handleChange}
-                    />
-                </form>
-                <h6 className='forgotpassword-text'>Forgot Password?</h6>
-                {!foundAccount && <div className='error-message'>Username and password combination not found!</div>}
-                <button className='login-btn' onClick={handleSubmit}>Login</button>
-                <h6 className='create-account-text'>
-                    Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong></Link>
-                </h6>
-            </div>
-        </div>
+    <div className='loginForm-container'>
+        <h1 className='login-title'>Login</h1>
+        <form className='login-form' onSubmit={handleSubmit}>
+            <label htmlFor="Username"></label>
+            <input
+                type="text"
+                id="Username"
+                name="Username"
+                placeholder="Username"
+                className='login-input'
+                value={username}
+                onChange={handleChange}
+            />
+            <label htmlFor="Password"></label>
+            <input
+                type="password"
+                id="Password"
+                name="Password"
+                placeholder="Password"
+                className='login-input'
+                value={password}
+                onChange={handleChange}
+            />
+            <h6 className='forgotpassword-text'>Forgot Password?</h6>
+            {!foundAccount && <div className='error-message'>Username and password combination not found!</div>}
+            <button type="submit" className='login-btn'>Login</button>
+        </form>
+        <h6 className='create-account-text'>
+            Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong></Link>
+        </h6>
+    </div>
+</div>
     );
 };
 

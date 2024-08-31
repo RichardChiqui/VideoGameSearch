@@ -48,7 +48,8 @@ const NotificationsIconComponent = () => {
         const fetchUserFriends = async () => {
             try {
                 const userFriendRequestsData = await loadUserFriendRequests(userId);
-                const friendRequestsMap = userFriendRequestsData.FriendRequests.map((fr: FriendRequest) => ({
+                Logger("userfirendrequestsdata: " + JSON.stringify(userFriendRequestsData), LogLevel.Debug);
+                const friendRequestsMap = (userFriendRequestsData.FriendRequests || []).map((fr: FriendRequest) => ({
                     id: fr.id,
                     username: fr.username
                 }));

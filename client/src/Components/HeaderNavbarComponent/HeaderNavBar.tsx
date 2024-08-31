@@ -20,6 +20,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
     const numofNotifcations = useSelector((state: RootState) => state.notifications.value);
     const dispatch = useDispatch();
+    const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
 
     const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
     const boldStyle: React.CSSProperties = {
@@ -86,8 +87,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     {/* <div className='navbar-item topnav-cats' style={peopleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "People")}>People</div>
                     <div className='navbar-item topnav-cats' style={groupFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Group")}>Groups</div>
                     <div className='navbar-item topnav-cats' style={titleFilter ? boldStyle : {}} onClick={(e) => onClick(e, "Title")}>Game</div> */}
-                    <div className='navbar-item topnav-cats' style={socialFilter ? boldStyle : {}} onClick={(e) => onClick(e, "social")}>Social</div>
-                    <div className='navbar-item topnav-cats' style={discoverFilter ? boldStyle : {}} onClick={(e) => onClick(e, "discover")}>Discover</div>
+                     <div className='navbar-item topnav-cats' style={discoverFilter ? boldStyle : {}} onClick={(e) => onClick(e, "discover")}>Discover</div>
+                   {userLoggedIn && <div className='navbar-item topnav-cats' style={socialFilter ? boldStyle : {}} onClick={(e) => onClick(e, "social")}>Social</div>} 
+                   
                 </div>
 
                 <div className="navbar-end">

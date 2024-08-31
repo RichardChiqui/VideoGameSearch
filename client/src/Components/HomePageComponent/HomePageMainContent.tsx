@@ -4,7 +4,11 @@ import CategoriesNavBar from '../CategoriesComponent/CategoriesNavBar';
 import SearchResults from '../SearchResultsComponent/SearchResults';
 import FiltersNavBar from '../FiltersLeftSideComponent/FitlersNavBar';
 import '../../StylingSheets/homePageStyles.css';   
-import DiscoverTab from '../DiscoverComponent/DiscoverTab';                                                                        
+import Discover from '../DiscoverComponent/Discover';                                                                        
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Store';
+import Social from '../SocialComponent/Social';
+import { Logger, LogLevel } from '../../Logger/Logger';
 
 
 interface SignUpForm {
@@ -21,6 +25,8 @@ interface CategoriesNavBarProps {
 
 export default function HomePageMainContent({onButtonClick, buttonClicked }: CategoriesNavBarProps){
 
+    const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
+    const boolean = mainFilter === 'Discover';
     const [peopleFilter, setPeopleFilter] = useState(true);
     const [groupFilter, setGroupFilter] = useState(false);
     const [titleFilter, setTitleFilter] = useState(false);
@@ -48,32 +54,17 @@ export default function HomePageMainContent({onButtonClick, buttonClicked }: Cat
                 break;
         }
     }
-
-    return(
+    return (
         <div className='maincontent'>
-        
-                <FiltersNavBar />
-                <DiscoverTab onButtonClick={onButtonClick} buttonClicked={buttonClicked}/>
-                {/* <div className='discover-filters'>
-                    <div className="tabs is-centered">
-                        <ul>
-                            <li className={peopleFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "People")}>
-                                <a>People</a>
-                            </li>
-                            <li className={groupFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "Group")}>
-                                <a>Groups</a>
-                            </li>
-                            <li className={titleFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "Title")}>
-                                <a>Game</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <SearchResults  onButtonClick={onButtonClick} buttonClicked={buttonClicked}/>
-             */}
-            
+            <FiltersNavBar />
+            {mainFilter === 'Discover' ? (
+                <Discover onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
+            ) : (
+                <Social onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
+            )}
+           
         </div>
-    )
-   
+    );
+    
 
 }

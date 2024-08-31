@@ -45,10 +45,12 @@ const MessageBubble = () => {
         const fetchUserFriends = async () => {
             try {
                 const userFriendData = await loadUserFriends(userId);
-                const friendsMap = userFriendData.friend.map((friend: UserFriend) => ({
+                Logger("userfriends: " + JSON.stringify(userFriendData), LogLevel.Debug);
+                const friendsMap = (userFriendData.users || []).map((friend: UserFriend) => ({
                     id: friend.id,
                     username: friend.username
                 }));
+                
                 setUserFriends(friendsMap);
             } catch (err) {
                 Logger(`Failed to load user ${userId}'s friends: ${err}`, LogLevel.Error);

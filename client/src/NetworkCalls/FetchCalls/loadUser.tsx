@@ -1,7 +1,7 @@
 import {Logger, LogLevel} from '../../Logger/Logger'
 export const loadUser = async (username:string, password:string) => {
     try {
-        const response = await fetch('http://localhost:5000/homepage/loadUsers', {
+        const response = await fetch('http://localhost:5000/homepage/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
