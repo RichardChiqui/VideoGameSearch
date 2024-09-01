@@ -46,7 +46,7 @@ const NotificationsIconComponent = () => {
     // Fetch user friend requests on component mount or when user data changes
     useEffect(() => {
         const fetchUserFriends = async () => {
-            try {
+            try { 
                 const userFriendRequestsData = await loadUserFriendRequests(userId);
                 Logger("userfirendrequestsdata: " + JSON.stringify(userFriendRequestsData), LogLevel.Debug);
                 const friendRequestsMap = (userFriendRequestsData.FriendRequests || []).map((fr: FriendRequest) => ({

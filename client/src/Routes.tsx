@@ -6,7 +6,7 @@ import AccountInfo from './Components/SignUpComponent/AdditionalInfoForm';
 import { useSelector,useDispatch } from 'react-redux';
 import { RootState } from './Store';
 import { io, Socket } from "socket.io-client";
-import { setSocketId,receiveFriendRequest } from './ReduxStore/UserstateSlice';
+import { setSocketId,receiveFriendRequest, receiveMessage, setNewMessage } from './ReduxStore/UserstateSlice';
 import {Logger, LogLevel} from './Logger/Logger'
 
 
@@ -43,6 +43,13 @@ function RouterComponent() {
             socket.on("receive-friend-request", (data) => {
                 Logger("Received friend request:"+ data, LogLevel.Debug);
                 dispatch(receiveFriendRequest(1))
+                // Dispatch an action or update state to handle the friend request
+            });
+
+            socket.on("receive-message", (data) => {
+                Logger("Received message:"+ data, LogLevel.Debug);
+                dispatch(receiveMessage(1))
+                dispatch(setNewMessage(data.message))
                 // Dispatch an action or update state to handle the friend request
             });
         }

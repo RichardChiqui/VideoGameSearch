@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import Social from '../SocialComponent/Social';
 import { Logger, LogLevel } from '../../Logger/Logger';
-
+import Badge from '../HeaderNavbarComponent/PorfileIcon';
 
 interface SignUpForm {
     username: string;
@@ -54,13 +54,17 @@ export default function HomePageMainContent({onButtonClick, buttonClicked }: Cat
                 break;
         }
     }
+    const numofmessages = 1;
     return (
         <div className='maincontent'>
             <FiltersNavBar />
             {mainFilter === 'Discover' ? (
                 <Discover onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
             ) : (
-                <Social onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
+               <>
+                {/* <Badge  count={numofmessages}/> */}
+               <Social onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
+               </> 
             )}
            
         </div>

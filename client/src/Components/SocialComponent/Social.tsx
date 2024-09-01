@@ -11,6 +11,7 @@ import { loadUserFriends } from '../../NetworkCalls/FetchCalls/loadUserFriends';
 import '../../StylingSheets/socialStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import {createNewMessage } from '../../NetworkCalls/createCalls/createNewMessage';
+import {loadUserMessages} from '../../NetworkCalls/FetchCalls/loadUserMessages';
 
 export type SearchResultsItemType = {
   id: number;
@@ -41,13 +42,21 @@ interface UserFriend {
 export default function Social({ onButtonClick, buttonClicked }: SearchResultsProps) {
   const discoverFilter = useSelector((state: RootState) => state.mainfilter.discoverSubFilter);
   const userId = useSelector((state: RootState) => state.user.userId);
+  const isLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
+  const newMessage = useSelector((state: RootState) => state.user.newMessage);
   const dispatch = useDispatch();
   const socket = useSocket();
   const numOfFriends = useSelector((state: RootState) => state.user.numberOfCurrentFriends);
   const [userFriends, setUserFriends] = useState<UserFriend[]>([]);
-
+  const [selectedUser, setSelectedUser] = useState<string>('');
+  const [selectedUserId, setSelectedUserId] = useState<number>(0);
+  const handleUserClick = (username: string, userId:number) => {
+      setSelectedUser(username);
+      setSelectedUserId(userId);
+  };
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
+  const [messagesList, setMessagesList] = React.useState<messageData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
   //const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
@@ -80,25 +89,48 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
     }
   }, [discoverFilter]);
 
+  useEffect(() => {
+ 
+    const fetchMessages = async () => {
+      try {
+        console.log("loading messages for user: " + userId + " and selected user: " + selectedUserId);
+        const allUserMessages = await loadUserMessages(userId, selectedUserId);
+        Logger("allUserMessages: " + JSON.stringify(allUserMessages), LogLevel.Debug);
+        
+        const allUserMessagesMap = allUserMessages.users.map(
+          (user: any) => ({
+            fromUserId: user.fk_fromuserid,  // Corrected key names
+            toUserId: user.fk_touserid,      // Corrected key names
+            message: user.textmessage        // Corrected key names
+          })
+        );
+        
+        Logger("allUserMessagesMap: " + JSON.stringify(allUserMessagesMap), LogLevel.Debug);
+        setMessagesList(allUserMessagesMap);
+        
+      } catch (err) {
+        Logger('Failed to load all users: ' + err, LogLevel.Error);
+      }
+    };
+    
+    fetchMessages();
+    
+  }, [selectedUserId]);
+
+  useEffect(() => {
+    if (newMessage && typeof newMessage === 'object') {
+      // Add the new message to the existing messages list
+      setMessagesList((prevMessages) => [...prevMessages, newMessage]);
+
+      // Optionally, you could dispatch an action to update Redux state
+      //dispatch(updateMessagesList(newMessage));
+    }
+  }, [newMessage, dispatch]);
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
 
 
-  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
-    if(!userLoggedIn){
-      dispatch(displayPopUpMethod(false));
-      dispatch(displayPopUpMethod(true));
-      return;
-    }
- 
-    if(userLoggedIn){
-      Logger('user has been logged in, lets try socketio, what is userid:' + userId + ' and socketid:', LogLevel.Debug);
-     
-    
-      socket?.emit('send-link-request', userId , recevieverId);
-    }
   
-  }
   React.useEffect(() => {
     if (socket) {
         socket.on("offline-reciever", (data) => {
@@ -131,12 +163,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
         });
     }
 }, [socket]);
-const [selectedUser, setSelectedUser] = useState<string>('');
-const [selectedUserId, setSelectedUserId] = useState<number>(0);
-const handleUserClick = (username: string, userId:number) => {
-    setSelectedUser(username);
-    setSelectedUserId(userId);
-};
+
 
 // Fetch user friends when user data changes
 useEffect(() => {
@@ -159,29 +186,51 @@ useEffect(() => {
     fetchUserFriends();
 }, [userLoggedIn, numOfFriends]);
 
+// Ref for scrolling
+// Ref for scrolling
+const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  // Scroll to the bottom when messagesList changes
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [messagesList]);
+
 const [message, setMessage] = useState<string>('');
 
     const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(event.target.value);
     };
-const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault(); // Prevents the default form submission behavior
-  if (message.trim()) {
-      try {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault(); // Prevents the default form submission behavior
+    
+      if (message.trim()) {
+        try {
           // Call your function to handle sending the message
-          const messageData = await createNewMessage(userId,selectedUserId ,message);
+          const messageData = await createNewMessage(userId, selectedUserId, message);
           Logger("Message data: " + JSON.stringify(messageData), LogLevel.Debug);
-          const messageMap = messageData.users.map((message: messageData) => ({
-            fk_recieveruserid: message.fromUserId,
-            username: message.toUserId,
-            message: message.message
-        }));
-          setMessage(message); // Clear the input after sending
-      } catch (err) {
+    
+          // Format the new message to match your messageData structure
+          const newMessage: messageData = {
+            fromUserId: userId,         // Set the sender ID
+            toUserId: selectedUserId,   // Set the receiver ID
+            message: message,           // The text message
+          };
+    
+          // Append the new message to the current list
+          setMessagesList((prevMessages) => [newMessage,...prevMessages ]);
+    
+          // Clear the input after sending
+          setMessage(""); 
+    
+        } catch (err) {
           console.error('Failed to send message:', err);
+        }
       }
-  }
-};
+    };
+    
+    
 const style: CSSProperties = { 
   filter: filterValue,
   marginTop: '30px' // Adjust this value based on your needs
@@ -190,11 +239,13 @@ const messageRef = useRef<HTMLDivElement>(null);
 
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
+
   return (
     <div className="container">
         <div className="social-window" ref={messageRef}>
             <div className="chat-column left">
-                <div className="chat-title">Chats</div>
+                <div className="chat-title">
+                  Chats</div>
                 <div className="user-list">
                     {userFriends.map(user => (
                         <div
@@ -209,13 +260,19 @@ const messageRef = useRef<HTMLDivElement>(null);
             </div>
             <div className="chat-column right">
                 <div className="chat-column-username">{selectedUser}</div>
-                {/* <div className="messages">
-                    {messages.map((message, index) => (
-                        <div key={index} className={`message-bubble ${message.sentByUser ? 'sent' : 'received'}`}>
-                            {message.text}
-                        </div>
-                    ))}
-                </div> */}
+                <div className="messages">
+                  {messagesList.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`message-bubble ${
+                        message.fromUserId == userId ? 'sent' : 'received'
+                      }`}
+                    >
+                      {message.message}
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} /> {/* This is used for scrolling to the bottom */}
+                </div>
                 <form onSubmit={handleSubmit} className="message-input">
                   <input
                       type="text"

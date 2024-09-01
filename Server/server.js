@@ -63,6 +63,30 @@ socketIo.on("connection", socket => {
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
   });
+
+  socket.on("send-message", (senderId, receiverId, message) => {
+    console.log(`Sending message from ${senderId} to ${receiverId}: "${message}"`);
+
+    // Get the receiver's socket ID from the map
+    const receiverSocketId = userSocketMap.get(receiverId);
+
+    if (receiverSocketId) {
+        console.log(`Receiver is connected with socket ID: ${receiverSocketId}`);
+
+        // Send the message to the receiver's socket
+        socketIo.to(receiverSocketId).emit("receive-message", { senderId, receiverId, message });
+    } else {
+        console.log(`Receiver ${receiverId} is not connected`);
+
+        // Notify the sender that the receiver is offline
+        const senderSocketId = userSocketMap.get(senderId);
+        if (senderSocketId) {
+            socketIo.to(senderSocketId).emit("offline-receive-message", { senderId, receiverId, message });
+        }
+    }
+});
+
+
 });
 
 // Start the server

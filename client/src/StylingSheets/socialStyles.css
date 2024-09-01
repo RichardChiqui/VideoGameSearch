@@ -1,8 +1,8 @@
 .social-window {
     display: flex;
     flex-direction: row;
-    width: 100%; /* Adjust width to take up the entire container */
-    height: 70vh; /* Adjust height as needed */
+    width: 100%;
+    height: 70vh;
     background-color: #f9f9f9;
     border-radius: 10px;
     overflow: hidden;
@@ -24,7 +24,7 @@
     width: 70%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* This ensures the message input stays at the bottom */
+    justify-content: flex-end; /* Pushes content to the bottom */
 }
 
 .chat-title {
@@ -57,9 +57,13 @@
 
 .messages {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column-reverse; /* Display messages from bottom to top */
     padding: 10px;
     overflow-y: auto;
+    background-color: white; /* Changed to white for a neutral background */
 }
+
 
 .message-bubble {
     max-width: 70%;
@@ -86,6 +90,5 @@
     align-items: center;
     padding: 10px 0;
     border-top: 1px solid #ccc;
-    margin-top: auto; /* Pushes the element to the bottom */
     background-color: white;
 }
