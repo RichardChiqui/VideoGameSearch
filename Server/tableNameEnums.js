@@ -1,8 +1,8 @@
 const table = {
-    Users: 'public.\"Users\"',
-    FriendRequest: 'public.\"FriendRequests\"',
-    tblGroups: 'public.\"tblGroups\"',
-    Friends: 'public.\"Friends\"',
-    Messages: 'public.\"Messages\"',
+    Users: 'users',
+    FriendRequest: 'friendrequests',
+    tblGroups: 'tblgroups',
+    Friends: 'friends',
+    Messages: 'messages',
   };
   module.exports = { table };

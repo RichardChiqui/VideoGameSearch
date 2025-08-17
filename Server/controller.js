@@ -13,6 +13,7 @@ const validateUser = (req,res) => {
 
 const addUser = (req,res) =>{
     const {username, password, email} = req.body
+    console.log("adding brand new user '" + username + "'");
     pool.query(queries.addUser, [username,password,email], (error, results) =>{
         if (error) throw error;
         res.status(200).json(results.rows);

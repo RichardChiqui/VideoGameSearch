@@ -73,7 +73,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
     if (discoverFilter === MainFiltersEnum.People) {
       const fetchUsers = async () => {
         try {
-          const allUsersData = await loadAllUsers();
+            const allUsersData = await loadAllUsers();
             const allUsersMap = allUsersData.users.map((user: UserData) => ({id: user.id,email: user.email,username: user.username}));
             setPeoplesList(allUsersMap);
             setSuccessFullyLoadedUsers(true);

@@ -10,16 +10,11 @@ import { store } from './Store'; // Import the Redux store
 
 function App() {
   return (
-
     <Provider store={store}> {/* Provide the Redux store to your application */}
       <div className="App">
           <RouterComponent/>
       </div>
     </Provider>
-
-
-      
-     
   );
 }
 

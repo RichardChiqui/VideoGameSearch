@@ -9,6 +9,7 @@ import { userLoggingOut } from '../../ReduxStore/UserstateSlice';
 import CreateGroup from './CreateGroupComponent/CreateGroup';
 import NotificationsIconComponent from './FriendRequestNotification'; // Import the new component
 import ChatIcon from '@mui/icons-material/Chat';
+import { useAppSelectors } from '../../hooks/useAppSelector';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -17,12 +18,11 @@ interface HeaderNavbar {
 }
 
 export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, buttonClicked }: HeaderNavbar) {
-    const mainFilter = useSelector((state: RootState) => state.mainfilter.value);
-    const numofNotifcations = useSelector((state: RootState) => state.notifications.value);
-    const dispatch = useDispatch();
-    const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
-
-    const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
+    const appSelectors = useAppSelectors();
+    const mainFilter = appSelectors.mainFilter;
+    const numofNotifications = appSelectors.numofNotifications;
+    const userLoggedIn = appSelectors.userLoggedIn;
+    const dispatch = appSelectors.dispatch;
     const boldStyle: React.CSSProperties = {
         fontWeight: 'bold'
         
@@ -105,9 +105,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     </div>
                     <div className="navbar-item">
                         <div className="buttons">
-                            {isUserLoggedIn && <CreateGroup />}
-                            {isUserLoggedIn && <NotificationsIconComponent />}
-                            {isUserLoggedIn ? (
+                            {userLoggedIn && <CreateGroup />}
+                            {userLoggedIn && <NotificationsIconComponent />}
+                            {userLoggedIn ? (
                                 <>
                                     <div className="dropdown is-right is-hoverable">
                                         <div className="dropdown-trigger" onClick={() => setDropdownVisible(!dropdownVisible)} style={{ fontSize: '1.5em' }}>
@@ -115,6 +115,9 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                         </div>
                                         <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>
                                             <div className="dropdown-content">
+                                                <a href="#" className="dropdown-item">
+                                                    User {}
+                                                </a>
                                                 <a href="#" className="dropdown-item">
                                                     Profile
                                                 </a>

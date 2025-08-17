@@ -33,12 +33,7 @@ export default function AdditionalInfoForm(){
 
     function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         event.preventDefault();
-
-       
         navigate('/');
-     
-  
-       
     }
 
     function handleFieldUpdates(event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {

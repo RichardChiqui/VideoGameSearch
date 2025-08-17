@@ -60,13 +60,14 @@ export default function SignUpForm(){
 
         console.log("Before submitting, here is email " + emailValue + ", password " + passwordValue + " and username " + usernameValue);
         console.log("and here is booleans for email " + missingEmail + ', password ' + missingPassword + " and usernamew " + missingUsername);
-        navigate('/accountinfo');
+       
         if(missingEmail || missingPassword || missingPassword){
             console.log("not all fields have been filled out");
             setMissingFields(true);
 
         } else{
-           //   sendSubmit();
+             navigate('/accountinfo');
+             sendSubmit();
         }
      
   
@@ -177,11 +178,11 @@ export default function SignUpForm(){
                          {missingFields && missingEmail && <div className='input-error-message'>Please enter a username</div>  }
                     <label htmlFor="Password"></label>
                         <input type="text" id="Password" name="Password"
-                        placeholder="Password" className={style} onChange={handleChange} onBlur={handleConfirmPasswordBlur}></input>
+                        placeholder="Password" className={style} onChange={handleChange} onBlur={handleFieldUpdates}></input>
                          {missingFields && missingEmail && <div className='input-error-message'>Please enter a password</div>  }
                     <label htmlFor="ConfirmPassword"></label>
                         <input type="text" id="ConfirmPassword" name="ConfirmPassword"
-                        placeholder="Confirm Password" className={style} onBlur={handleConfirmPasswordBlur} onChange={handleChange}></input>
+                        placeholder="Confirm Password" className={style} onBlur={handleFieldUpdates} onChange={handleChange}></input>
                         {!passwordMatch && <div className='input-error-message'>Passwords do not match</div>  }
                     <label htmlFor="How would you describe your gaming style?"></label>
                         {/* <input type="text" id="gamingStyle" name="gamingStyle"

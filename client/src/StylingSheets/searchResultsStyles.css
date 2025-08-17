@@ -19,13 +19,14 @@
     transform: scale(1.3); /* Increase size on hover */
     background-color: #0056b3; /* Example background color change */
   }
-  .button.card-footer-item{
+  /* .button.card-footer-item{
     background-color: #F5F5DC;
   }
 
   .card-content{
     background-color: #F5F5DC;
-  }
+  } */
+
   .button-container{
     width: 100%;
     background-color: lightblue;
