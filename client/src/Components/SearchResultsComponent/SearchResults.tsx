@@ -13,7 +13,7 @@ import LinkRequestModal from './LinkRequestModal';
 
 import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
-import { loadLinkRequests } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
+import { loadLinkRequests, loadLinkRequestsByGame } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
 import { deleteLinkRequest } from '../../NetworkCalls/deleteCalls/deleteLinkRequest';
 import { LinkRequest, SkillLevel } from '../../models/LinkRequest';
 import { ChatHistoryRecepient } from '../../models/ChatHistoryRecepient';
@@ -36,9 +36,10 @@ interface UserData {
 interface SearchResultsProps {
   onButtonClick: () => void;
   buttonClicked: boolean;
+  searchFilters?: any;
 }
 
-export default function SearchResults({ onButtonClick, buttonClicked }: SearchResultsProps) {
+export default function SearchResults({ onButtonClick, buttonClicked, searchFilters }: SearchResultsProps) {
   const discoverFilter = useSelector((state: RootState) => state.mainfilter.discoverSubFilter);
   const userId = useSelector((state: RootState) => state.user.userId);
   const user = useSelector((state: RootState) => state.user);
@@ -80,7 +81,17 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
    // if (discoverFilter === MainFiltersEnum.People) {
       const fetchUsers = async () => {
         try {
-          const linkRequestsData = await loadLinkRequests();
+          let linkRequestsData;
+          
+          // If search filters are provided and contain a game, filter by game
+          if (searchFilters && searchFilters.game) {
+            Logger(`Filtering link requests by game: ${searchFilters.game}`, LogLevel.Info);
+            linkRequestsData = await loadLinkRequestsByGame(searchFilters.game);
+          } else {
+            // Load all link requests if no game filter
+            linkRequestsData = await loadLinkRequests();
+          }
+          
           const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
             id: req.id,
             user_id: req.user_id,
@@ -97,7 +108,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
         }
       };
       fetchUsers();
-  }, []); // Remove userLoggedIn and userId dependencies to load regardless of auth status
+  }, [searchFilters]); // Add searchFilters as dependency
 
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
@@ -203,7 +214,17 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     // Refresh the link requests list to show the new request
     const fetchUsers = async () => {
       try {
-        const linkRequestsData = await loadLinkRequests();
+        let linkRequestsData;
+        
+        // If search filters are provided and contain a game, filter by game
+        if (searchFilters && searchFilters.game) {
+          Logger(`Refreshing link requests by game: ${searchFilters.game}`, LogLevel.Info);
+          linkRequestsData = await loadLinkRequestsByGame(searchFilters.game);
+        } else {
+          // Load all link requests if no game filter
+          linkRequestsData = await loadLinkRequests();
+        }
+        
         const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
           id: req.id,
           user_id: req.user_id,
@@ -267,6 +288,38 @@ const style: CSSProperties = {
 
   return (
     <>
+      {/* Show active filter info */}
+      {searchFilters && searchFilters.game && (
+        <div className="active-filter-info" style={{
+          padding: '10px 15px',
+          backgroundColor: '#e8f4f8',
+          border: '1px solid #6B73FF',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          margin: '0 20px 20px 20px'
+        }}>
+          <i className="fas fa-filter" style={{ color: '#6B73FF' }}></i>
+          <span style={{ color: '#2c3e50', fontWeight: '500' }}>
+            Showing link requests for: <strong>{searchFilters.game}</strong>
+          </span>
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#6B73FF',
+              cursor: 'pointer',
+              fontSize: '14px',
+              textDecoration: 'underline'
+            }}
+          >
+            Clear filter
+          </button>
+        </div>
+      )}
 
     <div className="container" style={style}>
       {/* Create Link Request Button */}

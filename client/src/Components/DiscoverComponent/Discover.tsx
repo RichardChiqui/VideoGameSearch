@@ -7,6 +7,8 @@ import '../../StylingSheets/homePageStyles.css';
 import DiscoverFilters from './Discover';                                                                        
 import { useDispatch } from 'react-redux';
 import { changeDiscoverSubFilter } from '../../ReduxStore/HeaderFilterSlice';
+import HybridSearchBar from '../SearchComponent/HybridSearchBar';
+import { Logger, LogLevel } from '../../Logger/Logger';
 
 
 interface SignUpForm {
@@ -26,10 +28,27 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
     const [peopleFilter, setPeopleFilter] = useState(true);
     const [groupFilter, setGroupFilter] = useState(false);
     const [titleFilter, setTitleFilter] = useState(false);
+    const [searchFilters, setSearchFilters] = useState<any>(null);
     const dispatch = useDispatch();
     const boldStyle: React.CSSProperties = {
         fontWeight: 'bold'
         
+    };
+
+    const handleSearch = (query: string, filters: any) => {
+        Logger(`Discover search - Query: "${query}"`, LogLevel.Info);
+        Logger(`Discover search - Filters:`, LogLevel.Debug);
+        Logger(`  Game: ${filters.game}`, LogLevel.Debug);
+        Logger(`  Skill Level: ${filters.skillLevel}`, LogLevel.Debug);
+        Logger(`  Tags: ${filters.tags.join(', ')}`, LogLevel.Debug);
+        
+        // Store the search filters to pass to SearchResults
+        setSearchFilters(filters);
+    };
+
+    const clearFilters = () => {
+        setSearchFilters(null);
+        Logger('Cleared all search filters', LogLevel.Info);
     };
 
     function onClick(event: React.MouseEvent<HTMLLIElement, MouseEvent>, filterType: string) {
@@ -57,6 +76,15 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
 
     return(
        <div className='container'>
+         {/* Hybrid Search Bar */}
+         <div style={{ marginBottom: '30px' }}>
+            <HybridSearchBar 
+                onSearch={handleSearch}
+                placeholder="Search by game name (e.g., Overwatch, Fortnite)..."
+                onClearFilters={clearFilters}
+            />
+         </div>
+         
          <div className='discover-filters'>
                     <div className="tabs is-centered">
                         <ul>
@@ -72,7 +100,11 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
                         </ul>
                     </div>
                 </div>
-                <SearchResults  onButtonClick={onButtonClick} buttonClicked={buttonClicked}/>
+                <SearchResults  
+                    onButtonClick={onButtonClick} 
+                    buttonClicked={buttonClicked}
+                    searchFilters={searchFilters}
+                />
        </div>
     )
    

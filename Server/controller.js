@@ -1,6 +1,9 @@
 const { Json } = require("sequelize/lib/utils");
 const pool = require("./db");
 const queries = require("./queries");
+const jwt = require('jsonwebtoken');
+const { authenticateToken, JWT_SECRET } = require('./Authentication/auth.js');
+
 
 // NEW: Returns user object or null (does NOT send response)
 const validateUser = (req, res, callback) => {
@@ -25,27 +28,51 @@ const validateUser = (req, res, callback) => {
 };
 
 const addUser = (req, res) => {
-    const { email, password, display_name } = req.body;
-    console.log("Adding brand new user with email: '" + email + "'");
-    
+    const { email, password, username } = req.body;
+    console.log("Adding brand new user with email:", email);
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         return res.status(400).json({ error: "Invalid email format" });
     }
-    
-    pool.query(queries.addUser, [email, password, display_name || email], (error, results) => {
+
+    pool.query(queries.addUser, [username, password, email], (error, results) => {
         if (error) {
             console.error("Add user error:", error);
-            // Check for duplicate email
+
             if (error.code === '23505') { // PostgreSQL unique violation
                 return res.status(409).json({ error: "Email already exists" });
             }
             return res.status(500).json({ error: "Failed to add user" });
         }
-        res.status(200).json({ 
+
+        const newUser = results.rows[0];
+        
+        // Generate JWT token for the new user
+        const token = jwt.sign(
+            { userId: newUser.id, email: newUser.email, display_name: newUser.display_name },
+            JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        // Set HTTP-only cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/'
+        });
+
+        // Respond with the user data
+        res.status(201).json({
             success: true,
-            user: results.rows[0] 
+            user: {
+                userId: newUser.id,
+                email: newUser.email,
+                display_name: newUser.display_name || newUser.email
+            }
         });
     });
 };

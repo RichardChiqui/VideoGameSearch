@@ -13,6 +13,7 @@ import { useAppSelectors } from '../../hooks/useAppSelector';
 import authService from '../../services/AuthService';
 import FeedbackModal from './FeedbackModal';
 import Logo from '../../images/Logo.png';
+import HybridSearchBar from '../SearchComponent/HybridSearchBar';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -71,6 +72,32 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
         dispatch(userLoggingOut());
         authService.logout();
     }
+
+    const handleSearch = (query: string, filters: any) => {
+        console.log('Search query:', query);
+        console.log('Search filters:', filters);
+        
+        // Log the search details for debugging
+        if (query.trim()) {
+            console.log(`Searching for: "${query}"`);
+        }
+        
+        if (filters.game) {
+            console.log(`Game filter: ${filters.game}`);
+        }
+        
+        if (filters.skillLevel) {
+            console.log(`Skill level filter: ${filters.skillLevel}`);
+        }
+        
+        if (filters.tags.length > 0) {
+            console.log(`Tags filter: ${filters.tags.join(', ')}`);
+        }
+        
+        // TODO: Implement actual search functionality
+        // This could dispatch a Redux action to update search results
+        // or navigate to a search results page
+    };
 
     // Handle clicks outside dropdown to close it
     useEffect(() => {
@@ -138,16 +165,12 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                 </span>
                             </div>
                         )}
-                        <div className="navbar-item">
-                            <div className="field">
-                                <div className="control has-icons-left">
-                                    <input className="input" type="text" placeholder="Search" />
-                                    <span className="icon is-left">
-                                        <i className="fas fa-search"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        {/* <div className="navbar-item">
+                            <HybridSearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search players, games, or keywords..."
+                            />
+                        </div> */}
                         <div className="navbar-item">
                             <div className="buttons">
                                 {/* {userLoggedIn && <CreateGroup />} */}

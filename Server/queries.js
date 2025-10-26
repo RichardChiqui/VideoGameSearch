@@ -1,7 +1,11 @@
 const { table } = require('./tableNameEnums');
 const validateUser = "SELECT * FROM users WHERE email = $1 and password = $2";
 
-const addUser = "INSERT INTO users (display_name, password, email) VALUES ($1, $2, $3)";
+const addUser = `
+  INSERT INTO users (display_name, password, email)
+  VALUES ($1, $2, $3)
+  RETURNING *;
+`;
 
 const loadUsers = "SELECT * FROM " + table.Users;
 

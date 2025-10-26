@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import '../../StylingSheets/signupStyles.css';
 import { send } from 'process';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAuthenticated, setUserData } from '../../ReduxStore/UserstateSlice';
+import authService from '../../services/AuthService';
+import { Logger, LogLevel } from '../../Logger/Logger';
 
 
 interface SignUpForm {
@@ -21,6 +25,8 @@ export default function SignUpForm(){
     const [confirmPassword, setConfirmPassword] = React.useState({confirmPassword: ""})
     const [email, setEmail] = React.useState({email: ""})
     const [responseData, setResponseData] = React.useState<any>(null); // State variable to store response data
+    const [isLoading, setIsLoading] = React.useState(false); // Loading state
+    const [errorMessage, setErrorMessage] = React.useState<string>(""); // Error message state
 
     const [missingEmail, setMissingEmail] = React.useState(true);
     const [missingPassword, setMissingPassword] = React.useState(true);
@@ -32,10 +38,17 @@ export default function SignUpForm(){
     const { confirmPassword: confirmPasswordValue } = confirmPassword;
     const { email: emailValue } = email;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
   
       
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
+        
+        // Clear error message when user starts typing
+        if (errorMessage) {
+            setErrorMessage("");
+        }
+        
         switch (name) {
             case "Username":
                 setUserName({ username: value });
@@ -111,6 +124,9 @@ export default function SignUpForm(){
     const missingFieldStyles = missingFields? 'createaccount-inputs':'errorInput';
 
     function sendSubmit(){
+        // Clear any previous error messages
+        setErrorMessage("");
+        setIsLoading(true);
 
         const postData: SignUpForm = {
             username:usernameValue,
@@ -123,30 +139,48 @@ export default function SignUpForm(){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(postData)
+            body: JSON.stringify(postData),
+            credentials: 'include' // Important for JWT cookie
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to submit data');
+                // Try to get error message from response
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || errorData.message || 'Failed to create account');
+                });
             }
-          
             return response.json();
         })
         .then(data => {
-            setResponseData(data);
+            console.log("response data", data);
+            setIsLoading(false);
           
-            if(data.length <= 0){
-                console.log("No data received from the server");
-            } else{
-                const { id,username, password } = data[0]; // Use the updated data object from the response
-                console.log("response data " + username + " and test " + password + " and database id " + id);
-                //success, now lets send to create account details
+            if (data.success && data.user) {
+                // Store user data in auth service (JWT token is already in HTTP-only cookie)
+                authService.setAuthData('', data.user);
+                
+                // Update Redux state to authenticate user
+                dispatch(setUserData({
+                    userId: data.user.userId,
+                    username: data.user.email, // Use email as username for now
+                    userEmail: data.user.email,
+                    display_name: data.user.display_name
+                }));
+                dispatch(setAuthenticated(true));
+                
+                Logger(`User ${data.user.email} account created and logged in successfully`, LogLevel.Info);
+                
+                // Navigate to home page
                 navigate('/');
+            } else {
+                setErrorMessage("Account created but failed to authenticate. Please try logging in.");
             }
-            
         })
         .catch(error => {
             console.error('Error submitting data:', error);
+            setIsLoading(false);
+            // Display user-friendly error message
+            setErrorMessage(error.message || 'An unexpected error occurred. Please try again.');
         });
     }
 
@@ -157,6 +191,23 @@ export default function SignUpForm(){
 
                 <form className='signup-form'>
                     <h1 className='createaccount-text'>Create Account</h1>
+                    
+                    {/* Error Message Display */}
+                    {errorMessage && (
+                        <div className='error-message' style={{
+                            backgroundColor: '#ffebee',
+                            color: '#c62828',
+                            padding: '12px',
+                            borderRadius: '4px',
+                            marginBottom: '16px',
+                            border: '1px solid #ffcdd2',
+                            fontSize: '14px',
+                            textAlign: 'center'
+                        }}>
+                            {errorMessage}
+                        </div>
+                    )}
+                    
                     <label htmlFor="Email"></label>
                         <input type="text" id="Email" name="Email"
                         placeholder="Email" className={missingEmail && missingFields?'errorInput':'createaccount-inputs'} onChange={handleChange} onBlur={handleFieldUpdates}></input>
@@ -177,7 +228,17 @@ export default function SignUpForm(){
                     <label htmlFor="How would you describe your gaming style?"></label>
                         {/* <input type="text" id="gamingStyle" name="gamingStyle"
                         placeholder="How would you describe your gaming style?" className='createaccount-inputs' onChange={handleChange}></input> */}
-                    <button className='create-account-btn' onClick={handleSubmit}>Create Account</button>
+                    <button 
+                        className='create-account-btn' 
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                        style={{
+                            opacity: isLoading ? 0.7 : 1,
+                            cursor: isLoading ? 'not-allowed' : 'pointer'
+                        }}
+                    >
+                        {isLoading ? 'Creating Account...' : 'Create Account'}
+                    </button>
                     {/* <h6 className='create-account-text'>Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong> </Link></h6>
               */}
 
