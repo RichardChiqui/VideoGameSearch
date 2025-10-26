@@ -4,6 +4,9 @@ import { act } from "react-dom/test-utils";
 interface UserState {
   isAuthenticated: boolean;
   userId: number;
+  username: string;
+  userEmail: string;
+  userName: string;
   numberOfCurrentFriendRequests: number;
   numberOfCurrentFriends:number;
   socketId: string | null; // Add socketId field
@@ -14,6 +17,9 @@ interface UserState {
 const initialState: UserState = {
   isAuthenticated: false,
   userId: 0,
+  username: '',
+  userEmail: '',
+  userName: '',
   numberOfCurrentFriendRequests: 0,
   socketId: null, // Initialize socketId as null
   numberOfCurrentFriends: 0,
@@ -25,10 +31,47 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    userLoggedIn: (state, action: PayloadAction<{ isAuthenticated: boolean; userId: number; numberOfCurrentFriendRequests: number }>) => {
+    // Authentication actions
+    setAuthenticated: (state, action: PayloadAction<boolean>) => {
+      state.isAuthenticated = action.payload;
+    },
+    setUserData: (state, action: PayloadAction<{ userId: number; username: string; userEmail: string; userName: string }>) => {
+      state.userId = action.payload.userId;
+      state.username = action.payload.username;
+      state.userEmail = action.payload.userEmail;
+      state.userName = action.payload.userName;
+    },
+    // Legacy action for backward compatibility (can be removed later)
+    userLoggedIn: (state, action: PayloadAction<{ isAuthenticated: boolean; userId: number; username: string; numberOfCurrentFriendRequests: number }>) => {
       state.isAuthenticated = action.payload.isAuthenticated;
       state.userId = action.payload.userId;
+      state.username = action.payload.username;
       state.numberOfCurrentFriendRequests = action.payload.numberOfCurrentFriendRequests;
+    },
+    setUserId: (state, action: PayloadAction<number>) => {
+      state.userId = action.payload;
+    },
+    setUserEmail: (state, action: PayloadAction<string>) => {
+      state.userEmail = action.payload;
+    },
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.userName = action.payload;
+    },
+    userLoggedOut: (state) => {
+      state.isAuthenticated = false;
+      state.userId = 0;
+      state.username = '';
+      state.userEmail = '';
+      state.userName = '';
+      state.numberOfCurrentFriendRequests = 0;
+      state.numberOfCurrentFriends = 0;
+      state.numOfMessages = 0;
+      state.newMessage = '';
+      state.socketId = null;
+    },
+    // Friend request actions
+    setFriendRequestCount: (state, action: PayloadAction<number>) => {
+      state.numberOfCurrentFriendRequests = action.payload;
     },
     receiveFriendRequest: (state, action: PayloadAction<number>) => {
       state.numberOfCurrentFriendRequests += action.payload;
@@ -48,6 +91,8 @@ const userSlice = createSlice({
     },
     userLoggingOut : (state) =>{
       state.isAuthenticated = false;
+      state.username = '';
+      state.userId = 0;
     },
     setCurrentNumberOfFriends :(state,action: PayloadAction<number>) =>{
       state.numberOfCurrentFriends = action.payload;
@@ -61,5 +106,25 @@ const userSlice = createSlice({
   },
 });
 
-export const { userLoggedIn, receiveFriendRequest,receiveMessage,setNewMessage, setSocketId, userLoggingOut,decrementFriendRequest,setCurrentNumberOfFriends,decrementNumOfFriends,incrementNumOfFriends } = userSlice.actions;
+export const { 
+  // New focused actions
+  setAuthenticated, 
+  setUserData, 
+  setFriendRequestCount,
+  // Legacy actions (for backward compatibility)
+  userLoggedIn, 
+  userLoggedOut, 
+  setUserId, 
+  setUserEmail, 
+  setUserName, 
+  receiveFriendRequest,
+  receiveMessage,
+  setNewMessage, 
+  setSocketId, 
+  userLoggingOut,
+  decrementFriendRequest,
+  setCurrentNumberOfFriends,
+  decrementNumOfFriends,
+  incrementNumOfFriends 
+} = userSlice.actions;
 export default userSlice.reducer;

@@ -2,198 +2,213 @@ const { Json } = require("sequelize/lib/utils");
 const pool = require("./db");
 const queries = require("./queries");
 
-const validateUser = (req,res) => {
-    const {username, password } = req.body
-    console.log("Entering 'validateUser' with username:" + username + " and password:" + password);
-    pool.query(queries.validateUser, [username,password], (error, results) =>{
-        if (error) throw error;
-        res.status(200).json(results.rows);
-    })
-}
+// NEW: Only for JWT authentication - returns user object or null
+const validateUser = (req, res) => {
+    const { email, password } = req.body;
+    console.log("Entering 'validateUser' with username:" + email);
+    
+    pool.query(queries.validateUser, [email, password], (error, results) => {
+        if (error) {
+            console.error("Validation error:", error);
+            return res.status(500).json({ error: "Validation failed" });
+        }
+        
+        if (results.rows.length > 0) {
+            // Return user object for JWT creation in routes.js
+            const user = results.rows[0];
+            return res.status(200).json({
+                success: true,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email
+                }
+            });
+        } else {
+            return res.status(401).json({ 
+                success: false,
+                error: "Invalid credentials" 
+            });
+        }
+    });
+};
 
-const addUser = (req,res) =>{
-    const {username, password, email} = req.body
-    console.log("adding brand new user '" + username + "'");
-    pool.query(queries.addUser, [username,password,email], (error, results) =>{
-        if (error) throw error;
-        res.status(200).json(results.rows);
-    })
-}
+const addUser = (req, res) => {
+    const { username, password, email } = req.body;
+    console.log("Adding brand new user '" + username + "'");
+    
+    pool.query(queries.addUser, [username, password, email], (error, results) => {
+        if (error) {
+            console.error("Add user error:", error);
+            return res.status(500).json({ error: "Failed to add user" });
+        }
+        res.status(200).json({ 
+            success: true,
+            user: results.rows[0] 
+        });
+    });
+};
 
-const createNewGroup = (req,res) =>{
+const createNewGroup = (req, res) => {
     console.log("Creating new group");
-    const {username, password, email} = req.body
-    pool.query(queries.createNewGrouyp, [username,password,email], (error, results) =>{
-        if (error) throw error;
+    const { username, password, email } = req.body;
+    
+    pool.query(queries.createNewGrouyp, [username, password, email], (error, results) => {
+        if (error) {
+            console.error("Create group error:", error);
+            return res.status(500).json({ error: "Failed to create group" });
+        }
         res.status(200).json(results.rows);
-    })
-}
+    });
+};
 
-const loadUsers = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    console.log("making sure we made it into here");
+const loadUsers = (req, res) => {
+    // Authenticated user available in req.user
+    console.log("Loading users. Authenticated user:", req.user.userId);
+    
     pool.query(queries.loadUsers, (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
             console.error("Error loading users:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            res.status(200).json({ users });
+            return res.status(500).json({ error: "Failed to load users" });
         }
+        res.status(200).json({ users: results.rows });
     });
+};
 
-}
-
-
-
-const sendFriendRequest = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-  
-    const {senderId, receiverId} = req.body
-    console.log("Entering 'sendFriendRequest'" + " for sender " + senderId + " and recevierid " + receiverId);
-    pool.query(queries.sendFriendRequest,[senderId,receiverId], (error, results) => {
+const sendFriendRequest = (req, res) => {
+    const { senderId, receiverId } = req.body;
+    console.log("Entering 'sendFriendRequest' for sender " + senderId + " and receiverId " + receiverId);
+    
+    // Security: Verify senderId matches authenticated user
+    if (req.user.userId !== senderId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot send request on behalf of another user" });
+    }
+    
+    pool.query(queries.sendFriendRequest, [senderId, receiverId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            res.status(200).json({ users });
-            console.log("all good");
+            console.error("Error sending friend request:", error);
+            return res.status(500).json({ error: "Failed to send friend request" });
         }
+        res.status(200).json({ 
+            success: true,
+            data: results.rows 
+        });
     });
+};
 
-}
-
-const loadUserFriendRequests = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    console.log("Attemptiong to load fr" + req.body);
-    const {receiverId} = req.body
-    console.log( " and correct reciever, we only want receiveer:" + receiverId);
-    pool.query(queries.loadUserFriendRequests,[receiverId], (error, results) => {
+const loadUserFriendRequests = (req, res) => {
+    const { receiverId } = req.body;
+    console.log("Loading friend requests for receiver:" + receiverId);
+    
+    // Security: Verify receiverId matches authenticated user
+    if (req.user.userId !== receiverId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot view another user's friend requests" });
+    }
+    
+    pool.query(queries.loadUserFriendRequests, [receiverId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good " + users);
-            res.status(200).json({ users });
-          
+            console.error("Error loading friend requests:", error);
+            return res.status(500).json({ error: "Failed to load friend requests" });
         }
+        res.status(200).json({ users: results.rows });
     });
+};
 
-}
-// const addUser = (req,res) =>{
-//     const {username, password, email} = req.body
-//     pool.query(queries.addUser, [username,password,email], (error, results) =>{
-//         if (error) throw error;
-//         res.status(200).json(results.rows);
-//     })
-// }
-
-const deleteFriendRequest = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    console.log("making sure we made it into here for deleting fr" + req.body);
-    const { userId} = req.body
-    console.log( " and correct reciever, we only want receiveer:" + userId);
-    pool.query(queries.deleteFriendRequest,[userId], (error, results) => {
+const deleteFriendRequest = (req, res) => {
+    const { userId } = req.body;
+    console.log("Deleting friend request for userId:" + userId);
+    
+    pool.query(queries.deleteFriendRequest, [userId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good creating friend  from db" + users);
-            res.status(200).json({ users });
-          
+            console.error("Error deleting friend request:", error);
+            return res.status(500).json({ error: "Failed to delete friend request" });
         }
+        res.status(200).json({ 
+            success: true,
+            data: results.rows 
+        });
     });
-}
+};
 
-const insertNewFriend = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    console.log("Attemptiong to create new friend" + req.body);
-    const {fromUserId,toUserId} = req.body
-    console.log("fromuserid" + fromUserId + " and correct reciever, we only want receiveer:" + toUserId);
-    pool.query(queries.insertNewFriend,[fromUserId,toUserId], (error, results) => {
+const insertNewFriend = (req, res) => {
+    const { fromUserId, toUserId } = req.body;
+    console.log("Creating new friendship fromUserId:" + fromUserId + " toUserId:" + toUserId);
+    
+    // Security: Verify fromUserId matches authenticated user
+    if (req.user.userId !== fromUserId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot create friendship on behalf of another user" });
+    }
+    
+    pool.query(queries.insertNewFriend, [fromUserId, toUserId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good dleteing friend request from db" + users);
-            res.status(200).json({ users });
-          
+            console.error("Error creating friend:", error);
+            return res.status(500).json({ error: "Failed to create friend" });
         }
+        res.status(200).json({ 
+            success: true,
+            data: results.rows 
+        });
     });
-}
+};
 
-const loadUserFriends = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    const {userId} = req.body
-    console.log( "Entering 'loadUserFriends' with userid:" + userId);
-    pool.query(queries.loadUserFriends,[userId], (error, results) => {
+const loadUserFriends = (req, res) => {
+    const { userId } = req.body;
+    console.log("Loading friends for userId:" + userId);
+    
+    // Security: Verify userId matches authenticated user
+    if (req.user.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot view another user's friends" });
+    }
+    
+    pool.query(queries.loadUserFriends, [userId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good dleteing friend request from db" + users);
-            res.status(200).json({ users });
-          
+            console.error("Error loading friends:", error);
+            return res.status(500).json({ error: "Failed to load friends" });
         }
+        res.status(200).json({ users: results.rows });
     });
-}
+};
 
-const insertNewMessage = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    const {fromUserId, toUserId, message} = req.body
-    console.log( "Entering 'insertNewMessage' with userid:" + fromUserId + " and toUserId:" + toUserId + " and message:" + message);
-    pool.query(queries.insertNewMessage,[fromUserId,toUserId,message], (error, results) => {
+const insertNewMessage = (req, res) => {
+    const { fromUserId, toUserId, message } = req.body;
+    console.log("Inserting message from:" + fromUserId + " to:" + toUserId);
+    
+    // Security: Verify fromUserId matches authenticated user
+    if (req.user.userId !== fromUserId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot send message on behalf of another user" });
+    }
+    
+    pool.query(queries.insertNewMessage, [fromUserId, toUserId, message], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good creating message"  +users);
-            res.status(200).json({ users });
-          
+            console.error("Error inserting message:", error);
+            return res.status(500).json({ error: "Failed to send message" });
         }
+        res.status(200).json({ 
+            success: true,
+            data: results.rows 
+        });
     });
-}
+};
 
-const loadMessages = (req, res) =>{
-    //for only loading first 100 users(or all users which ever is smaller)
-    const {fromUserId, toUserId} = req.body
-    console.log( "Entering 'loadUserFriends' with userid:" + fromUserId, toUserId);
-    pool.query(queries.loadMessages,[fromUserId,toUserId], (error, results) => {
+const loadMessages = (req, res) => {
+    const { fromUserId, toUserId } = req.body;
+    console.log("Loading messages between:" + fromUserId + " and " + toUserId);
+    
+    // Security: Verify user is part of the conversation
+    if (req.user.userId !== fromUserId && req.user.userId !== toUserId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot view messages from this conversation" });
+    }
+    
+    pool.query(queries.loadMessages, [fromUserId, toUserId], (error, results) => {
         if (error) {
-            // Handle the error gracefully, e.g., send an error response
-            console.error("Error sending link request:", error);
-            res.status(500).json({ error: "Failed to load users" });
-        } else {
-            // If there are no errors, send the users data in the response
-            const users = results.rows;
-            console.log("all good dleteing friend request from db" + users);
-            res.status(200).json({ users });
-          
+            console.error("Error loading messages:", error);
+            return res.status(500).json({ error: "Failed to load messages" });
         }
+        res.status(200).json({ users: results.rows });
     });
-}
+};
 
-module.exports ={
+module.exports = {
     validateUser,
     addUser,
     loadUsers,
@@ -205,4 +220,4 @@ module.exports ={
     loadUserFriends,
     insertNewMessage,
     loadMessages
-}
+};

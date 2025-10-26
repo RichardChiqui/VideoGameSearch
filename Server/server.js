@@ -1,17 +1,20 @@
-
+require('dotenv').config(); // Add this FIRST LINE
 const express = require('express');
 const routes = require('./routes');
 const controller = require('./controller');
 const cors = require('cors');
 const http = require('http');
-
-
-// Your code...
-
+const cookieParser = require('cookie-parser');
 
 const app = express();
-app.use(cors());
+
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:3000', // Your React app URL
+  credentials: true // IMPORTANT: Allow cookies
+}));
 app.use(express.json());
+app.use(cookieParser()); // Add cookie parser
 
 app.get('/api', (req, res) => {
   res.json({ "users": ["userone", "usertwo"] });
@@ -25,7 +28,8 @@ const server = http.createServer(app);
 // Initialize Socket.IO on the same server
 const socketIo = require('socket.io')(server, {
   cors: {
-    origin: ["http://localhost:3000"], // Change to the origin you're allowing
+    origin: ["http://localhost:3000"],
+    credentials: true // Allow cookies in Socket.IO
   },
 });
 
@@ -34,59 +38,56 @@ const userSocketMap = new Map();
 
 // Handle Socket.IO connections
 socketIo.on("connection", socket => {
-  console.log(socket.id);
+  console.log('New socket connection:', socket.id);
 
   socket.on("user-connected", (userId, socketId) => {
     console.log(`User ${userId} connected with socket ${socket.id}`);
-    // Add user ID and socket ID to the map when a user connects
     userSocketMap.set(userId, socketId);
-});
-
-  socket.on("send-link-request", (senderId, recevieverId) => {
-    console.log("Received sender from:", senderId + " and recevier:" + recevieverId + " can I print map:" + userSocketMap);
-    // Get the receiver's socket ID from the map
-    const receiverSocketId = userSocketMap.get(recevieverId);
-    if (receiverSocketId) {
-      console.log("making sure this was hit:" + receiverSocketId);
-        // Send the friend request to the receiver's socket
-        socketIo.to(receiverSocketId).emit("receive-friend-request", { senderId, recevieverId });
-    } else {
-        console.log(`Receiver ${recevieverId} is not connected`);
-        const senderIdSocketId = userSocketMap.get(senderId);
-        socketIo.to(senderIdSocketId).emit("offline-reciever", { senderId, recevieverId });
-      
-    }
-    // You can process the data and emit an event back if needed
-    // socket.emit("response-event", { some: "data" });
   });
 
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected:", socket.id);
+  socket.on("send-link-request", (senderId, receiverId) => {
+    console.log("Received sender from:", senderId + " and receiver:" + receiverId);
+    const receiverSocketId = userSocketMap.get(receiverId);
+    
+    if (receiverSocketId) {
+      console.log("Sending friend request to:", receiverSocketId);
+      socketIo.to(receiverSocketId).emit("receive-friend-request", { senderId, receiverId });
+    } else {
+      console.log(`Receiver ${receiverId} is not connected`);
+      const senderSocketId = userSocketMap.get(senderId);
+      if (senderSocketId) {
+        socketIo.to(senderSocketId).emit("offline-receiver", { senderId, receiverId });
+      }
+    }
   });
 
   socket.on("send-message", (senderId, receiverId, message) => {
     console.log(`Sending message from ${senderId} to ${receiverId}: "${message}"`);
-
-    // Get the receiver's socket ID from the map
     const receiverSocketId = userSocketMap.get(receiverId);
 
     if (receiverSocketId) {
-        console.log(`Receiver is connected with socket ID: ${receiverSocketId}`);
-
-        // Send the message to the receiver's socket
-        socketIo.to(receiverSocketId).emit("receive-message", { senderId, receiverId, message });
+      console.log(`Receiver is connected with socket ID: ${receiverSocketId}`);
+      socketIo.to(receiverSocketId).emit("receive-message", { senderId, receiverId, message });
     } else {
-        console.log(`Receiver ${receiverId} is not connected`);
-
-        // Notify the sender that the receiver is offline
-        const senderSocketId = userSocketMap.get(senderId);
-        if (senderSocketId) {
-            socketIo.to(senderSocketId).emit("offline-receive-message", { senderId, receiverId, message });
-        }
+      console.log(`Receiver ${receiverId} is not connected`);
+      const senderSocketId = userSocketMap.get(senderId);
+      if (senderSocketId) {
+        socketIo.to(senderSocketId).emit("offline-receive-message", { senderId, receiverId, message });
+      }
     }
-});
+  });
 
-
+  socket.on("disconnect", () => {
+    console.log("Socket disconnected:", socket.id);
+    // Remove user from map on disconnect
+    for (let [userId, socketId] of userSocketMap.entries()) {
+      if (socketId === socket.id) {
+        userSocketMap.delete(userId);
+        console.log(`User ${userId} removed from map`);
+        break;
+      }
+    }
+  });
 });
 
 // Start the server

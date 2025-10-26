@@ -22,6 +22,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     const mainFilter = appSelectors.mainFilter;
     const numofNotifications = appSelectors.numofNotifications;
     const userLoggedIn = appSelectors.userLoggedIn;
+    const username = useSelector((state: RootState) => state.user.username);
     const dispatch = appSelectors.dispatch;
     const boldStyle: React.CSSProperties = {
         fontWeight: 'bold'
@@ -93,6 +94,13 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                 </div>
 
                 <div className="navbar-end">
+                    {userLoggedIn && (
+                        <div className="navbar-item">
+                            <span className="has-text-white" style={{ fontWeight: 'bold', fontSize: '1.1em' }}>
+                                Welcome, {username}!
+                            </span>
+                        </div>
+                    )}
                     <div className="navbar-item">
                         <div className="field">
                             <div className="control has-icons-left">
@@ -105,7 +113,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     </div>
                     <div className="navbar-item">
                         <div className="buttons">
-                            {userLoggedIn && <CreateGroup />}
+                            {/* {userLoggedIn && <CreateGroup />} */}
                             {userLoggedIn && <NotificationsIconComponent />}
                             {userLoggedIn ? (
                                 <>
@@ -116,7 +124,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                         <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>
                                             <div className="dropdown-content">
                                                 <a href="#" className="dropdown-item">
-                                                    User {}
+                                                    Welcome, {username}!
                                                 </a>
                                                 <a href="#" className="dropdown-item">
                                                     Profile

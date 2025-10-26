@@ -1,111 +1,153 @@
 .loginForm-container{
-    width: 70%;
-    height: 70%;
-    
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    padding: 20px;
+    box-sizing: border-box;
   }
   
   .login-title{
-   
     height: min-content;
     width: min-content;
     margin: 0 auto;
+    color: #2C3E50;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   
   .login-form{
-   
     display: flex;
     flex-direction: column;
-    width: 70%;
-  
+    width: 80%;
     margin: 0 auto;
-    margin-top: 14%;
-    
+    margin-top: 20px;
+    gap: 20px;
   }
   .login-input{
-    margin: 6%;
-    height: 20px;
-    border: none;
-    border-bottom: 1px solid black;
+    padding: 15px 20px;
+    height: 50px;
+    border: 2px solid #E8F4F8;
+    border-radius: 12px;
     outline: none;
+    background: white;
+    color: #2C3E50;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .login-input:focus {
+    border-color: #6B73FF;
+    box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .login-input::placeholder {
+    color: #6B73FF;
+    font-weight: 500;
   }
   
   .login-btn{
-    border-radius: 15px;
-    background-color: #2D2DC1;
-    width: 70%;
-    height: 7%;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+    width: 100%;
+    height: 55px;
     margin: 0 auto;
-    margin-top: 10%;
+    margin-top: 20px;
     color: white;
-  
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3);
+  }
+
+  .login-btn:hover {
+    background: linear-gradient(135deg, #5A63E8 0%, #8E44AD 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 115, 255, 0.4);
+  }
+
+  .login-btn:active {
+    transform: translateY(0);
   }
   
   .create-account-text{
-    margin-top: 30%;
+    margin-top: 30px;
     text-align: center;
     font-weight: normal;
+    color: #2C3E50;
+    font-size: 14px;
   }
   
   .signupText{
     font-weight: bold;
+    color: #6B73FF;
+    text-decoration: none;
+    transition: all 0.3s ease;
   }
   
   .signupText:hover{
     cursor: pointer;
-    font-weight: bold;
+    color: #5A63E8;
+    text-decoration: underline;
+    transform: scale(1.05);
   }
   
   .forgotpassword-text{
-    font-weight: lighter;
+    font-weight: 500;
     width: max-content;
-    align-self:flex-end;
-    margin-right: 20%;
+    align-self: flex-end;
     height: min-content;
-    margin-top: -3%;
+    margin-top: -10px;
+    color: #6B73FF;
+    font-size: 14px;
+    transition: all 0.3s ease;
   }
   
   .forgotpassword-text:hover{
     cursor: pointer;
-    transform: scale(1.1);
-    font-weight: bold;
-  
+    transform: scale(1.05);
+    color: #5A63E8;
+    text-decoration: underline;
   }
   
   .error-message{
-   
-      margin: 0px;
-      color: red;
-      height: min-content;
-      width: max-content;
-      font-size: 10px;
-      margin-left: 19%;
-  
-      margin-top: -3%;
-  
-    
+    margin: 0px;
+    color: #E74C3C;
+    height: min-content;
+    width: max-content;
+    font-size: 14px;
+    margin-left: 0;
+    margin-top: -15px;
+    text-align: center;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(231, 76, 60, 0.2);
   }
 
   .LoginForm{
-    background:  white;
-    width: 30%;
-    height: 50%;
+    background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%);
+    width: 400px;
+    height: 500px;
     border-radius: 20px;
-    border: solid black 1px;
+    border: 2px solid #E8F4F8;
     position: absolute;
     z-index: 1000;
-  
-    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 20px 40px rgba(44, 95, 124, 0.3);
+    backdrop-filter: blur(10px);
   }

@@ -16,49 +16,81 @@ body {
   }
 
   .signup-page{
-    background-color: blue;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     height: 100vh;
     width: 100%;
-    background: linear-gradient( #ffcccb, #ADD8E6);
-
     display: flex;
-    justify-content: center; /* Horizontally center the container */
+    justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .signup-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 50%, #667eea 100%);
+    opacity: 0.9;
+    z-index: 1;
   }
   .account-info{
-    background-color: blue;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     height: 100vh;
     width: 100%;
-    background: linear-gradient( #ffcccb, #ADD8E6);
+    position: relative;
+    overflow: hidden;
+  }
 
+  .account-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 50%, #667eea 100%);
+    opacity: 0.9;
+    z-index: 1;
   }
 
   .signup-container{
-    background-color: white;
-    height: 70%;
-    width: 30%;
-
+    background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%);
+    height: 80%;
+    width: 450px;
+    border-radius: 20px;
+    border: 2px solid #E8F4F8;
+    position: relative;
+    z-index: 2;
     display: flex;
-    justify-content: center; /* Horizontally center the container */
+    justify-content: center;
     align-items: center;
-   
+    box-shadow: 0 20px 40px rgba(44, 95, 124, 0.3);
+    backdrop-filter: blur(10px);
   }
 
   .signup-form{
-    /* height: max-content; */
-    height: 70%;
-     width: 90%;
+    height: 90%;
+    width: 85%;
     display: flex;
     flex-direction: column;
-    /* justify-content: center;  */
-     align-items: center; /*Horizontally center the container  */
-
-   
-  
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   .createaccount-text{
     text-align: center;
+    color: #2C3E50;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 0 0 30px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   .AboutMe{
     border: none;
@@ -72,57 +104,92 @@ body {
   }
 
   .createaccount-inputs{
+    border: 2px solid #E8F4F8;
+    background: white;
+    height: 50px;
+    border-radius: 12px;
+    padding: 15px 20px;
+    width: 100%;
+    outline: none;
+    color: #2C3E50;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
 
-    border: none;
-    background-color: lightgray;
-    margin: 3%;
-    height: 30px;
-    border-radius: 3px;
-    padding-left: 2%;
-    width: 70%;
+  .createaccount-inputs:focus {
+    border-color: #6B73FF;
+    box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
+    transform: translateY(-2px);
+  }
 
+  .createaccount-inputs::placeholder {
+    color: #6B73FF;
+    font-weight: 500;
   }
   .create-account-btn{
-
-
-    border: 1px solid black;
-    background-color: #008FC4;
-    width: 40%;
-   
-    border-radius: 9px;
-    margin: auto;
-    margin-top: 9%;
-    height: 25px;
+    border: none;
+    background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+    width: 100%;
+    height: 55px;
+    border-radius: 12px;
+    margin-top: 20px;
     color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3);
+  }
 
+  .create-account-btn:hover {
+    background: linear-gradient(135deg, #5A63E8 0%, #8E44AD 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 115, 255, 0.4);
+  }
+
+  .create-account-btn:active {
+    transform: translateY(0);
   }
 
   .errorInput{
-   
-    border: 1px solid red;
-    background-color: lightgray;
-    margin: 3%;
-    height: 30px;
-    border-radius: 3px;
-    padding-left: 2%;
-    width: 70%;
+    border: 2px solid #E74C3C;
+    background: white;
+    height: 50px;
+    border-radius: 12px;
+    padding: 15px 20px;
+    width: 100%;
     outline: none;
+    color: #2C3E50;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.1);
+  }
+
+  .errorInput:focus {
+    border-color: #E74C3C;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    transform: translateY(-2px);
   }
 
   .errorInput::placeholder{
-    color: red;
+    color: #E74C3C;
+    font-weight: 500;
   }
   .input-error-message{
-    margin: 0px;
-    color: red;
-    
+    margin: 0;
+    color: #E74C3C;
     height: min-content;
     width: max-content;
-    font-size: 10px;
-    margin-left: 0;
-    margin-right: 35%;
-    margin-top: -3%;
-
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    text-align: left;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    width: 100%;
   }
 
   .account-visible-checkbox {

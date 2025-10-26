@@ -66,7 +66,7 @@ export default function SignUpForm(){
             setMissingFields(true);
 
         } else{
-             navigate('/accountinfo');
+            // navigate('/accountinfo');
              sendSubmit();
         }
      
@@ -125,7 +125,6 @@ export default function SignUpForm(){
             username:usernameValue,
             password:passwordValue,
             email:emailValue
-
         };
 
         fetch('http://localhost:5000/addUser', {
@@ -151,7 +150,7 @@ export default function SignUpForm(){
                 const { id,username, password } = data[0]; // Use the updated data object from the response
                 console.log("response data " + username + " and test " + password + " and database id " + id);
                 //success, now lets send to create account details
-                navigate('/accountinfo');
+                navigate('/');
             }
             
         })
@@ -175,14 +174,14 @@ export default function SignUpForm(){
                     <label htmlFor="Username"></label>
                         <input type="text" id="Username" name="Username"
                         placeholder="Username" className={missingUsername && missingFields?'errorInput':'createaccount-inputs'} onChange={handleChange}></input>
-                         {missingFields && missingEmail && <div className='input-error-message'>Please enter a username</div>  }
+                         {missingFields && missingUsername && <div className='input-error-message'>Please enter a username</div>  }
                     <label htmlFor="Password"></label>
-                        <input type="text" id="Password" name="Password"
+                        <input type="password" id="Password" name="Password"
                         placeholder="Password" className={style} onChange={handleChange} onBlur={handleFieldUpdates}></input>
-                         {missingFields && missingEmail && <div className='input-error-message'>Please enter a password</div>  }
+                         {missingFields && missingPassword && <div className='input-error-message'>Please enter a password</div>  }
                     <label htmlFor="ConfirmPassword"></label>
-                        <input type="text" id="ConfirmPassword" name="ConfirmPassword"
-                        placeholder="Confirm Password" className={style} onBlur={handleFieldUpdates} onChange={handleChange}></input>
+                        <input type="password" id="ConfirmPassword" name="ConfirmPassword"
+                        placeholder="Confirm Password" className={style} onBlur={handleConfirmPasswordBlur} onChange={handleChange}></input>
                         {!passwordMatch && <div className='input-error-message'>Passwords do not match</div>  }
                     <label htmlFor="How would you describe your gaming style?"></label>
                         {/* <input type="text" id="gamingStyle" name="gamingStyle"

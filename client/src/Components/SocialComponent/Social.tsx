@@ -4,7 +4,8 @@ import { RootState } from '../../Store';
 import { MainFiltersEnum } from '../../ENUMS';
 import { loadAllUsers } from '../../NetworkCalls/FetchCalls/loadAllUsers';
 import { userLoggedIn, receiveFriendRequest } from '../../ReduxStore/UserstateSlice';
-import { useSocket } from '../../Routes'
+import { useSocket } from '../../hooks/useSocket'
+import { useMessaging } from '../../hooks/useMessaging'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
 import { loadUserFriends } from '../../NetworkCalls/FetchCalls/loadUserFriends';
@@ -46,7 +47,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const newMessage = useSelector((state: RootState) => state.user.newMessage);
   const dispatch = useDispatch();
-  const socket = useSocket();
+  const { sendMessage } = useMessaging();
   const numOfFriends = useSelector((state: RootState) => state.user.numberOfCurrentFriends);
   const [userFriends, setUserFriends] = useState<UserFriend[]>([]);
   const [selectedUser, setSelectedUser] = useState<string>('');
@@ -131,38 +132,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
 
 
   
-  React.useEffect(() => {
-    if (socket) {
-        socket.on("offline-reciever", (data) => {
-          Logger("Received friend request, attempting to post now:"+ data.senderId + " to " + data.recevieverId, LogLevel.Debug);
-          
-          fetch('http://localhost:5000/friend_request', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({senderId: data.senderId, receiverId : data.recevieverId})
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Failed to submit data');
-              }
-              return response.json();
-          })
-          .then(data => {
-                const { id,username, password } = data[0]; 
-                console.log("response data " + username + " and test " + password + " and database id " + id);
-                  
-  
-              
-          })
-          .catch(error => {
-             Logger('Error submitting data:'+ error, LogLevel.Error);
-          });
-            // Dispatch an action or update state to handle the friend request
-        });
-    }
-}, [socket]);
+  // Socket logic is now handled by the messaging service
 
 
 // Fetch user friends when user data changes

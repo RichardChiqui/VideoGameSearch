@@ -1,32 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../StylingSheets/loginFormStyles.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../Store';
-import { userLoggedIn } from '../../ReduxStore/UserstateSlice';
-import { loadUser } from '../../NetworkCalls/FetchCalls/loadUser';
-import { loadUserFriends } from '../../NetworkCalls/FetchCalls/loadUserFriends';
-import { loadUserFriendRequests } from '../../NetworkCalls/FetchCalls/loadUserFriendRequests';
+import { useAuth } from '../../hooks/useAuth';
 import { Logger, LogLevel } from '../../Logger/Logger';
 
 interface FormData {
-    username: string;
+    email: string;
     password: string;
 }
 
 const LoginForm = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [responseData, setResponseData] = useState<any>(null); // State to store response data
     const [foundAccount, setFoundAccount] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const isUserLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
-    const dispatch = useDispatch();
+    const { login, isAuthenticated, isLoading: authLoading } = useAuth();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        if (name === "Username") {
-            setUsername(value);
+        if (name === "Email") {
+            setEmail(value);
         } else if (name === "Password") {
             setPassword(value);
         }
@@ -35,19 +29,27 @@ const LoginForm = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
         Logger("entered handleSubmit", LogLevel.Debug);
-        try {
-            const userData = await loadUser(username, password);
-            Logger("User data: " + JSON.stringify(userData), LogLevel.Debug);
-            const userId = userData[0].id;
-            dispatch(userLoggedIn({
-                isAuthenticated: true,
-                userId: userData[0].id,
-                numberOfCurrentFriendRequests: 0
-            }));
-            setFoundAccount(true);
-        } catch (err) {
-            Logger(`Failed to load user information for ${username}: ${err}`, LogLevel.Debug);
+        
+        if (!email || !password) {
             setFoundAccount(false);
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const success = await login(email, password);
+            if (success) {
+                Logger(`User ${email} logged in successfully`, LogLevel.Info);
+                setFoundAccount(true);
+            } else {
+                Logger(`Login failed for ${email}`, LogLevel.Debug);
+                setFoundAccount(false);
+            }
+        } catch (err) {
+            Logger(`Failed to load user information for ${email}: ${err}`, LogLevel.Debug);
+            setFoundAccount(false);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -56,14 +58,14 @@ const LoginForm = () => {
     <div className='loginForm-container'>
         <h1 className='login-title'>Login</h1>
         <form className='login-form' onSubmit={handleSubmit}>
-            <label htmlFor="Username"></label>
+            <label htmlFor="Email"></label>
             <input
-                type="text"
-                id="Username"
-                name="Username"
-                placeholder="Username"
+                type="email"
+                id="Email"
+                name="Email"
+                placeholder="Email"
                 className='login-input'
-                value={username}
+                value={email}
                 onChange={handleChange}
             />
             <label htmlFor="Password"></label>
@@ -77,8 +79,10 @@ const LoginForm = () => {
                 onChange={handleChange}
             />
             <h6 className='forgotpassword-text'>Forgot Password?</h6>
-            {!foundAccount && <div className='error-message'>Username and password combination not found!</div>}
-            <button type="submit" className='login-btn'>Login</button>
+            {!foundAccount && <div className='error-message'>Email and password combination not found!</div>}
+            <button type="submit" className='login-btn' disabled={isLoading || authLoading}>
+                {isLoading || authLoading ? 'Logging in...' : 'Login'}
+            </button>
         </form>
         <h6 className='create-account-text'>
             Don't have an account? <Link to="/signup"><strong className='signupText'>Sign Up!</strong></Link>

@@ -4,7 +4,8 @@ import { RootState } from '../../Store';
 import { MainFiltersEnum } from '../../ENUMS';
 import { loadAllUsers } from '../../NetworkCalls/FetchCalls/loadAllUsers';
 import { userLoggedIn, receiveFriendRequest } from '../../ReduxStore/UserstateSlice';
-import { useSocket } from '../../Routes'
+import { useSocket } from '../../hooks/useSocket'
+import { useMessaging } from '../../hooks/useMessaging'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
 import MessageComposeModal from './MessageComposeModal';
@@ -36,7 +37,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const userId = useSelector((state: RootState) => state.user.userId);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
-  const socket = useSocket();
+  const { sendGameInvitation } = useMessaging();
 
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
@@ -107,18 +108,10 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   function handleSendMessage(message: string) {
     if (!selectedUser) return;
 
-    Logger('user has been logged in, lets try socketio, what is userid:' + userId + ' and socketid:', LogLevel.Debug);
+    Logger(`Sending game invitation from ${userId} to ${selectedUser.id}`, LogLevel.Debug);
    
-    // Send friend request
-    socket?.emit('send-link-request', userId, selectedUser.id);
-    
-    // Send the custom message via socket
-    socket?.emit('send-message', {
-      fromUserId: userId,
-      toUserId: selectedUser.id,
-      message: message,
-      timestamp: new Date().toISOString()
-    });
+    // Send both friend request and message using the clean service
+    sendGameInvitation(userId, selectedUser.id, message);
     
     // Add user to chat bubble friends list
     if (messageBubbleRef.current) {
@@ -138,7 +131,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     
     // Show success feedback
     setSentRequests(prev => new Set(Array.from(prev).concat(selectedUser.id)));
-    Logger('Friend request and gaming message sent successfully!', LogLevel.Info);
+    Logger('Game invitation sent successfully!', LogLevel.Info);
     
     // Reset button state after 3 seconds
     setTimeout(() => {
@@ -154,38 +147,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     setIsMessageModalOpen(false);
     setSelectedUser(null);
   }
-  React.useEffect(() => {
-    if (socket) {
-        socket.on("offline-reciever", (data) => {
-          Logger("Received friend request, attempting to post now:"+ data.senderId + " to " + data.recevieverId, LogLevel.Debug);
-          
-          fetch('http://localhost:5000/friend_request', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({senderId: data.senderId, receiverId : data.recevieverId})
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Failed to submit data');
-              }
-              return response.json();
-          })
-          .then(data => {
-                const { id,username, password } = data[0]; 
-                console.log("response data " + username + " and test " + password + " and database id " + id);
-                  
-  
-              
-          })
-          .catch(error => {
-             Logger('Error submitting data:'+ error, LogLevel.Error);
-          });
-            // Dispatch an action or update state to handle the friend request
-        });
-    }
-}, [socket]);
+  // Socket logic is now handled by the messaging service
 
 const style: CSSProperties = { 
   filter: filterValue,
