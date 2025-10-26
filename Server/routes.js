@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const controller = require("./controller");
+const linkRequestController = require("./Repository/LinkRequests.js");
 const jwt = require('jsonwebtoken');
 const { authenticateToken, JWT_SECRET } = require('./Authentication/auth.js');
 
@@ -11,17 +12,18 @@ router.get('/', (req, res) => {
 
 // ===== AUTH ROUTES (Public) =====
 // Login route - returns JWT cookie
-router.post('/homepage/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        
-        // Use your existing validateUser controller
-        const user = await controller.validateUser(req, res, true); // Pass flag to not send response
-        
+router.post('/homepage/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    controller.validateUser(req, res, (user) => {
         if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ 
+                success: false,
+                error: "Invalid credentials" 
+            });
         }
         
+      
         // Create JWT token
         const token = jwt.sign(
             { userId: user.id, email: user.email }, 
@@ -30,28 +32,24 @@ router.post('/homepage/login', async (req, res) => {
         );
         
         // Set HTTP-only cookie
-        res.cookie('token', token, {
+     res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/' // Ensure cookie is available for all routes
         });
-        
         // Return user info
         res.json({ 
             success: true, 
             user: { 
                 id: user.id, 
                 email: user.email,
-                name: user.name 
+                display_name: user.display_name || user.email
             } 
         });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
-    }
+    });
 });
-
 // Logout route
 router.post('/api/logout', (req, res) => {
     res.clearCookie('token');
@@ -87,6 +85,20 @@ router.post('/loadUserFriends', authenticateToken, controller.loadUserFriends);
 router.post('/loadMessages', authenticateToken, controller.loadMessages);
 
 router.post('/insertNewMessage', authenticateToken, controller.insertNewMessage);
+
+// CREATE
+router.post("/link-requests",authenticateToken ,linkRequestController.createLinkRequest);
+
+// READ
+router.get("/link-requests", authenticateToken,linkRequestController.getLinkRequests);
+router.get("/link-requests/game/:gameName", authenticateToken,linkRequestController.getLinkRequestsByGame);
+router.get("/link-requests/user", authenticateToken,linkRequestController.getUserLinkRequests);
+
+// UPDATE
+router.put("/link-requests/status", authenticateToken,linkRequestController.updateLinkRequestStatus);
+
+// DELETE
+router.delete("/link-requests/:id", authenticateToken,linkRequestController.deleteLinkRequest);
 
 module.exports = router;
 

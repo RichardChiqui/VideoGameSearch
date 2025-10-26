@@ -9,9 +9,12 @@ import { useMessaging } from '../../hooks/useMessaging'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
 import MessageComposeModal from './MessageComposeModal';
+import LinkRequestModal from './LinkRequestModal';
 
 import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
+import { loadLinkRequests } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
+import { LinkRequest, SkillLevel } from '../../models/LinkRequest';
 
 export type SearchResultsItemType = {
   id: number;
@@ -39,10 +42,11 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const dispatch = useDispatch();
   const { sendGameInvitation } = useMessaging();
 
-  const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
-  const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
+  const [linkRequestsList, setLinkRequestsList] = React.useState<LinkRequest[]>([]);
+  const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(true);
   const [sentRequests, setSentRequests] = React.useState<Set<number>>(new Set());
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
+  const [isLinkRequestModalOpen, setIsLinkRequestModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
   const messageBubbleRef = React.useRef<{
     addNewUser: (user: { id: number; username: string }) => void;
@@ -68,30 +72,35 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const filterValue = buttonClicked ? 'brightness(50%)' : 'brightness(100%)';
 
   useEffect(() => {
-    if (discoverFilter === MainFiltersEnum.People) {
+   // if (discoverFilter === MainFiltersEnum.People) {
       const fetchUsers = async () => {
         try {
-          const allUsersData = await loadAllUsers();
-            const allUsersMap = allUsersData.users.map((user: UserData) => ({id: user.id,email: user.email,username: user.username}));
-            setPeoplesList(allUsersMap);
-            setSuccessFullyLoadedUsers(true);
+          const linkRequestsData = await loadLinkRequests();
+          console.log("linkRequestsData", linkRequestsData);
+          const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
+            id: req.id,
+            user_id: req.user_id,
+            display_name: req.display_name,
+            game_name: req.game_name,
+            tags: req.tags,
+            skill_level: req.skill_level,
+          }));
         
+          console.log("linkRequestsList", linkRequestsList);
+          setLinkRequestsList(linkRequestsList);
+          setSuccessFullyLoadedUsers(true);
         } catch (err) {
-          Logger('Failed to load all users:'+ err, LogLevel.Error);
+          Logger('Failed to load all link requests:'+ err, LogLevel.Error);
         }
       };
-
       fetchUsers();
-    } else {
-      setSuccessFullyLoadedUsers(false);
-    }
-  }, [discoverFilter]);
+  }, [userLoggedIn, userId]);
 
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
 
 
-  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, user: UserData){
+  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, linkRequest: LinkRequest){
     if(!userLoggedIn){
       dispatch(displayPopUpMethod(false));
       dispatch(displayPopUpMethod(true));
@@ -100,7 +109,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
  
     if(userLoggedIn){
       // Set selected user and open modal
-      setSelectedUser(user);
+     // setSelectedUser(user);
       setIsMessageModalOpen(true);
     }
   }
@@ -147,6 +156,20 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     setIsMessageModalOpen(false);
     setSelectedUser(null);
   }
+
+  function handleOpenLinkRequestModal() {
+    setIsLinkRequestModalOpen(true);
+  }
+
+  function handleCloseLinkRequestModal() {
+    setIsLinkRequestModalOpen(false);
+  }
+
+  function handleLinkRequestSuccess() {
+    Logger('Link request created successfully', LogLevel.Info);
+    // You can add additional success handling here
+    // For example, refresh the users list or show a success message
+  }
   // Socket logic is now handled by the messaging service
 
 const style: CSSProperties = { 
@@ -161,21 +184,52 @@ const style: CSSProperties = {
     <>
 
     <div className="container" style={style}>
+      {/* Create Link Request Button */}
+      {userLoggedIn && (
+        <div className="has-text-centered" style={{ marginBottom: '30px' }}>
+          <button 
+            className="button is-primary is-large"
+            onClick={handleOpenLinkRequestModal}
+            style={{
+              background: 'linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%)',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '15px 30px',
+              fontSize: '18px',
+              fontWeight: '600',
+              color: 'white',
+              boxShadow: '0 4px 15px rgba(107, 115, 255, 0.3)',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 115, 255, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(107, 115, 255, 0.3)';
+            }}
+          >
+            🎮 Create Link Request
+          </button>
+        </div>
+      )}
   
       <div className="columns is-multiline">
         {successFullyLoadedUsers
-          ? sampleUsersWithData.map((item: UserData) => (
+          ? linkRequestsList.map((item: LinkRequest) => (
               <div className="column is-one-quarter" key={item.id}>
                 <div className="card" style={cardStyle}>
                   <header className="card-header">
-                    <p className="card-header-title">{item.username}</p>
+                    <p className="card-header-title">{item.display_name}</p>
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
                       {/* Game Information */}
-                      {item.game && (
+                      {item.game_name && (
                         <div style={{ marginBottom: '10px' }}>
-                          <strong>Game:</strong> {item.game}
+                          <strong>Game:</strong> {item.game_name}
                         </div>
                       )}
                       
@@ -183,11 +237,11 @@ const style: CSSProperties = {
                       <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Play Style Tags */}
-                      {item.playStyles && item.playStyles.length > 0 && (
+                      {item.tags && item.tags.length > 0 && (
                         <div style={{ marginBottom: '10px' }}>
                           <strong>Play Style:</strong>
                           <div style={{ marginTop: '5px' }}>
-                            {item.playStyles.map((style, index) => (
+                            {item.tags.map((style, index) => (
                               <span 
                                 key={index}
                                 className="tag is-info is-light" 
@@ -204,19 +258,19 @@ const style: CSSProperties = {
                       <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Skill Level */}
-                      {item.skillLevel && (
+                      {item.skill_level && (
                         <div>
                           <strong>Skill Level:</strong>
                           <span 
                             className={`tag ${
-                              item.skillLevel === 'Expert' ? 'is-danger' :
-                              item.skillLevel === 'Advanced' ? 'is-warning' :
-                              item.skillLevel === 'Intermediate' ? 'is-info' :
+                              item.skill_level === SkillLevel.EXPERT ? 'is-danger' :
+                              item.skill_level === SkillLevel.ADVANCED ? 'is-warning' :
+                              item.skill_level === SkillLevel.INTERMEDIATE ? 'is-info' :
                               'is-light'
                             }`}
                             style={{ marginLeft: '5px', fontSize: '0.75rem' }}
                           >
-                            {item.skillLevel}
+                              {item.skill_level}
                           </span>
                         </div>
                       )}
@@ -225,11 +279,11 @@ const style: CSSProperties = {
                   <footer className="card-footer">
                    {userLoggedIn? (
                      <button 
-                       className={`button card-footer-item ${sentRequests.has(item.id) ? 'is-success' : 'is-primary'}`}
+                       className={`button card-footer-item ${sentRequests.has(item.user_id) ? 'is-success' : 'is-primary'}`}
                        onClick={(event) => handleLinkRequest(event, item)}
-                       disabled={sentRequests.has(item.id)}
+                       disabled={sentRequests.has(item.user_id)}
                      >
-                       {sentRequests.has(item.id) ? '✓ Request Sent!' : 'Send Link Request'}
+                       {sentRequests.has(item.user_id) ? '✓ Request Sent!' : 'Send Link Request'}
                      </button>
                    ) : (
                      <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button>
@@ -269,6 +323,13 @@ const style: CSSProperties = {
        onSend={handleSendMessage}
        recipientName={selectedUser?.username || ''}
        gameName={selectedUser?.game}
+     />
+
+     {/* Link Request Modal */}
+     <LinkRequestModal
+       isOpen={isLinkRequestModalOpen}
+       onClose={handleCloseLinkRequestModal}
+       onSuccess={handleLinkRequestSuccess}
      />
     </>
   );

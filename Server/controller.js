@@ -2,44 +2,45 @@ const { Json } = require("sequelize/lib/utils");
 const pool = require("./db");
 const queries = require("./queries");
 
-// NEW: Only for JWT authentication - returns user object or null
-const validateUser = (req, res) => {
+// NEW: Returns user object or null (does NOT send response)
+const validateUser = (req, res, callback) => {
     const { email, password } = req.body;
-    console.log("Entering 'validateUser' with username:" + email);
+    console.log("Entering 'validateUser' with email:" + email);
     
     pool.query(queries.validateUser, [email, password], (error, results) => {
         if (error) {
             console.error("Validation error:", error);
-            return res.status(500).json({ error: "Validation failed" });
+            return callback(null); // Return null on error
         }
         
         if (results.rows.length > 0) {
-            // Return user object for JWT creation in routes.js
             const user = results.rows[0];
-            return res.status(200).json({
-                success: true,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email
-                }
-            });
+            console.log("returning user");
+            return callback(user); // Return user object
         } else {
-            return res.status(401).json({ 
-                success: false,
-                error: "Invalid credentials" 
-            });
+            console.log("returning null");
+            return callback(null); // Return null if invalid
         }
     });
 };
 
 const addUser = (req, res) => {
-    const { username, password, email } = req.body;
-    console.log("Adding brand new user '" + username + "'");
+    const { email, password, display_name } = req.body;
+    console.log("Adding brand new user with email: '" + email + "'");
     
-    pool.query(queries.addUser, [username, password, email], (error, results) => {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Invalid email format" });
+    }
+    
+    pool.query(queries.addUser, [email, password, display_name || email], (error, results) => {
         if (error) {
             console.error("Add user error:", error);
+            // Check for duplicate email
+            if (error.code === '23505') { // PostgreSQL unique violation
+                return res.status(409).json({ error: "Email already exists" });
+            }
             return res.status(500).json({ error: "Failed to add user" });
         }
         res.status(200).json({ 
@@ -51,27 +52,43 @@ const addUser = (req, res) => {
 
 const createNewGroup = (req, res) => {
     console.log("Creating new group");
-    const { username, password, email } = req.body;
+    const { groupName, creatorId } = req.body;
     
-    pool.query(queries.createNewGrouyp, [username, password, email], (error, results) => {
+    // Security: Verify creatorId matches authenticated user
+    if (req.user.userId !== creatorId) {
+        return res.status(403).json({ error: "Unauthorized" });
+    }
+    
+    pool.query(queries.createNewGroup, [groupName, creatorId], (error, results) => {
         if (error) {
             console.error("Create group error:", error);
             return res.status(500).json({ error: "Failed to create group" });
         }
-        res.status(200).json(results.rows);
+        res.status(200).json({ 
+            success: true,
+            group: results.rows[0] 
+        });
     });
 };
 
 const loadUsers = (req, res) => {
     // Authenticated user available in req.user
-    console.log("Loading users. Authenticated user:", req.user.userId);
+    console.log("Loading all users. Authenticated user:", req.user.email);
     
     pool.query(queries.loadUsers, (error, results) => {
         if (error) {
             console.error("Error loading users:", error);
             return res.status(500).json({ error: "Failed to load users" });
         }
-        res.status(200).json({ users: results.rows });
+        
+        // Remove sensitive data before sending
+        const sanitizedUsers = results.rows.map(user => ({
+            id: user.id,
+            email: user.email,
+            display_name: user.display_name || user.email
+        }));
+        
+        res.status(200).json({ users: sanitizedUsers });
     });
 };
 

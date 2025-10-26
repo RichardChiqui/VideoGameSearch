@@ -1,19 +1,20 @@
 import {Logger, LogLevel} from '../../Logger/Logger'
+import { apiClient } from '../../utils/apiClient';
+
 export const loadAllUsers = async () => {
     try {
-        const response = await fetch('http://localhost:5000/homepage/loadUsers', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            Logger("Failed to load Users", LogLevel.Error);
+        // Use the authenticated API client
+        const response = await apiClient.get('/homepage/loadUsers');
+        
+        if (response.success) {
+            Logger("Successfully loaded all users", LogLevel.Info);
+            return response.data;
+        } else {
+            Logger(`Failed to load all users: ${response.error}`, LogLevel.Error);
+            throw new Error(response.error || 'Failed to load users');
         }
-
-       return await response.json();
     } catch (error) {
-        Logger("Failed to load Users " + error, LogLevel.Error);
+        Logger("Failed to load all Users: " + error, LogLevel.Error);
+        throw error;
     }
 };

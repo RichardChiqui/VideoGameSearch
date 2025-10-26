@@ -1,24 +1,20 @@
 import {Logger, LogLevel} from '../../Logger/Logger'
+import { apiClient } from '../../utils/apiClient';
+
 export const createNewFriend = async (fromUserId: number, toUserId: number) => {
     try {
-        const response = await fetch('http://localhost:5000/send-friendrequest', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                fromUserId: fromUserId,
-                toUserId: toUserId
-            })
+        const response = await apiClient.post('/send-friendrequest', {
+            fromUserId: fromUserId,
+            toUserId: toUserId
         });
 
-        if (!response.ok) {
-            Logger("Failed to create new friend request between " + fromUserId + " to " + toUserId, LogLevel.Error);
+        if (response.success) {
+            Logger("Successfully created friend request from " + fromUserId + " to " + toUserId, LogLevel.Info);
+            return response.data;
+        } else {
+            Logger(`Failed to create friend request from ${fromUserId} to ${toUserId}: ${response.error}`, LogLevel.Error);
+            throw new Error(response.error || 'Failed to create friend request');
         }
-
-
-      
-        return await response.json();
     } catch (error) {
         Logger("Failed to create new friend request " + fromUserId + " to " + toUserId + " error:" + error, LogLevel.Error);
         throw error;

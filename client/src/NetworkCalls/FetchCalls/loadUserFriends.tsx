@@ -1,23 +1,19 @@
 import {Logger, LogLevel} from '../../Logger/Logger'
+import { apiClient } from '../../utils/apiClient';
+
 export const loadUserFriends = async (userId: number) => {
     try {
-        const response = await fetch('http://localhost:5000/loadUserFriends', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId: userId })
-        });
-
-        if (!response.ok) {
-            Logger("Failed to load friends for user:" + userId, LogLevel.Error);
-        } else{
-            Logger("Success loading " + userId + " friends json:" + response, LogLevel.Debug);
+        const response = await apiClient.post('/loadUserFriends', { userId: userId });
+        
+        if (response.success) {
+            Logger("Successfully loaded friends for user: " + userId, LogLevel.Info);
+            return response.data;
+        } else {
+            Logger(`Failed to load friends for user ${userId}: ${response.error}`, LogLevel.Error);
+            throw new Error(response.error || 'Failed to load friends');
         }
-
-    
-       return await response.json();
     } catch (error) {
         Logger("Failed to load friends for user:" + userId + " error " + error, LogLevel.Error);
+        throw error;
     }
 };

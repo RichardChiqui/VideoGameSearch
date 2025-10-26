@@ -70,6 +70,7 @@ export const useAuth = () => {
       setIsLoading(true);
       const response = await authService.login(email, password);
       
+      console.log("response", response);
       if (response.success && response.user) {
         // Update Redux state with focused actions
         dispatch(setUserData({
