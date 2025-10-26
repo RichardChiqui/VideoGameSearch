@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%);
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
 }
 
 .App-logo {

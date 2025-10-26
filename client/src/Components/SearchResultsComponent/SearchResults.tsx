@@ -7,6 +7,7 @@ import { userLoggedIn, receiveFriendRequest } from '../../ReduxStore/UserstateSl
 import { useSocket } from '../../Routes'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
+import MessageComposeModal from './MessageComposeModal';
 
 import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
@@ -20,6 +21,9 @@ interface UserData {
   id: number;
   username: string;
   email: string;
+  playStyles?: string[];
+  skillLevel?: string;
+  game?: string;
 }
 
 interface SearchResultsProps {
@@ -36,6 +40,13 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
 
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
+  const [sentRequests, setSentRequests] = React.useState<Set<number>>(new Set());
+  const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
+  const messageBubbleRef = React.useRef<{
+    addNewUser: (user: { id: number; username: string }) => void;
+    addNewMessage: (message: { fromUserId: number; toUserId: number; message: string; timestamp: string }) => void;
+  }>(null);
   //const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
   const categoriesList: SearchResultsItemType[] = [
@@ -43,6 +54,14 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     { id: 2, name: 'Fornite' },
     { id: 3, name: 'Modern Warfare 2' },
     { id: 4, name: 'Avatar' }
+  ];
+
+  // Sample data with play styles and skills for demonstration
+  const sampleUsersWithData: UserData[] = [
+    { id: 1, username: 'GamerPro123', email: 'pro@email.com', playStyles: ['Competitive', 'Ranked'], skillLevel: 'Expert', game: 'Overwatch' },
+    { id: 2, username: 'CasualPlayer', email: 'casual@email.com', playStyles: ['Casual', 'Quick Play'], skillLevel: 'Intermediate', game: 'Fortnite' },
+    { id: 3, username: 'RPGMaster', email: 'rpg@email.com', playStyles: ['Role-Playing', 'Story Mode'], skillLevel: 'Advanced', game: 'Modern Warfare 2' },
+    { id: 4, username: 'NewbieGamer', email: 'new@email.com', playStyles: ['Casual'], skillLevel: 'Beginner', game: 'Avatar' }
   ];
 
   const filterValue = buttonClicked ? 'brightness(50%)' : 'brightness(100%)';
@@ -71,7 +90,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
 
 
-  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>,recevieverId: number){
+  function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, user: UserData){
     if(!userLoggedIn){
       dispatch(displayPopUpMethod(false));
       dispatch(displayPopUpMethod(true));
@@ -79,12 +98,61 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     }
  
     if(userLoggedIn){
-      Logger('user has been logged in, lets try socketio, what is userid:' + userId + ' and socketid:', LogLevel.Debug);
-     
-    
-      socket?.emit('send-link-request', userId , recevieverId);
+      // Set selected user and open modal
+      setSelectedUser(user);
+      setIsMessageModalOpen(true);
     }
-  
+  }
+
+  function handleSendMessage(message: string) {
+    if (!selectedUser) return;
+
+    Logger('user has been logged in, lets try socketio, what is userid:' + userId + ' and socketid:', LogLevel.Debug);
+   
+    // Send friend request
+    socket?.emit('send-link-request', userId, selectedUser.id);
+    
+    // Send the custom message via socket
+    socket?.emit('send-message', {
+      fromUserId: userId,
+      toUserId: selectedUser.id,
+      message: message,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Add user to chat bubble friends list
+    if (messageBubbleRef.current) {
+      messageBubbleRef.current.addNewUser({
+        id: selectedUser.id,
+        username: selectedUser.username
+      });
+      
+      // Add message to chat bubble
+      messageBubbleRef.current.addNewMessage({
+        fromUserId: userId,
+        toUserId: selectedUser.id,
+        message: message,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // Show success feedback
+    setSentRequests(prev => new Set(Array.from(prev).concat(selectedUser.id)));
+    Logger('Friend request and gaming message sent successfully!', LogLevel.Info);
+    
+    // Reset button state after 3 seconds
+    setTimeout(() => {
+      setSentRequests(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(selectedUser.id);
+        return newSet;
+      });
+    }, 3000);
+  }
+
+  function handleCloseModal() {
+    setIsMessageModalOpen(false);
+    setSelectedUser(null);
   }
   React.useEffect(() => {
     if (socket) {
@@ -134,7 +202,7 @@ const style: CSSProperties = {
   
       <div className="columns is-multiline">
         {successFullyLoadedUsers
-          ? peoplesList.map((item: UserData) => (
+          ? sampleUsersWithData.map((item: UserData) => (
               <div className="column is-one-quarter" key={item.id}>
                 <div className="card" style={cardStyle}>
                   <header className="card-header">
@@ -142,13 +210,69 @@ const style: CSSProperties = {
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
-                      {/* <p>Email: {item.email}</p> */}
+                      {/* Game Information */}
+                      {item.game && (
+                        <div style={{ marginBottom: '10px' }}>
+                          <strong>Game:</strong> {item.game}
+                        </div>
+                      )}
+                      
+                      {/* Horizontal line separator */}
+                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      
+                      {/* Play Style Tags */}
+                      {item.playStyles && item.playStyles.length > 0 && (
+                        <div style={{ marginBottom: '10px' }}>
+                          <strong>Play Style:</strong>
+                          <div style={{ marginTop: '5px' }}>
+                            {item.playStyles.map((style, index) => (
+                              <span 
+                                key={index}
+                                className="tag is-info is-light" 
+                                style={{ marginRight: '5px', marginBottom: '3px', fontSize: '0.75rem' }}
+                              >
+                                {style}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Horizontal line separator */}
+                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      
+                      {/* Skill Level */}
+                      {item.skillLevel && (
+                        <div>
+                          <strong>Skill Level:</strong>
+                          <span 
+                            className={`tag ${
+                              item.skillLevel === 'Expert' ? 'is-danger' :
+                              item.skillLevel === 'Advanced' ? 'is-warning' :
+                              item.skillLevel === 'Intermediate' ? 'is-info' :
+                              'is-light'
+                            }`}
+                            style={{ marginLeft: '5px', fontSize: '0.75rem' }}
+                          >
+                            {item.skillLevel}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <footer className="card-footer">
-                   {userLoggedIn? <button className="button card-footer-item" onClick={(event) => handleLinkRequest(event, item.id)}>Send Link Request</button> : 
-                   <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button> }
-                    <button className="button card-footer-item">Profile</button>
+                   {userLoggedIn? (
+                     <button 
+                       className={`button card-footer-item ${sentRequests.has(item.id) ? 'is-success' : 'is-primary'}`}
+                       onClick={(event) => handleLinkRequest(event, item)}
+                       disabled={sentRequests.has(item.id)}
+                     >
+                       {sentRequests.has(item.id) ? '✓ Request Sent!' : 'Send Link Request'}
+                     </button>
+                   ) : (
+                     <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button>
+                   )}
+                    {/* <button className="button card-footer-item">Profile</button> */}
                   </footer>
                 </div>
               </div>
@@ -174,7 +298,16 @@ const style: CSSProperties = {
       </div>
     
     </div>
-     {userLoggedIn && <ChatWindow />} 
+     {userLoggedIn && <ChatWindow ref={messageBubbleRef} />} 
+     
+     {/* Message Compose Modal */}
+     <MessageComposeModal
+       isOpen={isMessageModalOpen}
+       onClose={handleCloseModal}
+       onSend={handleSendMessage}
+       recipientName={selectedUser?.username || ''}
+       gameName={selectedUser?.game}
+     />
     </>
   );
 }

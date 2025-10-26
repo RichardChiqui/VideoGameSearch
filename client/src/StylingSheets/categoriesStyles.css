@@ -4,7 +4,9 @@
     width: 33.5%;
     z-index: 3000; 
     border: 10px;
-    background-color: red;
+    background: linear-gradient(135deg, #2C5F7C 0%, #4A90A4 100%);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(44, 95, 124, 0.3);
     
   }
   .categories-bar{
@@ -14,10 +16,9 @@
     justify-content: center; /* Horizontally center the inner div */
     align-items: center;
     z-index: 2000;
-    border-top: 1px solid black;
-  
-  
-   
+    border-top: 1px solid #E8F4F8;
+    background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%);
+    
   }
   .catButtons{
     height: 100%;
@@ -26,26 +27,30 @@
     border-left: none;
     border-right: none;
     border-bottom: none;
-  
     font-family: roboto;
     font-size: medium;
-    background-color: white;
-    
+    background: transparent;
+    color: #2C3E50;
+    font-weight: 500;
+    transition: all 0.3s ease;
   }
   .catButtons:hover{
     cursor: pointer;
+    background-color: rgba(107, 115, 255, 0.1);
+    color: #6B73FF;
   }
   .DropDownMenuItem{
-    background-color: white;
+    background-color: transparent;
     width: 100%;
-    border-bottom: 1px solid  lightgray;
-    padding: 1px;
-  
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    color: white;
+    transition: all 0.3s ease;
   }
   .DropDownMenuItem:hover{
-    background-color: #e5e5e5;
+    background-color: rgba(255, 255, 255, 0.1);
     cursor: pointer;
-  
+    transform: translateX(4px);
   }
   
   

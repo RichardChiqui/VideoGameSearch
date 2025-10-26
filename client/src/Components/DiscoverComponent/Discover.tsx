@@ -60,7 +60,7 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
          <div className='discover-filters'>
                     <div className="tabs is-centered">
                         <ul>
-                            <li className={peopleFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "People")}>
+                            {/* <li className={peopleFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "People")}>
                                 <a>People</a>
                             </li>
                             <li className={groupFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "Group")}>
@@ -68,7 +68,7 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
                             </li>
                             <li className={titleFilter ? 'is-active' : ''} onClick={(e) => onClick(e, "Title")}>
                                 <a>Game</a>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>

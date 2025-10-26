@@ -57,7 +57,7 @@ export default function HomePageMainContent({onButtonClick, buttonClicked }: Cat
     const numofmessages = 1;
     return (
         <div className='maincontent'>
-            <FiltersNavBar />
+            {/* <FiltersNavBar /> */}
             {mainFilter === 'Discover' ? (
                 <Discover onButtonClick={onButtonClick} buttonClicked={buttonClicked} />
             ) : (
