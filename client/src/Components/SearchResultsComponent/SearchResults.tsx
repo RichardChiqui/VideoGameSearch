@@ -14,6 +14,7 @@ import LinkRequestModal from './LinkRequestModal';
 import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import { loadLinkRequests } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
+import { deleteLinkRequest } from '../../NetworkCalls/deleteCalls/deleteLinkRequest';
 import { LinkRequest, SkillLevel } from '../../models/LinkRequest';
 import { ChatHistoryRecepient } from '../../models/ChatHistoryRecepient';
 import { Message } from '../../models/Message'
@@ -48,6 +49,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const [linkRequestsList, setLinkRequestsList] = React.useState<LinkRequest[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(true);
   const [sentRequests, setSentRequests] = React.useState<Set<number>>(new Set());
+  const [deletedRequests, setDeletedRequests] = React.useState<Set<number>>(new Set());
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
   const [isLinkRequestModalOpen, setIsLinkRequestModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
@@ -186,8 +188,60 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
 
   function handleLinkRequestSuccess() {
     Logger('Link request created successfully', LogLevel.Info);
-    // You can add additional success handling here
-    // For example, refresh the users list or show a success message
+    // Refresh the link requests list to show the new request
+    const fetchUsers = async () => {
+      try {
+        const linkRequestsData = await loadLinkRequests();
+        const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
+          id: req.id,
+          user_id: req.user_id,
+          display_name: req.display_name,
+          game_name: req.game_name,
+          tags: req.tags,
+          skill_level: req.skill_level,
+        }));
+      
+        setLinkRequestsList(linkRequestsList);
+        setSuccessFullyLoadedUsers(true);
+      } catch (err) {
+        Logger('Failed to load all link requests:'+ err, LogLevel.Error);
+      }
+    };
+    fetchUsers();
+  }
+
+  async function handleDeleteLinkRequest(linkRequest: LinkRequest) {
+    if (!linkRequest.id) {
+      Logger('Cannot delete link request: missing ID', LogLevel.Error);
+      return;
+    }
+
+    try {
+      Logger(`Deleting link request with ID: ${linkRequest.id}`, LogLevel.Debug);
+      
+      const response = await deleteLinkRequest(linkRequest.id);
+      
+      if (response.success) {
+        // Add to deleted requests set for visual feedback
+        setDeletedRequests(prev => new Set(prev).add(linkRequest.id!));
+        
+        // Remove from the list after a short delay for visual feedback
+        setTimeout(() => {
+          setLinkRequestsList(prev => prev.filter(req => req.id !== linkRequest.id));
+          setDeletedRequests(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(linkRequest.id!);
+            return newSet;
+          });
+        }, 1000);
+        
+        Logger('Link request deleted successfully!', LogLevel.Info);
+      } else {
+        Logger(`Failed to delete link request: ${response.error}`, LogLevel.Error);
+      }
+    } catch (error) {
+      Logger(`Error deleting link request: ${error}`, LogLevel.Error);
+    }
   }
   // Socket logic is now handled by the messaging service
 
@@ -297,13 +351,26 @@ const style: CSSProperties = {
                   </div>
                   <footer className="card-footer">
                    {userLoggedIn? (
-                     <button 
-                       className={`button card-footer-item ${sentRequests.has(item.user_id) ? 'is-success' : 'is-primary'}`}
-                       onClick={(event) => handleLinkRequest(event, item)}
-                       disabled={sentRequests.has(item.user_id)}
-                     >
-                       {sentRequests.has(item.user_id) ? '✓ Request Sent!' : 'Send Link Request'}
-                     </button>
+                     // Check if this request was created by the current user
+                     item.user_id === userId ? (
+                       // Show delete button for user's own requests
+                       <button 
+                         className={`button card-footer-item ${deletedRequests.has(item.id!) ? 'is-success' : 'is-danger'}`}
+                         onClick={() => handleDeleteLinkRequest(item)}
+                         disabled={deletedRequests.has(item.id!)}
+                       >
+                         {deletedRequests.has(item.id!) ? '✓ Deleted!' : '🗑️ Delete'}
+                       </button>
+                     ) : (
+                       // Show send request button for other users' requests
+                       <button 
+                         className={`button card-footer-item ${sentRequests.has(item.user_id) ? 'is-success' : 'is-primary'}`}
+                         onClick={(event) => handleLinkRequest(event, item)}
+                         disabled={sentRequests.has(item.user_id)}
+                       >
+                         {sentRequests.has(item.user_id) ? '✓ Request Sent!' : 'Send Link Request'}
+                       </button>
+                     )
                    ) : (
                      <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button>
                    )}

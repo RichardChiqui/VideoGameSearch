@@ -13,6 +13,7 @@ import { ChatHistoryRecepient } from '../../../models/ChatHistoryRecepient';
 import { Message } from '../../../models/Message';
 import { loadNewChatRequests } from '../../../NetworkCalls/FetchCalls/ChatHistory/loadNewChatRequests';
 import { NewChatHistoryRequest } from '../../../models/NewChatHistoryRequest';
+import messagingService from '../../../services/MessagingService';
 // Define TypeScript interface for messages
 
 
@@ -74,7 +75,7 @@ const MessageBubble = forwardRef<{
                 message: newMessage.trim(),
                 timestamp: new Date().toISOString()
             };
-            
+            messagingService.sendMessage(userId, selectedUserId, newMessage.trim());
             setMessages(prev => [...prev, message]);
             setNewMessage('');
             
@@ -136,6 +137,12 @@ const MessageBubble = forwardRef<{
 
     // Fetch user friends when user data changes
     useEffect(() => {
+        // Only fetch if user is logged in AND userId is valid (not 0)
+        if (!userLoggedIn || !userId || userId === 0) {
+            Logger('Skipping chat history fetch - user not authenticated or userId invalid', LogLevel.Debug);
+            return;
+        }
+
         const fetchChatHistoryRecepients = async () => {
             try {
                 const chatHistoryRecepientsData = await loadChatHistoryRecepients(userId);
@@ -159,10 +166,16 @@ const MessageBubble = forwardRef<{
         };
 
         fetchChatHistoryRecepients();
-    }, [userLoggedIn, numOfFriends]);
+    }, [userLoggedIn, userId, numOfFriends]);
 
     // Fetch new chat requests when user data changes
     useEffect(() => {
+        // Only fetch if user is logged in AND userId is valid (not 0)
+        if (!userLoggedIn || !userId || userId === 0) {
+            Logger('Skipping new chat requests fetch - user not authenticated or userId invalid', LogLevel.Debug);
+            return;
+        }
+
         const fetchNewChatRequests = async () => {
             try {
                 const newChatRequestsData = await loadNewChatRequests(userId);
@@ -181,37 +194,41 @@ const MessageBubble = forwardRef<{
         };
 
         fetchNewChatRequests();
-    }, [userLoggedIn]);
+    }, [userLoggedIn, userId]);
 
     // Load messages when a user is selected
     useEffect(() => {
-        if (selectedUserId) {
-            const fetchMessages = async () => {
-                try {
-                    const messagesData = await loadUserMessages(userId, selectedUserId);
-                    Logger("messages: " + JSON.stringify(messagesData), LogLevel.Debug);
-                    
-                    if (messagesData.success && messagesData.users) {
-                        // Map the users array to messages format
-                        const mappedMessages = messagesData.users.map((user: any) => ({
-                            fromUserId: user.fk_fromuserid,
-                            toUserId: user.fk_touserid,
-                            message: user.textmessage,
-                            timestamp: user.timestamp || new Date().toISOString()
-                        }));
-                        setMessages(mappedMessages);
-                    } else {
-                        Logger(`Failed to load messages: ${messagesData.error}`, LogLevel.Error);
-                        setMessages([]);
-                    }
-                } catch (err) {
-                    Logger(`Failed to load messages: ${err}`, LogLevel.Error);
+        // Only fetch if user is logged in AND userId is valid (not 0) AND selectedUserId is set
+        if (!userLoggedIn || !userId || userId === 0 || !selectedUserId) {
+            Logger('Skipping messages fetch - user not authenticated, userId invalid, or no selected user', LogLevel.Debug);
+            return;
+        }
+
+        const fetchMessages = async () => {
+            try {
+                const messagesData = await loadUserMessages(userId, selectedUserId);
+                Logger("messages: " + JSON.stringify(messagesData), LogLevel.Debug);
+                
+                if (messagesData.success && messagesData.users) {
+                    // Map the users array to messages format
+                    const mappedMessages = messagesData.users.map((user: any) => ({
+                        fromUserId: user.fk_fromuserid,
+                        toUserId: user.fk_touserid,
+                        message: user.textmessage,
+                        timestamp: user.timestamp || new Date().toISOString()
+                    }));
+                    setMessages(mappedMessages);
+                } else {
+                    Logger(`Failed to load messages: ${messagesData.error}`, LogLevel.Error);
                     setMessages([]);
                 }
-            };
-            fetchMessages();
-        }
-    }, [selectedUserId, userId]);
+            } catch (err) {
+                Logger(`Failed to load messages: ${err}`, LogLevel.Error);
+                setMessages([]);
+            }
+        };
+        fetchMessages();
+    }, [selectedUserId, userId, userLoggedIn]);
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {

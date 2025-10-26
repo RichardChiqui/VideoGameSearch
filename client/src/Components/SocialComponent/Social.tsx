@@ -92,7 +92,12 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
   }, [discoverFilter]);
 
   useEffect(() => {
- 
+    // Only fetch if userId is valid (not 0 or undefined) and selectedUserId is set
+    if (!userId || userId === 0 || !selectedUserId) {
+      Logger('Skipping messages fetch - userId invalid or no selected user', LogLevel.Debug);
+      return;
+    }
+
     const fetchMessages = async () => {
       try {
         Logger(`Loading messages for user: ${userId} and selected user: ${selectedUserId}`, LogLevel.Debug);
@@ -125,7 +130,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
     
     fetchMessages();
     
-  }, [selectedUserId]);
+  }, [selectedUserId, userId]);
 
   useEffect(() => {
     if (newMessage && typeof newMessage === 'object') {

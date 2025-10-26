@@ -6,11 +6,23 @@ const createLinkRequest = (req, res) => {
     const { game_name, skill_level, tags, description } = req.body;
     const userId = req.user.userId;
 
+    console.log("Iknow why ", req.body);
     console.log("Creating link request for user:", userId);
+
+    let parsedTags = tags;
+    try {
+        // If it's a string like '["tag1","tag2"]', parse it
+        if (typeof tags === "string") {
+            parsedTags = JSON.parse(tags);
+        }
+    } catch (e) {
+        console.warn("Tags parsing failed, storing as empty array.");
+        parsedTags = [];
+    }
 
     pool.query(
         queries.createLinkRequest,
-        [userId, game_name, skill_level, tags, description],
+        [userId, game_name, skill_level, JSON.stringify(parsedTags), description],
         (error, results) => {
             if (error) {
                 console.error("Error creating link request:", error);
@@ -23,6 +35,7 @@ const createLinkRequest = (req, res) => {
         }
     );
 };
+
 
 // READ — Get all active link requests (global feed)
 const getLinkRequests = (req, res) => {

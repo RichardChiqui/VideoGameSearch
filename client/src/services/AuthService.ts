@@ -178,6 +178,7 @@ class AuthService {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("data", data);
         if (data.user) {
           // Update stored user data
           this.setAuthData('', data.user);

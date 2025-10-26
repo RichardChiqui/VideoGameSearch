@@ -25,11 +25,32 @@ const loadMessages = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.d
 
 const insertNewMessage = "INSERT INTO " + table.Messages + " (fk_fromuserid, fk_touserid, textmessage) VALUES ($1, $2, $3)";
 
-const loadChatHistoryRecepients = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.display_name AS toDisplayName " +
-" FROM messages m JOIN users u_from ON m.fk_fromUserId = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id where m.fk_fromUserId = $1"
+const loadChatHistoryRecepients = `
+SELECT DISTINCT ON (m.fk_toUserId)
+    m.*, 
+    u_from.display_name AS fromDisplayName, 
+    u_to.display_name AS toDisplayName
+FROM messages m
+JOIN users u_from ON m.fk_fromUserId = u_from.id
+JOIN users u_to ON m.fk_toUserId = u_to.id
+WHERE m.fk_fromUserId = $1;
+`;
 
-const loadNewChatHistoryRequests = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.display_name AS toDisplayName " +
-" FROM messages m JOIN users u_from ON m.fk_fromUserId = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id where m.fk_toUserId = $1"
+const loadNewChatHistoryRequests = `
+SELECT DISTINCT ON (m.fk_fromUserId)
+    m.*, 
+    u_from.display_name AS fromDisplayName, 
+    u_to.display_name AS toDisplayName
+FROM messages m
+JOIN users u_from ON m.fk_fromUserId = u_from.id
+JOIN users u_to ON m.fk_toUserId = u_to.id
+WHERE m.fk_toUserId = $1
+  AND m.fk_fromUserId NOT IN (
+      SELECT DISTINCT fk_toUserId
+      FROM messages
+      WHERE fk_fromUserId = $1
+  );
+`;
 
 // queries.js
 const createLinkRequest = `

@@ -43,7 +43,7 @@ router.post('/homepage/login', (req, res) => {
         res.json({ 
             success: true, 
             user: { 
-                id: user.id, 
+                userId: user.id, 
                 email: user.email,
                 display_name: user.display_name || user.email
             } 

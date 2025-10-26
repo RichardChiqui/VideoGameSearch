@@ -7,7 +7,7 @@ export const createLinkRequest = async (linkRequestData: CreateLinkRequestData):
         const response = await apiClient.post('/link-requests', linkRequestData);
         
         if (response.success) {
-            Logger("Successfully created link request for game: " + linkRequestData.game, LogLevel.Info);
+            Logger("Successfully created link request for game: " + linkRequestData.game_name, LogLevel.Info);
             return {
                 success: true,
                 data: response.data

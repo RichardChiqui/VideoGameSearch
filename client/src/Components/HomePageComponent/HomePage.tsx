@@ -62,7 +62,7 @@ export default function HomePage(){
                 
              
             > 
-              <LoginForm />
+            <LoginForm />
             </Modal>
             <HeaderNavBar onButtonClick={handleButtonClick} dismissHandlerClick={dismissHandler}  buttonClicked={buttonClicked}/>
             <HomePageMainContent onButtonClick={handleButtonClick} buttonClicked={buttonClicked}/>

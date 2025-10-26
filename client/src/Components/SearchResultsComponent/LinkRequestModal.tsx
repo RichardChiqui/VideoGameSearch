@@ -12,7 +12,7 @@ interface LinkRequestModalProps {
 
 const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState<CreateLinkRequestData>({
-    game: '',
+    game_name: '',
     tags: [],
     skill_level: SkillLevel.INTERMEDIATE
   });
@@ -69,7 +69,7 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.game.trim()) {
+    if (!formData.game_name.trim()) {
       setError('Game name is required');
       return;
     }
@@ -86,7 +86,7 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
         onClose();
         // Reset form
         setFormData({
-          game: '',
+          game_name: '',
           tags: [],
           skill_level: SkillLevel.INTERMEDIATE
         });
@@ -131,8 +131,8 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
             <input
               type="text"
               id="game"
-              name="game"
-              value={formData.game}
+              name="game_name"
+              value={formData.game_name}
               onChange={handleInputChange}
               className="link-request-modal-input"
               placeholder="Enter the game you want to play"
@@ -147,7 +147,7 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
             </label>
             <select
               id="skillLevel"
-              name="skillLevel"
+              name="skill_level"
               value={formData.skill_level}
               onChange={handleInputChange}
               className="link-request-modal-select"
@@ -231,7 +231,7 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
             <button
               type="submit"
               className="link-request-modal-submit"
-              disabled={isLoading || !formData.game.trim()}
+              disabled={isLoading || !formData.game_name.trim()}
             >
               {isLoading ? 'Creating...' : 'Create Link Request'}
             </button>

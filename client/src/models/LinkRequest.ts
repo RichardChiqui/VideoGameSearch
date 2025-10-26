@@ -24,7 +24,7 @@ export enum LinkRequestStatus {
 }
 
 export interface CreateLinkRequestData {
-  game: string;
+  game_name: string;
   tags: string[];
   skill_level: SkillLevel;
 }
