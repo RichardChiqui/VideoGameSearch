@@ -87,6 +87,7 @@ router.post('/loadMessages', authenticateToken, controller.loadMessages);
 router.post('/insertNewMessage', authenticateToken, controller.insertNewMessage);
 
 router.post('/chat-history/loadRecepients', authenticateToken, controller.loadChatHistoryRecepients);
+router.get('/chat-history/loadNewChatRequests', authenticateToken, controller.loadNewChatHistoryRequests);
 
 // CREATE
 router.post("/link-requests",authenticateToken ,linkRequestController.createLinkRequest);

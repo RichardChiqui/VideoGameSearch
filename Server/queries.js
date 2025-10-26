@@ -28,6 +28,9 @@ const insertNewMessage = "INSERT INTO " + table.Messages + " (fk_fromuserid, fk_
 const loadChatHistoryRecepients = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.display_name AS toDisplayName " +
 " FROM messages m JOIN users u_from ON m.fk_fromUserId = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id where m.fk_fromUserId = $1"
 
+const loadNewChatHistoryRequests = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.display_name AS toDisplayName " +
+" FROM messages m JOIN users u_from ON m.fk_fromUserId = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id where m.fk_toUserId = $1"
+
 // queries.js
 const createLinkRequest = `
     INSERT INTO link_requests (user_id, game_name, skill_level, tags, description)
@@ -87,5 +90,6 @@ module.exports = {
     getUserLinkRequests,
     getLinkRequestsByGame,
     getLinkRequests,
-    loadChatHistoryRecepients
+    loadChatHistoryRecepients,
+    loadNewChatHistoryRequests
 }

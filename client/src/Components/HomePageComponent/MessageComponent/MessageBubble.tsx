@@ -11,6 +11,8 @@ import { Logger, LogLevel } from '../../../Logger/Logger';
 import { loadChatHistoryRecepients } from '../../../NetworkCalls/FetchCalls/ChatHistory/loadChatHistoryRecepients';
 import { ChatHistoryRecepient } from '../../../models/ChatHistoryRecepient';
 import { Message } from '../../../models/Message';
+import { loadNewChatRequests } from '../../../NetworkCalls/FetchCalls/ChatHistory/loadNewChatRequests';
+import { NewChatHistoryRequest } from '../../../models/NewChatHistoryRequest';
 // Define TypeScript interface for messages
 
 
@@ -23,14 +25,15 @@ const MessageBubble = forwardRef<{
     const [selectedUser, setSelectedUser] = useState<string>('');
     const [selectedUserId, setSelectedUserId] = useState<number>(0);
     const [currentView, setCurrentView] = useState<'recipients' | 'chat'>('recipients'); // New state for view mode
+    const [activeTab, setActiveTab] = useState<'chats' | 'requests'>('chats'); // New state for tab selection
     const messageRef = useRef<HTMLDivElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [chatHistoryRecepients, setChatHistoryRecepients] = useState<ChatHistoryRecepient[]>([]);
+    const [newChatRequests, setNewChatRequests] = useState<NewChatHistoryRequest[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
     const userId = useSelector((state: RootState) => state.user.userId);
     const numOfFriends = useSelector((state: RootState) => state.user.numberOfCurrentFriends);
-    const numOfFriendRequests = useSelector((state: RootState) => state.user.numberOfCurrentFriendRequests);
     const dispatch = useDispatch();
 
     // Toggle message window visibility
@@ -158,6 +161,28 @@ const MessageBubble = forwardRef<{
         fetchChatHistoryRecepients();
     }, [userLoggedIn, numOfFriends]);
 
+    // Fetch new chat requests when user data changes
+    useEffect(() => {
+        const fetchNewChatRequests = async () => {
+            try {
+                const newChatRequestsData = await loadNewChatRequests(userId);
+                Logger("newChatRequestsData: " + JSON.stringify(newChatRequestsData), LogLevel.Debug);
+                
+                if (newChatRequestsData.success && newChatRequestsData.newChatRequests) {
+                    setNewChatRequests(newChatRequestsData.newChatRequests);
+                } else {
+                    Logger(`Failed to load new chat requests: ${newChatRequestsData.error}`, LogLevel.Error);
+                    setNewChatRequests([]);
+                }
+            } catch (err) {
+                Logger(`Failed to load new chat requests: ${err}`, LogLevel.Error);
+                setNewChatRequests([]);
+            }
+        };
+
+        fetchNewChatRequests();
+    }, [userLoggedIn]);
+
     // Load messages when a user is selected
     useEffect(() => {
         if (selectedUserId) {
@@ -215,25 +240,67 @@ const MessageBubble = forwardRef<{
             {messageWindowVisible && (
                 <div className="message-window" ref={messageRef}>
                     {currentView === 'recipients' ? (
-                        // Recipients view - show only the list of chat history recipients
+                        // Recipients view - show tabs for chats and requests
                         <div className="chat-column recipients-view">
                             <div className="chat-title">Chat History</div>
-                            <div className="user-list">
-                                {chatHistoryRecepients.length > 0 ? (
-                                    chatHistoryRecepients.map(user => (
-                                        <div
-                                            key={user.fk_touserid}
-                                            className="user recipient-item"
-                                            onClick={() => handleUserClick(user.todisplayname, user.fk_touserid)}
-                                        >
-                                            <div className="recipient-name">{user.todisplayname}</div>
-                                            <div className="recipient-arrow">→</div>
-                                        </div>
-                                    ))
+                            
+                            {/* Tab Navigation */}
+                            <div className="tab-navigation">
+                                <button 
+                                    className={`tab-button ${activeTab === 'chats' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('chats')}
+                                >
+                                    Chats
+                                </button>
+                                <button 
+                                    className={`tab-button ${activeTab === 'requests' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('requests')}
+                                >
+                                    New Requests
+                                </button>
+                            </div>
+                            
+                            {/* Tab Content */}
+                            <div className="tab-content">
+                                {activeTab === 'chats' ? (
+                                    <div className="user-list">
+                                        {chatHistoryRecepients.length > 0 ? (
+                                            chatHistoryRecepients.map(user => (
+                                                <div
+                                                    key={user.fk_touserid}
+                                                    className="user recipient-item"
+                                                    onClick={() => handleUserClick(user.todisplayname, user.fk_touserid)}
+                                                >
+                                                    <div className="recipient-name">{user.todisplayname}</div>
+                                                    <div className="recipient-arrow">→</div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="no-recipients">
+                                                <p>No chat history found</p>
+                                                <p>Start a conversation to see it here!</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 ) : (
-                                    <div className="no-recipients">
-                                        <p>No chat history found</p>
-                                        <p>Start a conversation to see it here!</p>
+                                    <div className="user-list">
+                                        {newChatRequests.length > 0 ? (
+                                            newChatRequests.map((newChatRequest: NewChatHistoryRequest) => (
+                                                <div
+                                                    key={newChatRequest.fk_fromuserid}
+                                                    className="user recipient-item request-item"
+                                                    onClick={() => handleUserClick(newChatRequest.fromdisplayname, newChatRequest.fk_fromuserid)}
+                                                >
+                                                    <div className="recipient-name">{newChatRequest.fromdisplayname}</div>
+                                                    <div className="recipient-arrow">→</div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="no-recipients">
+                                                <p>No new requests</p>
+                                                <p>Friend requests will appear here!</p>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

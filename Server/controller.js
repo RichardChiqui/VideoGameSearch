@@ -242,6 +242,25 @@ const loadChatHistoryRecepients = (req, res) => {
     });
 }; 
 
+const loadNewChatHistoryRequests = (req, res) => {
+    const { fromUserId } = req.query;
+    const userId = req.user.userId;
+    const parsedFromUserId = parseInt(fromUserId, 10);
+    if (userId !== parsedFromUserId) {
+        console.log("WAIT NOT AUTH??");
+        return res.status(403).json({ error: "Unauthorized: Cannot view messages from this conversation" });
+    }
+
+    pool.query(queries.loadNewChatHistoryRequests, [parsedFromUserId], (error, results) => {
+        if (error) {
+            console.error("Error loading messages:", error);
+            return res.status(500).json({ error: "Failed to load messages" });
+        }
+        res.status(200).json({ newChatHistoryRequests: results.rows });
+    });
+};
+
+
 module.exports = {
     validateUser,
     addUser,
@@ -254,5 +273,6 @@ module.exports = {
     loadUserFriends,
     insertNewMessage,
     loadMessages,
-    loadChatHistoryRecepients
+    loadChatHistoryRecepients,
+    loadNewChatHistoryRequests
 };
