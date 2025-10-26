@@ -9,8 +9,10 @@ import Modal from 'react-modal';
 import HomePageMainContent from './HomePageMainContent';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Store';
+import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
 
 export default function HomePage(){
+    const dispatch = useDispatch();
     const [buttonClicked, setButtonClicked] = React.useState(false);
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -23,6 +25,15 @@ export default function HomePage(){
         closeModal();
       } 
     }, [isUserLoggedIn]);
+
+    // Watch for displayPopUp changes to show/hide login modal
+    useEffect(() => {
+      if (displayPopUp) {
+        openModal();
+      } else {
+        closeModal();
+      }
+    }, [displayPopUp]);
     // Function to open the modal
     const openModal = () => {
       setIsModalOpen(true);
@@ -32,7 +43,8 @@ export default function HomePage(){
     const closeModal = () => {
       setIsModalOpen(false);
       setButtonClicked(!buttonClicked);
-
+      // Reset the displayPopUp state
+      dispatch(displayPopUpMethod(false));
     };
 
     const displayStyle= {display: buttonClicked? "block":"none"}

@@ -1,10 +1,10 @@
 import {Logger, LogLevel} from '../../../Logger/Logger'
-import { apiClient } from '../../../utils/apiClient';
+import { publicApiClient } from '../../../utils/apiClient';
 
 export const loadLinkRequests = async () => {
     try {
-        // Use the authenticated API client
-        const response = await apiClient.get('/link-requests');
+        // Use the public API client for unauthenticated access
+        const response = await publicApiClient.get('/link-requests');
         
         if (response.success) {
             Logger("Successfully loaded all link requests", LogLevel.Info);

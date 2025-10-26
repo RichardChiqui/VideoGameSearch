@@ -12,6 +12,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { useAppSelectors } from '../../hooks/useAppSelector';
 import authService from '../../services/AuthService';
 import FeedbackModal from './FeedbackModal';
+import Logo from '../../images/Logo.png';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -91,17 +92,21 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
         };
     }, [dropdownVisible]);
 
-    // Debug dropdown state changes
-    useEffect(() => {
-        console.log('Dropdown state changed to:', dropdownVisible);
-    }, [dropdownVisible]);
-
     return (
         <>
             <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
                 <div className="navbar-brand">
-                    <a className="navbar-item" href="/">
-                        <strong>GameLink</strong>
+                    <a className="navbar-item" href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <img src={Logo} alt="GameLink" style={{ height: '32px', maxHeight: '32px' }} />
+                        <span style={{ 
+                            fontSize: '1.5rem', 
+                            fontWeight: 'bold', 
+                            color: 'white',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                            letterSpacing: '0.5px'
+                        }}>
+                            GameLink
+                        </span>
                     </a>
                     <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu" onClick={() => {
                         const burger = document.querySelector('.navbar-burger');
@@ -153,7 +158,6 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                         <div className="dropdown-trigger" onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            console.log('Dropdown clicked, current state:', dropdownVisible);
                                             setDropdownVisible(!dropdownVisible);
                                         }} style={{ fontSize: '1.5em', cursor: 'pointer', padding: '8px' }}>
                                             <Avatar />

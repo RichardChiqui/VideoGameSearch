@@ -96,6 +96,70 @@ class ApiClient {
   }
 }
 
-// Export singleton instance
+// Public API client for unauthenticated requests
+class PublicApiClient {
+  private baseUrl = 'http://localhost:5000';
+
+  /**
+   * Make a public API call (no authentication)
+   */
+  async request<T = any>(
+    endpoint: string, 
+    options: RequestInit = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const url = `${this.baseUrl}${endpoint}`;
+      
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        credentials: 'include', // Important for cookies
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        return {
+          success: false,
+          error: errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        };
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        data
+      };
+    } catch (error) {
+      Logger(`Public API request failed: ${error}`, LogLevel.Error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error'
+      };
+    }
+  }
+
+  /**
+   * GET request
+   */
+  async get<T = any>(endpoint: string): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, { method: 'GET' });
+  }
+
+  /**
+   * POST request
+   */
+  async post<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+}
+
+// Export singleton instances
 export const apiClient = new ApiClient();
+export const publicApiClient = new PublicApiClient();
 export default apiClient;

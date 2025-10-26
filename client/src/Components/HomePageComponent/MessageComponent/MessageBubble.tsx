@@ -14,6 +14,7 @@ import { Message } from '../../../models/Message';
 import { loadNewChatRequests } from '../../../NetworkCalls/FetchCalls/ChatHistory/loadNewChatRequests';
 import { NewChatHistoryRequest } from '../../../models/NewChatHistoryRequest';
 import messagingService from '../../../services/MessagingService';
+import { useSocket } from '../../../hooks/useSocket';
 // Define TypeScript interface for messages
 
 
@@ -36,6 +37,7 @@ const MessageBubble = forwardRef<{
     const userId = useSelector((state: RootState) => state.user.userId);
     const numOfFriends = useSelector((state: RootState) => state.user.numberOfCurrentFriends);
     const dispatch = useDispatch();
+    const { isConnected: socketConnected, socketId } = useSocket();
 
     // Toggle message window visibility
     const handleIconClick = () => {
@@ -68,19 +70,29 @@ const MessageBubble = forwardRef<{
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (newMessage.trim() && selectedUserId) {
-            // Add message to local state immediately for better UX
+            const messageText = newMessage.trim();
+            setNewMessage(''); // Clear input immediately for better UX
+            
+            // Add message to local state immediately for better UX (fallback)
             const message: Message = {
                 fromUserId: userId,
                 toUserId: selectedUserId,
-                message: newMessage.trim(),
+                message: messageText,
                 timestamp: new Date().toISOString()
             };
-            messagingService.sendMessage(userId, selectedUserId, newMessage.trim());
-            setMessages(prev => [...prev, message]);
-            setNewMessage('');
             
-            // Here you would typically send the message to the server
-            Logger(`Message sent to ${selectedUser}: ${newMessage}`, LogLevel.Info);
+            // Add to local state immediately
+            setMessages(prev => {
+                const updatedMessages = [message,...prev ];
+                return updatedMessages.sort((a, b) => {
+                    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+                });
+            });
+            
+            // Send message via service (this will save to DB and send via socket)
+            messagingService.sendMessage(userId, selectedUserId, messageText);
+            
+            Logger(`Message sent to ${selectedUser}: ${messageText}`, LogLevel.Info);
         }
     };
 
@@ -105,6 +117,7 @@ const MessageBubble = forwardRef<{
     // Function to add a new message (called from SearchResults)
     const addNewMessage = (message: Message) => {
         console.log("Adding new message:", message);
+        Logger(`Adding new message: ${JSON.stringify(message)}`, LogLevel.Debug);
         
         // Determine which user to select based on the message direction
         const targetUserId = message.fromUserId === userId ? message.toUserId : message.fromUserId;
@@ -127,8 +140,29 @@ const MessageBubble = forwardRef<{
         }
         
         // Add the message to the current messages list
-        setMessages(prev => [...prev, message]);
-        Logger(`Message added to local state. Total messages: ${messages.length + 1}`, LogLevel.Debug);
+        setMessages(prev => {
+            // Check if message already exists (to avoid duplicates)
+            const messageExists = prev.some(existingMessage => 
+                existingMessage.fromUserId === message.fromUserId &&
+                existingMessage.toUserId === message.toUserId &&
+                existingMessage.message === message.message &&
+                Math.abs(new Date(existingMessage.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000 // Within 1 second
+            );
+            
+            if (messageExists) {
+                Logger(`Message already exists, skipping duplicate`, LogLevel.Debug);
+                return prev;
+            }
+            
+            const updatedMessages = [...prev, message];
+            // Sort messages by timestamp to maintain chronological order
+            const sortedMessages = updatedMessages.sort((a, b) => {
+                return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+            });
+            
+            Logger(`Added new message. Total messages: ${sortedMessages.length}`, LogLevel.Debug);
+            return sortedMessages;
+        });
         
         // If we're switching to a new user, the useEffect will handle loading messages
         // If we're staying with the same user, we just added the message locally
@@ -207,7 +241,6 @@ const MessageBubble = forwardRef<{
         const fetchMessages = async () => {
             try {
                 const messagesData = await loadUserMessages(userId, selectedUserId);
-                Logger("messages: " + JSON.stringify(messagesData), LogLevel.Debug);
                 
                 if (messagesData.success && messagesData.users) {
                     // Map the users array to messages format
@@ -217,7 +250,13 @@ const MessageBubble = forwardRef<{
                         message: user.textmessage,
                         timestamp: user.timestamp || new Date().toISOString()
                     }));
-                    setMessages(mappedMessages);
+                    
+                    // Sort messages by timestamp (oldest first, newest last)
+                    const sortedMessages = mappedMessages.sort((a, b) => {
+                        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+                    });
+                    
+                    setMessages(sortedMessages);
                 } else {
                     Logger(`Failed to load messages: ${messagesData.error}`, LogLevel.Error);
                     setMessages([]);
@@ -232,7 +271,12 @@ const MessageBubble = forwardRef<{
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messagesEndRef.current) {
+            // Use setTimeout to ensure DOM has updated
+            setTimeout(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
     }, [messages]);
 
     // Expose functions to parent components
@@ -240,6 +284,24 @@ const MessageBubble = forwardRef<{
         addNewUser,
         addNewMessage
     }));
+
+    // Subscribe to incoming messages via socket
+    useEffect(() => {
+        Logger(`Setting up socket subscription for user ${userId}`, LogLevel.Debug);
+        Logger(`Socket connected: ${socketConnected}, Socket ID: ${socketId}`, LogLevel.Debug);
+        
+        const unsubscribeMessages = messagingService.onMessage((message: Message) => {
+            Logger(`Received message via socket: ${JSON.stringify(message)}`, LogLevel.Debug);
+            Logger(`Current selectedUserId: ${selectedUserId}, message target: ${message.fromUserId === userId ? message.toUserId : message.fromUserId}`, LogLevel.Debug);
+            addNewMessage(message);
+        });
+
+        // Cleanup subscription
+        return () => {
+            Logger(`Cleaning up socket subscription for user ${userId}`, LogLevel.Debug);
+            unsubscribeMessages();
+        };
+    }, [userId, selectedUserId, chatHistoryRecepients, socketConnected, socketId]);
 
     // Add and clean up event listener for clicks outside the message window
     useEffect(() => {

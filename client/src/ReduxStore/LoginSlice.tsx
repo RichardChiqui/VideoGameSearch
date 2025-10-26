@@ -5,7 +5,7 @@ interface DisplayPopUp {
 }
 
 const initialState: DisplayPopUp = {
-    displayPopup: true
+    displayPopup: false
 };
 
 const displayPopSlice = createSlice({

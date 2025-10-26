@@ -21,7 +21,7 @@ const loadUserFriends = "SELECT DISTINCT u.id,u.display_name FROM " + table.Frie
                         " u ON u.id = f.fk_fromuserid OR u.id = f.fk_touserid where (f.fk_fromuserid = $1 OR f.fk_touserid = $1) and u.id != $1"
 
 const loadMessages = "SELECT m.*, u_from.display_name AS fromDisplayName, u_to.display_name AS toDisplayName FROM messages m JOIN users u_from ON m.fk_fromUserId" +
-" = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id WHERE (m.fk_fromUserId = $1 AND m.fk_toUserId = $2) OR (m.fk_fromUserId = $2 AND m.fk_toUserId = $1);";
+" = u_from.id JOIN users u_to ON m.fk_toUserId = u_to.id WHERE (m.fk_fromUserId = $1 AND m.fk_toUserId = $2) OR (m.fk_fromUserId = $2 AND m.fk_toUserId = $1) order by m.id desc;";
 
 const insertNewMessage = "INSERT INTO " + table.Messages + " (fk_fromuserid, fk_touserid, textmessage) VALUES ($1, $2, $3)";
 

@@ -93,7 +93,7 @@ router.get('/chat-history/loadNewChatRequests', authenticateToken, controller.lo
 router.post("/link-requests",authenticateToken ,linkRequestController.createLinkRequest);
 
 // READ
-router.get("/link-requests", authenticateToken,linkRequestController.getLinkRequests);
+router.get("/link-requests",linkRequestController.getLinkRequests);
 router.get("/link-requests/game/:gameName", authenticateToken,linkRequestController.getLinkRequestsByGame);
 router.get("/link-requests/user", authenticateToken,linkRequestController.getUserLinkRequests);
 

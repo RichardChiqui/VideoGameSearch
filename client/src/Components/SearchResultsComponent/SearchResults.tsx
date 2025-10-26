@@ -97,7 +97,7 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
         }
       };
       fetchUsers();
-  }, [userLoggedIn, userId]);
+  }, []); // Remove userLoggedIn and userId dependencies to load regardless of auth status
 
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
@@ -179,6 +179,18 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   }
 
   function handleOpenLinkRequestModal() {
+    Logger(`handleOpenLinkRequestModal called - userLoggedIn: ${userLoggedIn}`, LogLevel.Debug);
+    
+    if (!userLoggedIn) {
+      // Redirect to login for unauthenticated users
+      Logger('User not authenticated, triggering login popup', LogLevel.Debug);
+      dispatch(displayPopUpMethod(false));
+      dispatch(displayPopUpMethod(true));
+      return;
+    }
+    
+    // Open modal for authenticated users
+    Logger('User authenticated, opening link request modal', LogLevel.Debug);
     setIsLinkRequestModalOpen(true);
   }
 
@@ -258,11 +270,10 @@ const style: CSSProperties = {
 
     <div className="container" style={style}>
       {/* Create Link Request Button */}
-      {userLoggedIn && (
-        <div className="has-text-centered" style={{ marginBottom: '30px' }}>
-          <button 
-            className="button is-primary is-large"
-            onClick={handleOpenLinkRequestModal}
+      <div className="has-text-centered" style={{ marginBottom: '30px' }}>
+        <button 
+          className="button is-primary is-large"
+          onClick={handleOpenLinkRequestModal}
             style={{
               background: 'linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%)',
               border: 'none',
@@ -287,7 +298,6 @@ const style: CSSProperties = {
             🎮 Create Link Request
           </button>
         </div>
-      )}
   
       <div className="columns is-multiline">
         {successFullyLoadedUsers
