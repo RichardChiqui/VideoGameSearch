@@ -10,7 +10,7 @@ export const useAuth = () => {
   const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
   const userId = useSelector((state: RootState) => state.user.userId);
   const userEmail = useSelector((state: RootState) => state.user.userEmail);
-  const userName = useSelector((state: RootState) => state.user.userName);
+  const display_name = useSelector((state: RootState) => state.user.display_name);
   const [isLoading, setIsLoading] = useState(true);
 
   // Check authentication status on mount
@@ -18,32 +18,44 @@ export const useAuth = () => {
     const checkAuthStatus = async () => {
       try {
         setIsLoading(true);
+        Logger('Checking authentication status...', LogLevel.Debug);
         
         // Check if we have stored auth data
         if (authService.isAuthenticated()) {
-          const user = authService.getUser();
-          if (user) {
-            // Update Redux state with stored user data
-            dispatch(setUserData({
-              userId: user.id,
-              username: user.email, // Use email as username for now
-              userEmail: user.email,
-              userName: user.name
-            }));
-            dispatch(setAuthenticated(true));
-            Logger('User authenticated from stored data', LogLevel.Info);
-          }
-        } else {
-          // Try to refresh from server
-          const refreshed = await authService.refreshAuth();
-          if (refreshed) {
-            const user = authService.getUser();
+          Logger('Found stored user data, verifying with server...', LogLevel.Debug);
+          // We have stored user data, but let's verify with server
+          const isStillAuthenticated = await authService.checkAuthStatus();
+          if (isStillAuthenticated) {
+            const user: User | null = authService.getUser();
             if (user) {
+              // Update Redux state with stored user data
               dispatch(setUserData({
-                userId: user.id,
+                userId: user.userId,
                 username: user.email, // Use email as username for now
                 userEmail: user.email,
-                userName: user.name
+                display_name: user.display_name
+              }));
+              dispatch(setAuthenticated(true));
+              Logger('User authenticated from stored data', LogLevel.Info);
+            }
+          } else {
+            // Server says we're not authenticated, clear local data
+            authService.clearAuthData();
+            dispatch(userLoggedOut());
+            Logger('User authentication expired', LogLevel.Debug);
+          }
+        } else {
+          Logger('No stored user data, checking server...', LogLevel.Debug);
+          // No stored data, try to refresh from server
+          const refreshed = await authService.refreshAuth();
+          if (refreshed) {
+            const user: User | null = authService.getUser();
+            if (user) {
+              dispatch(setUserData({
+                userId: user.userId,
+                username: user.email, // Use email as username for now
+                userEmail: user.email,
+                display_name: user.display_name
               }));
               dispatch(setAuthenticated(true));
               Logger('User authenticated from server refresh', LogLevel.Info);
@@ -74,10 +86,10 @@ export const useAuth = () => {
       if (response.success && response.user) {
         // Update Redux state with focused actions
         dispatch(setUserData({
-          userId: response.user.id,
+          userId: response.user.userId,
           username: response.user.email, // Use email as username for now
           userEmail: response.user.email,
-          userName: response.user.name
+          display_name: response.user.display_name
         }));
         dispatch(setAuthenticated(true));
         
@@ -116,7 +128,7 @@ export const useAuth = () => {
     isAuthenticated,
     userId,
     userEmail,
-    userName,
+    display_name,
     isLoading,
     login,
     logout,

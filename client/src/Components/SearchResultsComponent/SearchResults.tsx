@@ -15,6 +15,8 @@ import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import { loadLinkRequests } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
 import { LinkRequest, SkillLevel } from '../../models/LinkRequest';
+import { ChatHistoryRecepient } from '../../models/ChatHistoryRecepient';
+import { Message } from '../../models/Message'
 
 export type SearchResultsItemType = {
   id: number;
@@ -24,7 +26,7 @@ export type SearchResultsItemType = {
 interface UserData {
   id: number;
   username: string;
-  email: string;
+  email?: string;
   playStyles?: string[];
   skillLevel?: string;
   game?: string;
@@ -38,6 +40,7 @@ interface SearchResultsProps {
 export default function SearchResults({ onButtonClick, buttonClicked }: SearchResultsProps) {
   const discoverFilter = useSelector((state: RootState) => state.mainfilter.discoverSubFilter);
   const userId = useSelector((state: RootState) => state.user.userId);
+  const user = useSelector((state: RootState) => state.user);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
   const { sendGameInvitation } = useMessaging();
@@ -49,8 +52,8 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
   const [isLinkRequestModalOpen, setIsLinkRequestModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
   const messageBubbleRef = React.useRef<{
-    addNewUser: (user: { id: number; username: string }) => void;
-    addNewMessage: (message: { fromUserId: number; toUserId: number; message: string; timestamp: string }) => void;
+    addNewUser: (user: ChatHistoryRecepient) => void;
+    addNewMessage: (message: Message) => void;
   }>(null);
   //const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
@@ -69,14 +72,13 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     { id: 4, username: 'NewbieGamer', email: 'new@email.com', playStyles: ['Casual'], skillLevel: 'Beginner', game: 'Avatar' }
   ];
 
-  const filterValue = buttonClicked ? 'brightness(50%)' : 'brightness(100%)';
+  const filterValue = buttonClicked ? 'brightness(100%)' : 'brightness(100%)';
 
   useEffect(() => {
    // if (discoverFilter === MainFiltersEnum.People) {
       const fetchUsers = async () => {
         try {
           const linkRequestsData = await loadLinkRequests();
-          console.log("linkRequestsData", linkRequestsData);
           const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
             id: req.id,
             user_id: req.user_id,
@@ -86,7 +88,6 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
             skill_level: req.skill_level,
           }));
         
-          console.log("linkRequestsList", linkRequestsList);
           setLinkRequestsList(linkRequestsList);
           setSuccessFullyLoadedUsers(true);
         } catch (err) {
@@ -108,48 +109,66 @@ export default function SearchResults({ onButtonClick, buttonClicked }: SearchRe
     }
  
     if(userLoggedIn){
-      // Set selected user and open modal
-     // setSelectedUser(user);
+      // Convert LinkRequest to UserData format and set as selected user
+      const userData: UserData = {
+        id: linkRequest.user_id,
+        username: linkRequest.display_name,
+        playStyles: linkRequest.tags,
+        skillLevel: linkRequest.skill_level,
+        game: linkRequest.game_name
+      };
+      
+      setSelectedUser(userData);
       setIsMessageModalOpen(true);
     }
   }
 
-  function handleSendMessage(message: string) {
+  async function handleSendMessage(message: string) {
     if (!selectedUser) return;
 
     Logger(`Sending game invitation from ${userId} to ${selectedUser.id}`, LogLevel.Debug);
    
-    // Send both friend request and message using the clean service
-    sendGameInvitation(userId, selectedUser.id, message);
-    
-    // Add user to chat bubble friends list
-    if (messageBubbleRef.current) {
-      messageBubbleRef.current.addNewUser({
-        id: selectedUser.id,
-        username: selectedUser.username
-      });
+    try {
+      // Send both friend request and message using the clean service
+      await sendGameInvitation(userId, selectedUser.id, message);
       
-      // Add message to chat bubble
-      messageBubbleRef.current.addNewMessage({
-        fromUserId: userId,
-        toUserId: selectedUser.id,
-        message: message,
-        timestamp: new Date().toISOString()
-      });
+      // Add user to chat bubble friends list
+      if (messageBubbleRef.current) {
+        Logger(`Adding user ${selectedUser.username} to chat bubble`, LogLevel.Debug);
+        messageBubbleRef.current.addNewUser({
+          fk_touserid: selectedUser.id,
+          todisplayname: selectedUser.username
+        });
+        
+        // Add message to chat bubble
+        Logger(`Adding message to chat bubble: ${message}`, LogLevel.Debug);
+        messageBubbleRef.current.addNewMessage({
+          id: selectedUser.id,
+          fromUserId: userId,
+          toUserId: selectedUser.id,
+          message: message,
+          timestamp: new Date().toISOString()
+        });
+      } else {
+        Logger('MessageBubble ref is null - cannot add user or message', LogLevel.Warn);
+      }
+      
+      // Show success feedback
+      setSentRequests(prev => new Set(Array.from(prev).concat(selectedUser.id)));
+      Logger('Game invitation sent successfully!', LogLevel.Info);
+      
+      // Reset button state after 3 seconds
+      setTimeout(() => {
+        setSentRequests(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(selectedUser.id);
+          return newSet;
+        });
+      }, 3000);
+    } catch (error) {
+      Logger(`Error sending game invitation: ${error}`, LogLevel.Error);
+      // You might want to show an error message to the user here
     }
-    
-    // Show success feedback
-    setSentRequests(prev => new Set(Array.from(prev).concat(selectedUser.id)));
-    Logger('Game invitation sent successfully!', LogLevel.Info);
-    
-    // Reset button state after 3 seconds
-    setTimeout(() => {
-      setSentRequests(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(selectedUser.id);
-        return newSet;
-      });
-    }, 3000);
   }
 
   function handleCloseModal() {

@@ -10,6 +10,7 @@ import CreateGroup from './CreateGroupComponent/CreateGroup';
 import NotificationsIconComponent from './FriendRequestNotification'; // Import the new component
 import ChatIcon from '@mui/icons-material/Chat';
 import { useAppSelectors } from '../../hooks/useAppSelector';
+import authService from '../../services/AuthService';
 
 interface HeaderNavbar {
     onButtonClick: () => void;
@@ -22,7 +23,8 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
     const mainFilter = appSelectors.mainFilter;
     const numofNotifications = appSelectors.numofNotifications;
     const userLoggedIn = appSelectors.userLoggedIn;
-    const username = useSelector((state: RootState) => state.user.username);
+    const display_name = useSelector((state: RootState) => state.user.display_name);
+    const user = useSelector((state: RootState) => state.user);
     const dispatch = appSelectors.dispatch;
     const boldStyle: React.CSSProperties = {
         fontWeight: 'bold'
@@ -63,6 +65,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
 
     function handleLogOut() {
         dispatch(userLoggingOut());
+        authService.logout();
     }
 
     return (
@@ -97,7 +100,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                     {userLoggedIn && (
                         <div className="navbar-item">
                             <span className="has-text-white" style={{ fontWeight: 'bold', fontSize: '1.1em' }}>
-                                Welcome, {username}!
+                                Welcome, {display_name}!
                             </span>
                         </div>
                     )}
@@ -124,7 +127,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                         <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>
                                             <div className="dropdown-content">
                                                 <a href="#" className="dropdown-item">
-                                                    Welcome, {username}!
+                                                    Welcome, {display_name}!
                                                 </a>
                                                 <a href="#" className="dropdown-item">
                                                     Profile

@@ -18,7 +18,6 @@ export default function AdditionalInfoForm(){
     const [isAccountSearchAble, setIsAccountSearchAble] = React.useState(true)
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = event.target;
-        console.log("within handle changes param value for name " + name + " and value " + value);
         switch (name) {
             case "Biograph":
                 setDescription({ description: value });

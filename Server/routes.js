@@ -26,9 +26,9 @@ router.post('/homepage/login', (req, res) => {
       
         // Create JWT token
         const token = jwt.sign(
-            { userId: user.id, email: user.email }, 
+            { userId: user.id, email: user.email, display_name: user.display_name }, 
             JWT_SECRET,
-            { expiresIn: '7d' }
+            { expiresIn: '1d' }
         );
         
         // Set HTTP-only cookie
@@ -86,6 +86,8 @@ router.post('/loadMessages', authenticateToken, controller.loadMessages);
 
 router.post('/insertNewMessage', authenticateToken, controller.insertNewMessage);
 
+router.post('/chat-history/loadRecepients', authenticateToken, controller.loadChatHistoryRecepients);
+
 // CREATE
 router.post("/link-requests",authenticateToken ,linkRequestController.createLinkRequest);
 
@@ -99,6 +101,25 @@ router.put("/link-requests/status", authenticateToken,linkRequestController.upda
 
 // DELETE
 router.delete("/link-requests/:id", authenticateToken,linkRequestController.deleteLinkRequest);
+
+// This route matches the FE call
+router.get('/auth/verify', authenticateToken, (req, res) => {
+  // If we reach here, the token is valid
+  // You can send back the decoded user info
+  res.json({ user: req.user });
+});
+
+router.post('/auth/logout', (req, res) => {
+  // Clear the JWT cookie
+  console.log("logging oput");
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: 'lax'
+  });
+
+  res.json({ message: 'Logged out successfully' });
+});
 
 module.exports = router;
 

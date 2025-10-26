@@ -225,6 +225,23 @@ const loadMessages = (req, res) => {
     });
 };
 
+const loadChatHistoryRecepients = (req, res) => {
+    const { fromUserId } = req.body;
+    
+    // Security: Verify user is part of the conversation
+    if (req.user.userId !== fromUserId) {
+        return res.status(403).json({ error: "Unauthorized: Cannot view messages from this conversation" });
+    }
+    
+    pool.query(queries.loadChatHistoryRecepients, [fromUserId], (error, results) => {
+        if (error) {
+            console.error("Error loading messages:", error);
+            return res.status(500).json({ error: "Failed to load messages" });
+        }
+        res.status(200).json({ recepients: results.rows });
+    });
+}; 
+
 module.exports = {
     validateUser,
     addUser,
@@ -236,5 +253,6 @@ module.exports = {
     insertNewFriend,
     loadUserFriends,
     insertNewMessage,
-    loadMessages
+    loadMessages,
+    loadChatHistoryRecepients
 };

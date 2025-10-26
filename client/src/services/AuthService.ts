@@ -1,9 +1,9 @@
 import { Logger, LogLevel } from '../Logger/Logger';
 
 export interface User {
-  id: number;
+  userId: number;
   email: string;
-  name: string;
+  display_name: string;
 }
 
 export interface LoginResponse {
@@ -16,28 +16,24 @@ class AuthService {
   private readonly USER_KEY = 'user_data';
 
   /**
-   * Store JWT token and user data in localStorage
+   * Store user data in localStorage (JWT token is stored in HTTP-only cookie)
    */
   setAuthData(token: string, user: User): void {
     try {
-      localStorage.setItem(this.TOKEN_KEY, token);
+      // Don't store the token in localStorage since it's in HTTP-only cookie
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-      Logger('Auth data stored successfully', LogLevel.Debug);
+      Logger('User data stored successfully', LogLevel.Debug);
     } catch (error) {
-      Logger(`Failed to store auth data: ${error}`, LogLevel.Error);
+      Logger(`Failed to store user data: ${error}`, LogLevel.Error);
     }
   }
 
   /**
-   * Get stored JWT token
+   * Get stored JWT token (not used with HTTP-only cookies)
    */
   getToken(): string | null {
-    try {
-      return localStorage.getItem(this.TOKEN_KEY);
-    } catch (error) {
-      Logger(`Failed to get token: ${error}`, LogLevel.Error);
-      return null;
-    }
+    // JWT token is stored in HTTP-only cookie, not accessible from client
+    return null;
   }
 
   /**
@@ -55,20 +51,13 @@ class AuthService {
 
   /**
    * Check if user is authenticated (has valid token)
+   * Since we're using HTTP-only cookies, we can't check the token directly
+   * We'll rely on the server to validate the token via the refresh endpoint
    */
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    try {
-      // Check if token is expired
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Date.now() / 1000;
-      return payload.exp > currentTime;
-    } catch (error) {
-      Logger(`Token validation error: ${error}`, LogLevel.Error);
-      return false;
-    }
+    // Check if we have user data stored (indicates previous successful login)
+    const user = this.getUser();
+    return user !== null;
   }
 
   /**
@@ -88,10 +77,9 @@ class AuthService {
    * Get headers for authenticated requests
    */
   getAuthHeaders(): HeadersInit {
-    const token = this.getToken();
     return {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` })
+      'Content-Type': 'application/json'
+      // JWT token is automatically sent via HTTP-only cookie
     };
   }
 
@@ -117,8 +105,9 @@ class AuthService {
       const data: LoginResponse = await response.json();
       
       if (data.success && data.user) {
-        // Store auth data for future use
-        this.setAuthData('jwt_token', data.user); // We'll get the actual token from cookies
+        // Store user data (JWT is already in HTTP-only cookie) 
+   
+        this.setAuthData('', data.user);
         Logger(`User ${data.user.email} logged in successfully`, LogLevel.Info);
         return data;
       } else {
@@ -162,7 +151,8 @@ class AuthService {
       if (response.ok) {
         const data = await response.json();
         if (data.user) {
-          this.setAuthData('jwt_token', data.user);
+          // Store user data (JWT is already in HTTP-only cookie)
+          this.setAuthData('', data.user);
           return true;
         }
       }
@@ -172,6 +162,32 @@ class AuthService {
     } catch (error) {
       Logger(`Auth refresh failed: ${error}`, LogLevel.Error);
       this.clearAuthData();
+      return false;
+    }
+  }
+
+  /**
+   * Check if user is still authenticated by making a test request
+   */
+  async checkAuthStatus(): Promise<boolean> {
+    try {
+      const response = await fetch('http://localhost:5000/auth/verify', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.user) {
+          // Update stored user data
+          this.setAuthData('', data.user);
+          return true;
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      Logger(`Auth status check failed: ${error}`, LogLevel.Error);
       return false;
     }
   }

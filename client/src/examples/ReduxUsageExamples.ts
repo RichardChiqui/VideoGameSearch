@@ -26,7 +26,7 @@ export const loginUserExample = () => {
     userId: 123,
     username: 'john@example.com', // Use email as username for now
     userEmail: 'john@example.com',
-    userName: 'John Doe'
+    display_name: 'John Doe'
   }));
   dispatch(setAuthenticated(true));
   
@@ -43,7 +43,7 @@ export const updateUserDataExample = () => {
     userId: 123,
     username: 'john.updated@example.com', // Use email as username for now
     userEmail: 'john.updated@example.com',
-    userName: 'John Updated'
+    display_name: 'John Updated'
   }));
 };
 
@@ -82,7 +82,7 @@ export const ComponentExample = () => {
         userId: userData.id,
         username: userData.email, // Use email as username for now
         userEmail: userData.email,
-        userName: userData.name
+        display_name: userData.display_name
       }));
       dispatch(setAuthenticated(true));
       

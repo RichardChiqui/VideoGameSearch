@@ -1,5 +1,7 @@
 import { socketService, MessageData } from './SocketService';
 import { Logger, LogLevel } from '../Logger/Logger';
+import { createNewMessage, CreateMessageData } from '../NetworkCalls/createCalls/createNewMessage';
+import { loadMessages, LoadMessagesRequest } from '../NetworkCalls/FetchCalls/loadMessages';
 
 export interface Message {
   id?: number;
@@ -57,21 +59,44 @@ class MessagingService {
   /**
    * Send a message to another user
    */
-  sendMessage(fromUserId: number, toUserId: number, message: string): void {
-    if (!socketService.isSocketConnected()) {
-      Logger('Cannot send message: Socket not connected', LogLevel.Error);
-      return;
-    }
-
-    const messageData: MessageData = {
+  async sendMessage(fromUserId: number, toUserId: number, message: string): Promise<void> {
+    const timestamp = new Date().toISOString();
+    
+    // Always save to database first for persistence
+    const messageData: CreateMessageData = {
       fromUserId,
       toUserId,
       message,
-      timestamp: new Date().toISOString()
+      timestamp
     };
 
-    Logger(`Sending message from ${fromUserId} to ${toUserId}: ${message}`, LogLevel.Info);
-    socketService.emit('send-message', messageData);
+    try {
+      const dbResult = await createNewMessage(messageData);
+      if (dbResult.success) {
+        Logger(`Message saved to database with ID: ${dbResult.messageId}`, LogLevel.Info);
+      } else {
+        Logger(`Failed to save message to database: ${dbResult.error}`, LogLevel.Error);
+        // Continue with socket send even if DB save fails
+      }
+    } catch (error) {
+      Logger(`Error saving message to database: ${error}`, LogLevel.Error);
+      // Continue with socket send even if DB save fails
+    }
+
+    // Send via socket if connected
+    if (socketService.isSocketConnected()) {
+      const socketMessageData: MessageData = {
+        fromUserId,
+        toUserId,
+        message,
+        timestamp
+      };
+
+      Logger(`Sending message via socket from ${fromUserId} to ${toUserId}: ${message}`, LogLevel.Info);
+      socketService.emit('send-message', socketMessageData);
+    } else {
+      Logger('Socket not connected, message saved to database only', LogLevel.Warn);
+    }
   }
 
   /**
@@ -90,14 +115,14 @@ class MessagingService {
   /**
    * Send both friend request and message (for game invitations)
    */
-  sendGameInvitation(fromUserId: number, toUserId: number, message: string): void {
+  async sendGameInvitation(fromUserId: number, toUserId: number, message: string): Promise<void> {
     Logger(`Sending game invitation from ${fromUserId} to ${toUserId}`, LogLevel.Info);
     
     // Send friend request first
-    this.sendFriendRequest(fromUserId, toUserId);
+    //this.sendFriendRequest(fromUserId, toUserId);
     
     // Then send the message
-    this.sendMessage(fromUserId, toUserId, message);
+    await this.sendMessage(fromUserId, toUserId, message);
   }
 
   /**
@@ -157,15 +182,33 @@ class MessagingService {
   }
 
   /**
+   * Load messages from database
+   */
+  async loadMessages(request: LoadMessagesRequest = {}): Promise<Message[]> {
+    try {
+      const result = await loadMessages(request);
+      if (result.success && result.messages) {
+        Logger(`Loaded ${result.messages.length} messages from database`, LogLevel.Info);
+        return result.messages;
+      } else {
+        Logger(`Failed to load messages: ${result.error}`, LogLevel.Error);
+        return [];
+      }
+    } catch (error) {
+      Logger(`Error loading messages: ${error}`, LogLevel.Error);
+      return [];
+    }
+  }
+
+  /**
    * Handle offline message delivery
    */
   private handleOfflineMessage(data: { senderId: number; recevieverId: number }): void {
-    // This would typically save the message to a database
-    // and deliver it when the user comes online
     Logger(`Handling offline message from ${data.senderId} to ${data.recevieverId}`, LogLevel.Debug);
     
-    // For now, we'll just log it
-    // In a real app, you'd save to database and send via push notification
+    // Message is already saved to database via sendMessage method
+    // When the receiver comes online, they can load messages from database
+    // In a real app, you might also send push notifications here
   }
 
   /**

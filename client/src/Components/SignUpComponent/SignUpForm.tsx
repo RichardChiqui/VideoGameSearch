@@ -36,7 +36,6 @@ export default function SignUpForm(){
       
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
-        console.log("within handle changes param value for name " + name + " and value " + value);
         switch (name) {
             case "Username":
                 setUserName({ username: value });
@@ -58,11 +57,7 @@ export default function SignUpForm(){
     function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         event.preventDefault();
 
-        console.log("Before submitting, here is email " + emailValue + ", password " + passwordValue + " and username " + usernameValue);
-        console.log("and here is booleans for email " + missingEmail + ', password ' + missingPassword + " and usernamew " + missingUsername);
-       
         if(missingEmail || missingPassword || missingPassword){
-            console.log("not all fields have been filled out");
             setMissingFields(true);
 
         } else{
@@ -76,7 +71,6 @@ export default function SignUpForm(){
 
     function handleFieldUpdates(event: React.FocusEvent<HTMLInputElement>){
         const { name, value } = event.target;
-        console.log("within check for uypdates value for name " + name + " and value " + value);
         switch (name) {
             case "Username":
                 if(value.length == 0){
@@ -105,10 +99,7 @@ export default function SignUpForm(){
     }
 
     function handleConfirmPasswordBlur(event: React.FocusEvent<HTMLInputElement>) {
-        console.log("Clicked off input field:", event.target.name);
-        console.log("current password " + passwordValue + " and the confirm apssword " + confirmPasswordValue);
         if(passwordValue === confirmPasswordValue){
-            console.log("Passwords are the same are good");
             setPasswordMatch(true);
         } else{
             setPasswordMatch(false);

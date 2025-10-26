@@ -1,25 +1,46 @@
-import {Logger, LogLevel} from '../../Logger/Logger'
-export const createNewMessage = async (fromUserId: number, toUserId: number, message:string) => {
-    try {
-        const response = await fetch('http://localhost:5000/insertNewMessage', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                fromUserId: fromUserId,
-                toUserId: toUserId,
-                message:message
-            })
-        });
+import { apiClient } from '../../utils/apiClient';
+import { Logger, LogLevel } from '../../Logger/Logger';
 
-        if (!response.ok) {
-            Logger("Failed to create new message from " + fromUserId + " to " + toUserId + " with message:" + message, LogLevel.Error);
-        }
+export interface CreateMessageData {
+  fromUserId: number;
+  toUserId: number;
+  message: string;
+  timestamp: string;
+}
 
-        
-        return await response.json();
-    } catch (error) {
-        Logger("Error creating new friend relationship between" +  fromUserId + " to " + toUserId + " error:" + error, LogLevel.Error);
+export interface CreateMessageResponse {
+  success: boolean;
+  messageId?: number;
+  error?: string;
+}
+
+/**
+ * Create a new message in the database
+ */
+export const createNewMessage = async (messageData: CreateMessageData): Promise<CreateMessageResponse> => {
+  try {
+    Logger(`Creating new message from ${messageData.fromUserId} to ${messageData.toUserId}`, LogLevel.Debug);
+    
+    const response = await apiClient.post<{ messageId: number }>('/insertNewMessage', messageData);
+    
+    if (response.success && response.data) {
+      Logger(`Message created successfully with ID: ${response.data.messageId}`, LogLevel.Info);
+      return {
+        success: true,
+        messageId: response.data.messageId
+      };
+    } else {
+      Logger(`Failed to create message: ${response.error}`, LogLevel.Error);
+      return {
+        success: false,
+        error: response.error || 'Failed to create message'
+      };
     }
+  } catch (error) {
+    Logger(`Error creating message: ${error}`, LogLevel.Error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
 };

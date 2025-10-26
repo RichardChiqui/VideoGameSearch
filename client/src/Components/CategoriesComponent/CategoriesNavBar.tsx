@@ -36,7 +36,7 @@ export default function CategoriesNavBar({ buttonClicked }: CategoriesNavBarProp
       ];
 
 
-    const filterValue = buttonClicked ? "brightness(50%)" : "brightness(100%)";
+    const filterValue = buttonClicked ? "brightness(100%)" : "brightness(100%)";
     const style= {filter: filterValue};
     return(
         <div className="categories-bar"  style={style}>

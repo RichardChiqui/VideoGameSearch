@@ -11,8 +11,8 @@ import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; //
 import { loadUserFriends } from '../../NetworkCalls/FetchCalls/loadUserFriends';
 import '../../StylingSheets/socialStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
-import {createNewMessage } from '../../NetworkCalls/createCalls/createNewMessage';
 import {loadUserMessages} from '../../NetworkCalls/FetchCalls/loadUserMessages';
+import { messagingService } from '../../services/MessagingService';
 
 export type SearchResultsItemType = {
   id: number;
@@ -25,10 +25,11 @@ interface UserData {
   email: string;
 }
 
-interface messageData {
+interface MessageData {
   fromUserId: number;
   toUserId: number;
   message: string;
+  timestamp?: string;
 }
 
 interface SearchResultsProps {
@@ -57,7 +58,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
       setSelectedUserId(userId);
   };
   const [peoplesList, setPeoplesList] = React.useState<UserData[]>([]);
-  const [messagesList, setMessagesList] = React.useState<messageData[]>([]);
+  const [messagesList, setMessagesList] = React.useState<MessageData[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(false);
   //const [socket, setSocket] = React.useState<WebSocket | null>(null);
 
@@ -68,7 +69,7 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
     { id: 4, name: 'Avatar' }
   ];
 
-  const filterValue = buttonClicked ? 'brightness(50%)' : 'brightness(100%)';
+  const filterValue = buttonClicked ? 'brightness(100%)' : 'brightness(100%)';
 
   useEffect(() => {
     if (discoverFilter === MainFiltersEnum.People) {
@@ -94,23 +95,31 @@ export default function Social({ onButtonClick, buttonClicked }: SearchResultsPr
  
     const fetchMessages = async () => {
       try {
-        console.log("loading messages for user: " + userId + " and selected user: " + selectedUserId);
+        Logger(`Loading messages for user: ${userId} and selected user: ${selectedUserId}`, LogLevel.Debug);
         const allUserMessages = await loadUserMessages(userId, selectedUserId);
-        Logger("allUserMessages: " + JSON.stringify(allUserMessages), LogLevel.Debug);
         
-        const allUserMessagesMap = allUserMessages.users.map(
-          (user: any) => ({
-            fromUserId: user.fk_fromuserid,  // Corrected key names
-            toUserId: user.fk_touserid,      // Corrected key names
-            message: user.textmessage        // Corrected key names
-          })
-        );
-        
-        Logger("allUserMessagesMap: " + JSON.stringify(allUserMessagesMap), LogLevel.Debug);
-        setMessagesList(allUserMessagesMap);
+        if (allUserMessages.success && allUserMessages.users) {
+          Logger("allUserMessages: " + JSON.stringify(allUserMessages), LogLevel.Debug);
+          
+          const allUserMessagesMap = allUserMessages.users.map(
+            (user: any) => ({
+              fromUserId: user.fk_fromuserid,  // Corrected key names
+              toUserId: user.fk_touserid,      // Corrected key names
+              message: user.textmessage,       // Corrected key names
+              timestamp: user.timestamp || new Date().toISOString()
+            })
+          );
+          
+          Logger("allUserMessagesMap: " + JSON.stringify(allUserMessagesMap), LogLevel.Debug);
+          setMessagesList(allUserMessagesMap);
+        } else {
+          Logger(`Failed to load messages: ${allUserMessages.error}`, LogLevel.Error);
+          setMessagesList([]); // Set empty array on failure
+        }
         
       } catch (err) {
-        Logger('Failed to load all users: ' + err, LogLevel.Error);
+        Logger('Failed to load messages: ' + err, LogLevel.Error);
+        setMessagesList([]); // Set empty array on error
       }
     };
     
@@ -169,36 +178,41 @@ useEffect(() => {
 
 const [message, setMessage] = useState<string>('');
 
-    const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setMessage(event.target.value);
-    };
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault(); // Prevents the default form submission behavior
-    
-      if (message.trim()) {
-        try {
-          // Call your function to handle sending the message
-          const messageData = await createNewMessage(userId, selectedUserId, message);
-          Logger("Message data: " + JSON.stringify(messageData), LogLevel.Debug);
-    
-          // Format the new message to match your messageData structure
-          const newMessage: messageData = {
-            fromUserId: userId,         // Set the sender ID
-            toUserId: selectedUserId,   // Set the receiver ID
-            message: message,           // The text message
-          };
-    
-          // Append the new message to the current list
-          setMessagesList((prevMessages) => [newMessage,...prevMessages ]);
-    
-          // Clear the input after sending
-          setMessage(""); 
-    
-        } catch (err) {
-          console.error('Failed to send message:', err);
-        }
-      }
-    };
+const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(event.target.value);
+};
+const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault(); // Prevents the default form submission behavior
+
+  if (message.trim() && selectedUserId) {
+    try {
+      // Use MessagingService to send message (saves to DB and sends via socket)
+      await messagingService.sendMessage(userId, selectedUserId, message);
+      
+      Logger(`Message sent from ${userId} to ${selectedUserId}: ${message}`, LogLevel.Info);
+
+      // Format the new message to match your MessageData structure
+      const newMessage: MessageData = {
+        fromUserId: userId,         // Set the sender ID
+        toUserId: selectedUserId,   // Set the receiver ID
+        message: message,           // The text message
+        timestamp: new Date().toISOString()
+      };
+
+      // Append the new message to the current list
+      setMessagesList((prevMessages) => [newMessage, ...prevMessages]);
+
+      // Clear the input after sending
+      setMessage(""); 
+
+    } catch (err) {
+      Logger(`Failed to send message: ${err}`, LogLevel.Error);
+      console.error('Failed to send message:', err);
+    }
+  } else {
+    Logger('Cannot send message: missing message content or selected user', LogLevel.Warn);
+  }
+};
     
     
 const style: CSSProperties = { 
@@ -247,11 +261,16 @@ const messageRef = useRef<HTMLDivElement>(null);
                   <input
                       type="text"
                       className="input"
-                      placeholder={`Message ${selectedUser}`}
+                      placeholder={selectedUser ? `Message ${selectedUser}` : "Select a user to message"}
                       value={message}
                       onChange={handleMessageChange}
+                      disabled={!selectedUser}
                   />
-                  <button type="submit" className="button is-primary">
+                  <button 
+                      type="submit" 
+                      className="button is-primary"
+                      disabled={!selectedUser || !message.trim()}
+                  >
                       Send
                   </button>
               </form>
