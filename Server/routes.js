@@ -26,7 +26,7 @@ router.post('/homepage/login', (req, res) => {
       
         // Create JWT token
         const token = jwt.sign(
-            { userId: user.id, email: user.email, display_name: user.display_name }, 
+            { userId: user.id, email: user.email, display_name: user.display_name,region: user.region, profile_description: user.profile_description }, 
             JWT_SECRET,
             { expiresIn: '1d' }
         );
@@ -45,7 +45,9 @@ router.post('/homepage/login', (req, res) => {
             user: { 
                 userId: user.id, 
                 email: user.email,
-                display_name: user.display_name || user.email
+                display_name: user.display_name,
+                region: user.region,
+                profile_description: user.profile_description,
             } 
         });
     });
@@ -96,9 +98,11 @@ router.post("/link-requests",authenticateToken ,linkRequestController.createLink
 router.get("/link-requests",linkRequestController.getLinkRequests);
 router.get("/link-requests/game/:gameName", authenticateToken,linkRequestController.getLinkRequestsByGame);
 router.get("/link-requests/user", authenticateToken,linkRequestController.getUserLinkRequests);
+router.get("/link-requests/user/:userId", authenticateToken, linkRequestController.getLinkRequestsByUserId);
 
 // UPDATE
 router.put("/link-requests/status", authenticateToken,linkRequestController.updateLinkRequestStatus);
+router.put("/link-requests/:id", authenticateToken, linkRequestController.updateLinkRequest);
 
 // DELETE
 router.delete("/link-requests/:id", authenticateToken,linkRequestController.deleteLinkRequest);

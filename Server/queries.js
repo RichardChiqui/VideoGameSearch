@@ -2,8 +2,8 @@ const { table } = require('./tableNameEnums');
 const validateUser = "SELECT * FROM users WHERE email = $1 and password = $2";
 
 const addUser = `
-  INSERT INTO users (display_name, password, email)
-  VALUES ($1, $2, $3)
+  INSERT INTO users (email, password, display_name, region, profile_description)
+  VALUES ($1, $2, $3, $4, $5)
   RETURNING *;
 `;
 
@@ -58,13 +58,13 @@ WHERE m.fk_toUserId = $1
 
 // queries.js
 const createLinkRequest = `
-    INSERT INTO link_requests (user_id, game_name, skill_level, tags, description)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO link_requests (user_id, game_name, tags, description)
+    VALUES ($1, $2, $3, $4)
     RETURNING *
 `;
 
 const getLinkRequests = `
-    SELECT lr.*, u.email, u.display_name 
+    SELECT lr.*, u.email, u.display_name, u.region
     FROM link_requests lr
     JOIN users u ON lr.user_id = u.id
     WHERE lr.status = 'active'
@@ -75,14 +75,16 @@ const getLinkRequestsByGame = `
     SELECT lr.*, u.email, u.display_name 
     FROM link_requests lr
     JOIN users u ON lr.user_id = u.id
-    WHERE lr.game_name = $1 AND lr.status = 'active'
+    WHERE lr.game_name ILIKE  $1 AND lr.status = 'active'
     ORDER BY lr.created_at DESC
 `;
 
 const getUserLinkRequests = `
-    SELECT * FROM link_requests
-    WHERE user_id = $1
-    ORDER BY created_at DESC
+    SELECT lr.*, u.email, u.display_name, u.region
+    FROM link_requests lr
+    JOIN users u ON lr.user_id = u.id
+    WHERE lr.user_id = $1
+    ORDER BY lr.created_at DESC
 `;
 
 const updateLinkRequestStatus = `

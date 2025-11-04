@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../Store';
 import 'bulma/css/bulma.min.css';
 import { changeMainFilter } from '../../ReduxStore/HeaderFilterSlice';
@@ -22,6 +23,7 @@ interface HeaderNavbar {
 }
 
 export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, buttonClicked }: HeaderNavbar) {
+    const navigate = useNavigate();
     const appSelectors = useAppSelectors();
     const mainFilter = appSelectors.mainFilter;
     const numofNotifications = appSelectors.numofNotifications;
@@ -185,24 +187,24 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                         }} style={{ fontSize: '1.5em', cursor: 'pointer', padding: '8px' }}>
                                             <Avatar />
                                         </div>
-                                            <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`} style={{
-                                                display: dropdownVisible ? 'block' : 'none',
-                                                position: 'absolute',
-                                                top: '100%',
-                                                right: '0',
-                                                backgroundColor: 'white',
-                                                border: '1px solid #ccc',
-                                                borderRadius: '8px',
-                                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                                                zIndex: 1100,
-                                                minWidth: '200px'
-                                            }}>
+                                            <div className={`dropdown-menu ${dropdownVisible ? 'is-active' : ''}`}>
                                                 <div className="dropdown-content">
                                                     <a href="#" className="dropdown-item">
                                                         Welcome, {display_name}!
                                                     </a>
-                                                    <a href="#" className="dropdown-item" onClick={() => setDropdownVisible(false)}>
+                                                    <a href="#" className="dropdown-item" onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setDropdownVisible(false);
+                                                        navigate('/profile');
+                                                    }}>
                                                         Profile
+                                                    </a>
+                                                    <a href="#" className="dropdown-item" onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setDropdownVisible(false);
+                                                        navigate('/my-requests');
+                                                    }}>
+                                                        MY Requests
                                                     </a>
                                                     <a href="#" className="dropdown-item" onClick={() => setDropdownVisible(false)}>
                                                         Settings

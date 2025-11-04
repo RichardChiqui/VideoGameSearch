@@ -3,11 +3,12 @@ export interface LinkRequest {
   user_id: number;
   game_name: string;
   tags: string[];
-  skill_level: SkillLevel;
+  description: string;
   status: LinkRequestStatus;
   createdAt?: string;
   updatedAt?: string;
   display_name: string;
+  region?: string;
 }
 
 export enum SkillLevel {
@@ -26,7 +27,7 @@ export enum LinkRequestStatus {
 export interface CreateLinkRequestData {
   game_name: string;
   tags: string[];
-  skill_level: SkillLevel;
+  description: string;
 }
 
 export interface LinkRequestResponse {

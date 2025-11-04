@@ -1,9 +1,12 @@
 import { Logger, LogLevel } from '../Logger/Logger';
+import { REGIONS_ENUMS } from '../enums/RegionsEnums';
 
 export interface User {
   userId: number;
   email: string;
   display_name: string;
+  region: REGIONS_ENUMS;
+  profile_description: string;
 }
 
 export interface LoginResponse {

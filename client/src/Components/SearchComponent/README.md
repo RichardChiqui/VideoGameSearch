@@ -76,7 +76,6 @@ function MyComponent() {
 ```tsx
 interface SearchFilters {
   game: string;           // Selected game name
-  skillLevel: string;    // Selected skill level
   tags: string[];        // Array of selected tags
 }
 ```

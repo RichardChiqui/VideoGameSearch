@@ -31,9 +31,10 @@ export const useAuth = () => {
               // Update Redux state with stored user data
               dispatch(setUserData({
                 userId: user.userId,
-                username: user.email, // Use email as username for now
                 userEmail: user.email,
-                display_name: user.display_name
+                display_name: user.display_name,
+                region: user.region,
+                profile_description: user.profile_description
               }));
               dispatch(setAuthenticated(true));
               Logger('User authenticated from stored data', LogLevel.Info);
@@ -53,9 +54,10 @@ export const useAuth = () => {
             if (user) {
               dispatch(setUserData({
                 userId: user.userId,
-                username: user.email, // Use email as username for now
                 userEmail: user.email,
-                display_name: user.display_name
+                display_name: user.display_name,
+                region: user.region,
+                profile_description: user.profile_description
               }));
               dispatch(setAuthenticated(true));
               Logger('User authenticated from server refresh', LogLevel.Info);
@@ -87,9 +89,10 @@ export const useAuth = () => {
         // Update Redux state with focused actions
         dispatch(setUserData({
           userId: response.user.userId,
-          username: response.user.email, // Use email as username for now
           userEmail: response.user.email,
-          display_name: response.user.display_name
+          display_name: response.user.display_name,
+          region: response.user.region,
+          profile_description: response.user.profile_description
         }));
         dispatch(setAuthenticated(true));
         

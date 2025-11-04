@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import '../../StylingSheets/hybridSearchStyles.css';
-
+import SearchIcon from '@mui/icons-material/Search';
+import { GAME_NAME_DESCRIPTIONS } from '../../enums/gameNameEnums';
+import { PLAY_STYLE_TAGS } from '../../enums/PlayStyleTagsEnums';
 interface SearchFilters {
   game: string;
   skillLevel: string;
@@ -21,39 +23,8 @@ const SKILL_LEVELS = [
   'Expert'
 ];
 
-const POPULAR_GAMES = [
-  'Overwatch',
-  'Fortnite',
-  'Modern Warfare 2',
-  'Avatar: Frontiers of Pandora',
-  'Call of Duty',
-  'Valorant',
-  'League of Legends',
-  'Counter-Strike 2',
-  'Apex Legends',
-  'Rocket League'
-];
-
-const POPULAR_TAGS = [
-  'Competitive',
-  'Casual',
-  'Speedrun',
-  'Exploration',
-  'PvP',
-  'PvE',
-  'Cooperative',
-  'Solo',
-  'Team-based',
-  'Strategy',
-  'Action',
-  'RPG',
-  'FPS',
-  'RTS',
-  'MOBA',
-  'Racing',
-  'Fighting',
-  'Puzzle'
-];
+// moved to src/enums/gameNameEnums.tsx
+// moved to src/enums/PlayStyleTagsEnums.tsx
 
 export default function HybridSearchBar({ onSearch, placeholder = "Search by game name (e.g., Overwatch, Fortnite)...", onClearFilters }: HybridSearchBarProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +39,7 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
   const [skillDropdownOpen, setSkillDropdownOpen] = useState(false);
   const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
   
+  console.log(tagsDropdownOpen);
   // Refs for click outside detection
   const gameDropdownRef = useRef<HTMLDivElement>(null);
   const skillDropdownRef = useRef<HTMLDivElement>(null);
@@ -112,9 +84,11 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
   };
 
   const handleGameSelect = (game: string) => {
-    setFilters(prev => ({ ...prev, game }));
+    const updatedFilters = { ...filters, game };
+    setFilters(updatedFilters);
     setGameDropdownOpen(false);
     Logger(`Selected game: ${game}`, LogLevel.Debug);
+    onSearch(searchQuery, updatedFilters);
   };
 
   const handleSkillSelect = (skillLevel: string) => {
@@ -169,7 +143,7 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
             onClick={handleSearch}
             title="Search"
           >
-            <i className="fas fa-search"></i>
+            <SearchIcon fontSize="small" />
           </button>
         </div>
       </div>
@@ -180,7 +154,11 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
         <div className="filter-dropdown" ref={gameDropdownRef}>
           <button
             className={`filter-button ${filters.game ? 'active' : ''}`}
-            onClick={() => setGameDropdownOpen(!gameDropdownOpen)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setGameDropdownOpen(!gameDropdownOpen);
+            }}
+            type="button"
           >
             <i className="fas fa-gamepad"></i>
             <span>{filters.game || 'Game'}</span>
@@ -188,26 +166,27 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
           </button>
           
           {gameDropdownOpen && (
-            <div className="dropdown-menu">
+            <div className="dropdown-menu" onClick={(e) => e.stopPropagation()} style={{ display: 'block', visibility: 'visible', opacity: 1 }}>
               <div className="dropdown-content">
                 <div className="dropdown-header">
                   <span>Select Game</span>
                   {filters.game && (
                     <button 
                       className="clear-filter"
+                      type="button"
                       onClick={() => handleGameSelect('')}
                     >
                       Clear
                     </button>
                   )}
                 </div>
-                {POPULAR_GAMES.map((game) => (
+                {Object.entries(GAME_NAME_DESCRIPTIONS).map(([id, name]) => (
                   <div
-                    key={game}
-                    className={`dropdown-item ${filters.game === game ? 'selected' : ''}`}
-                    onClick={() => handleGameSelect(game)}
+                    key={id}
+                    className={`dropdown-item ${filters.game === name ? 'selected' : ''}`}
+                    onClick={() => handleGameSelect(name)}
                   >
-                    {game}
+                    {name}
                   </div>
                 ))}
               </div>
@@ -216,7 +195,7 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
         </div>
 
         {/* Skill Level Filter */}
-        <div className="filter-dropdown" ref={skillDropdownRef}>
+        {/* <div className="filter-dropdown" ref={skillDropdownRef}>
           <button
             className={`filter-button ${filters.skillLevel ? 'active' : ''}`}
             onClick={() => setSkillDropdownOpen(!skillDropdownOpen)}
@@ -252,13 +231,14 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
               </div>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Tags Filter */}
         <div className="filter-dropdown" ref={tagsDropdownRef}>
           <button
             className={`filter-button ${filters.tags.length > 0 ? 'active' : ''}`}
-            onClick={() => setTagsDropdownOpen(!tagsDropdownOpen)}
+            onClick={(e) => { e.stopPropagation(); setTagsDropdownOpen(!tagsDropdownOpen); }}
+            type="button"
           >
             <i className="fas fa-tags"></i>
             <span>
@@ -271,7 +251,7 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
           </button>
           
           {tagsDropdownOpen && (
-            <div className="dropdown-menu tags-dropdown">
+            <div className="dropdown-menu tags-dropdown" onClick={(e) => e.stopPropagation()} style={{ display: 'block', visibility: 'visible', opacity: 1 }}>
               <div className="dropdown-content">
                 <div className="dropdown-header">
                   <span>Select Tags</span>
@@ -285,7 +265,7 @@ export default function HybridSearchBar({ onSearch, placeholder = "Search by gam
                   )}
                 </div>
                 <div className="tags-grid">
-                  {POPULAR_TAGS.map((tag) => (
+                  {PLAY_STYLE_TAGS.map((tag) => (
                     <div
                       key={tag}
                       className={`tag-item ${filters.tags.includes(tag) ? 'selected' : ''}`}

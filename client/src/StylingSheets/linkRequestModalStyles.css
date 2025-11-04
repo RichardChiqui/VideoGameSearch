@@ -99,6 +99,7 @@
   transition: all 0.3s ease;
   outline: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
 }
 
 .link-request-modal-input:focus,
@@ -117,6 +118,12 @@
 .link-request-modal-select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+textarea.link-request-modal-input {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
 }
 
 /* Tags Styling */

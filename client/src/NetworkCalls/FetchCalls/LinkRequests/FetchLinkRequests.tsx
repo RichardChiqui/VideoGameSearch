@@ -1,5 +1,5 @@
 import {Logger, LogLevel} from '../../../Logger/Logger'
-import { publicApiClient } from '../../../utils/apiClient';
+import { publicApiClient, apiClient } from '../../../utils/apiClient';
 
 export const loadLinkRequests = async () => {
     try {
@@ -33,6 +33,24 @@ export const loadLinkRequestsByGame = async (gameName: string) => {
         }
     } catch (error) {
         Logger(`Failed to load link requests for game ${gameName}: ` + error, LogLevel.Error);
+        throw error;
+    }
+};
+
+export const loadLinkRequestsByUser = async (userId: number) => {
+    try {
+        // Use authenticated API client since this requires user authentication
+        const response = await apiClient.get(`/link-requests/user/${userId}`);
+        
+        if (response.success) {
+            Logger(`Successfully loaded link requests for user: ${userId}`, LogLevel.Info);
+            return response.data;
+        } else {
+            Logger(`Failed to load link requests for user ${userId}: ${response.error}`, LogLevel.Error);
+            throw new Error(response.error || 'Failed to load link requests by user');
+        }
+    } catch (error) {
+        Logger(`Failed to load link requests for user ${userId}: ` + error, LogLevel.Error);
         throw error;
     }
 };

@@ -39,7 +39,6 @@ export default function DiscoverTab({onButtonClick, buttonClicked }: CategoriesN
         Logger(`Discover search - Query: "${query}"`, LogLevel.Info);
         Logger(`Discover search - Filters:`, LogLevel.Debug);
         Logger(`  Game: ${filters.game}`, LogLevel.Debug);
-        Logger(`  Skill Level: ${filters.skillLevel}`, LogLevel.Debug);
         Logger(`  Tags: ${filters.tags.join(', ')}`, LogLevel.Debug);
         
         // Store the search filters to pass to SearchResults

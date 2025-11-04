@@ -1,35 +1,26 @@
 import React, { useEffect, CSSProperties } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Store';
-import { MainFiltersEnum } from '../../ENUMS';
-import { loadAllUsers } from '../../NetworkCalls/FetchCalls/loadAllUsers';
-import { userLoggedIn, receiveFriendRequest } from '../../ReduxStore/UserstateSlice';
-import { useSocket } from '../../hooks/useSocket'
-import { useMessaging } from '../../hooks/useMessaging'
 import { displayPopUpMethod } from '../../ReduxStore/LoginSlice';
-import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble'; // Import the MessageBubble component
+import ChatWindow from '../HomePageComponent/MessageComponent/MessageBubble';
 import MessageComposeModal from './MessageComposeModal';
 import LinkRequestModal from './LinkRequestModal';
+import { loadLinkRequests, loadLinkRequestsByGame } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
+import { LinkRequest } from '../../models/LinkRequest';
+import { REGIONS_DESCRIPTIONS, REGIONS_ENUMS } from '../../enums/RegionsEnums';
+import { useMessaging } from '../../hooks/useMessaging';
 
 import '../../StylingSheets/searchResultsStyles.css';
 import { Logger, LogLevel } from '../../Logger/Logger';
-import { loadLinkRequests, loadLinkRequestsByGame } from '../../NetworkCalls/FetchCalls/LinkRequests/FetchLinkRequests';
-import { deleteLinkRequest } from '../../NetworkCalls/deleteCalls/deleteLinkRequest';
-import { LinkRequest, SkillLevel } from '../../models/LinkRequest';
 import { ChatHistoryRecepient } from '../../models/ChatHistoryRecepient';
-import { Message } from '../../models/Message'
-
-export type SearchResultsItemType = {
-  id: number;
-  name: string;
-};
+import { Message } from '../../models/Message';
 
 interface UserData {
   id: number;
   username: string;
   email?: string;
   playStyles?: string[];
-  skillLevel?: string;
+  description?: string;
   game?: string;
 }
 
@@ -40,9 +31,7 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ onButtonClick, buttonClicked, searchFilters }: SearchResultsProps) {
-  const discoverFilter = useSelector((state: RootState) => state.mainfilter.discoverSubFilter);
   const userId = useSelector((state: RootState) => state.user.userId);
-  const user = useSelector((state: RootState) => state.user);
   const userLoggedIn = useSelector((state: RootState) => state.user.isAuthenticated);
   const dispatch = useDispatch();
   const { sendGameInvitation } = useMessaging();
@@ -50,7 +39,6 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
   const [linkRequestsList, setLinkRequestsList] = React.useState<LinkRequest[]>([]);
   const [successFullyLoadedUsers, setSuccessFullyLoadedUsers] = React.useState(true);
   const [sentRequests, setSentRequests] = React.useState<Set<number>>(new Set());
-  const [deletedRequests, setDeletedRequests] = React.useState<Set<number>>(new Set());
   const [isMessageModalOpen, setIsMessageModalOpen] = React.useState(false);
   const [isLinkRequestModalOpen, setIsLinkRequestModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserData | null>(null);
@@ -58,61 +46,80 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
     addNewUser: (user: ChatHistoryRecepient) => void;
     addNewMessage: (message: Message) => void;
   }>(null);
-  //const [socket, setSocket] = React.useState<WebSocket | null>(null);
-
-  const categoriesList: SearchResultsItemType[] = [
-    { id: 1, name: 'OverWatch' },
-    { id: 2, name: 'Fornite' },
-    { id: 3, name: 'Modern Warfare 2' },
-    { id: 4, name: 'Avatar' }
-  ];
-
-  // Sample data with play styles and skills for demonstration
-  const sampleUsersWithData: UserData[] = [
-    { id: 1, username: 'GamerPro123', email: 'pro@email.com', playStyles: ['Competitive', 'Ranked'], skillLevel: 'Expert', game: 'Overwatch' },
-    { id: 2, username: 'CasualPlayer', email: 'casual@email.com', playStyles: ['Casual', 'Quick Play'], skillLevel: 'Intermediate', game: 'Fortnite' },
-    { id: 3, username: 'RPGMaster', email: 'rpg@email.com', playStyles: ['Role-Playing', 'Story Mode'], skillLevel: 'Advanced', game: 'Modern Warfare 2' },
-    { id: 4, username: 'NewbieGamer', email: 'new@email.com', playStyles: ['Casual'], skillLevel: 'Beginner', game: 'Avatar' }
-  ];
 
   const filterValue = buttonClicked ? 'brightness(100%)' : 'brightness(100%)';
 
   useEffect(() => {
-   // if (discoverFilter === MainFiltersEnum.People) {
-      const fetchUsers = async () => {
-        try {
-          let linkRequestsData;
-          
-          // If search filters are provided and contain a game, filter by game
-          if (searchFilters && searchFilters.game) {
-            Logger(`Filtering link requests by game: ${searchFilters.game}`, LogLevel.Info);
-            linkRequestsData = await loadLinkRequestsByGame(searchFilters.game);
-          } else {
-            // Load all link requests if no game filter
-            linkRequestsData = await loadLinkRequests();
+    const fetchUsers = async () => {
+      try {
+        let linkRequestsData;
+        
+        // If search filters are provided and contain a game, filter by game
+        if (searchFilters && searchFilters.game) {
+          Logger(`Filtering link requests by game: ${searchFilters.game}`, LogLevel.Info);
+          linkRequestsData = await loadLinkRequestsByGame(searchFilters.game);
+        } else {
+          // Load all link requests if no game filter
+          linkRequestsData = await loadLinkRequests();
+        }
+        
+        const allLinkRequests: LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => {
+          // Convert region enum ID to description if it exists
+          let regionDescription: string | undefined = req.region;
+          if (req.region && typeof req.region === 'number') {
+            const enumValue = req.region as REGIONS_ENUMS;
+            regionDescription = REGIONS_DESCRIPTIONS[enumValue] || String(req.region);
+          } else if (!req.region) {
+            regionDescription = undefined;
           }
           
-          const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
+          return {
             id: req.id,
             user_id: req.user_id,
             display_name: req.display_name,
             game_name: req.game_name,
             tags: req.tags,
-            skill_level: req.skill_level,
-          }));
+            description: req.description || '',
+            status: req.status,
+            region: regionDescription
+          };
+        });
         
-          setLinkRequestsList(linkRequestsList);
-          setSuccessFullyLoadedUsers(true);
-        } catch (err) {
-          Logger('Failed to load all link requests:'+ err, LogLevel.Error);
-        }
-      };
-      fetchUsers();
-  }, [searchFilters]); // Add searchFilters as dependency
+        // Filter out the current user's own requests - only show other users' requests
+        const otherUsersRequests = allLinkRequests.filter(req => req.user_id !== userId);
+        
+        setLinkRequestsList(otherUsersRequests);
+        setSuccessFullyLoadedUsers(true);
+      } catch (err) {
+        Logger('Failed to load all link requests:'+ err, LogLevel.Error);
+      }
+    };
+    fetchUsers();
+  }, [searchFilters, userId]);
 
 
   const displayPopUpVal = useSelector((state: RootState) => state.displayPopUp.displayPopup);
 
+
+  function handleOpenLinkRequestModal() {
+    Logger(`handleOpenLinkRequestModal called - userLoggedIn: ${userLoggedIn}`, LogLevel.Debug);
+    
+    if (!userLoggedIn) {
+      // Redirect to login for unauthenticated users
+      Logger('User not authenticated, triggering login popup', LogLevel.Debug);
+      dispatch(displayPopUpMethod(false));
+      dispatch(displayPopUpMethod(true));
+      return;
+    }
+    
+    // Open modal for authenticated users
+    Logger('User authenticated, opening link request modal', LogLevel.Debug);
+    setIsLinkRequestModalOpen(true);
+  }
+
+  function handleCloseLinkRequestModal() {
+    setIsLinkRequestModalOpen(false);
+  }
 
   function handleLinkRequest(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, linkRequest: LinkRequest){
     if(!userLoggedIn){
@@ -127,7 +134,7 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
         id: linkRequest.user_id,
         username: linkRequest.display_name,
         playStyles: linkRequest.tags,
-        skillLevel: linkRequest.skill_level,
+        description: linkRequest.description,
         game: linkRequest.game_name
       };
       
@@ -180,33 +187,12 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
       }, 3000);
     } catch (error) {
       Logger(`Error sending game invitation: ${error}`, LogLevel.Error);
-      // You might want to show an error message to the user here
     }
   }
 
   function handleCloseModal() {
     setIsMessageModalOpen(false);
     setSelectedUser(null);
-  }
-
-  function handleOpenLinkRequestModal() {
-    Logger(`handleOpenLinkRequestModal called - userLoggedIn: ${userLoggedIn}`, LogLevel.Debug);
-    
-    if (!userLoggedIn) {
-      // Redirect to login for unauthenticated users
-      Logger('User not authenticated, triggering login popup', LogLevel.Debug);
-      dispatch(displayPopUpMethod(false));
-      dispatch(displayPopUpMethod(true));
-      return;
-    }
-    
-    // Open modal for authenticated users
-    Logger('User authenticated, opening link request modal', LogLevel.Debug);
-    setIsLinkRequestModalOpen(true);
-  }
-
-  function handleCloseLinkRequestModal() {
-    setIsLinkRequestModalOpen(false);
   }
 
   function handleLinkRequestSuccess() {
@@ -225,16 +211,32 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
           linkRequestsData = await loadLinkRequests();
         }
         
-        const linkRequestsList : LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => ({
-          id: req.id,
-          user_id: req.user_id,
-          display_name: req.display_name,
-          game_name: req.game_name,
-          tags: req.tags,
-          skill_level: req.skill_level,
-        }));
-      
-        setLinkRequestsList(linkRequestsList);
+        const allLinkRequests: LinkRequest[] = linkRequestsData.linkRequests.map((req: LinkRequest) => {
+          // Convert region enum ID to description if it exists
+          let regionDescription: string | undefined = req.region;
+          if (req.region && typeof req.region === 'number') {
+            const enumValue = req.region as REGIONS_ENUMS;
+            regionDescription = REGIONS_DESCRIPTIONS[enumValue] || String(req.region);
+          } else if (!req.region) {
+            regionDescription = undefined;
+          }
+          
+          return {
+            id: req.id,
+            user_id: req.user_id,
+            display_name: req.display_name,
+            game_name: req.game_name,
+            tags: req.tags,
+            description: req.description || '',
+            status: req.status,
+            region: regionDescription
+          };
+        });
+        
+        // Filter out the current user's own requests - only show other users' requests
+        const otherUsersRequests = allLinkRequests.filter(req => req.user_id !== userId);
+        
+        setLinkRequestsList(otherUsersRequests);
         setSuccessFullyLoadedUsers(true);
       } catch (err) {
         Logger('Failed to load all link requests:'+ err, LogLevel.Error);
@@ -242,46 +244,12 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
     };
     fetchUsers();
   }
-
-  async function handleDeleteLinkRequest(linkRequest: LinkRequest) {
-    if (!linkRequest.id) {
-      Logger('Cannot delete link request: missing ID', LogLevel.Error);
-      return;
-    }
-
-    try {
-      Logger(`Deleting link request with ID: ${linkRequest.id}`, LogLevel.Debug);
-      
-      const response = await deleteLinkRequest(linkRequest.id);
-      
-      if (response.success) {
-        // Add to deleted requests set for visual feedback
-        setDeletedRequests(prev => new Set(prev).add(linkRequest.id!));
-        
-        // Remove from the list after a short delay for visual feedback
-        setTimeout(() => {
-          setLinkRequestsList(prev => prev.filter(req => req.id !== linkRequest.id));
-          setDeletedRequests(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(linkRequest.id!);
-            return newSet;
-          });
-        }, 1000);
-        
-        Logger('Link request deleted successfully!', LogLevel.Info);
-      } else {
-        Logger(`Failed to delete link request: ${response.error}`, LogLevel.Error);
-      }
-    } catch (error) {
-      Logger(`Error deleting link request: ${error}`, LogLevel.Error);
-    }
-  }
   // Socket logic is now handled by the messaging service
 
-const style: CSSProperties = { 
-  filter: filterValue,
-  marginTop: '30px' // Adjust this value based on your needs
-};
+  const style: CSSProperties = { 
+    filter: filterValue,
+    marginTop: '30px' // Adjust this value based on your needs
+  };
 
   const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
@@ -289,7 +257,7 @@ const style: CSSProperties = {
   return (
     <>
       {/* Show active filter info */}
-      {searchFilters && searchFilters.game && (
+      {/* {searchFilters && searchFilters.game && (
         <div className="active-filter-info" style={{
           padding: '10px 15px',
           backgroundColor: '#e8f4f8',
@@ -319,7 +287,7 @@ const style: CSSProperties = {
             Clear filter
           </button>
         </div>
-      )}
+      )} */}
 
     <div className="container" style={style}>
       {/* Create Link Request Button */}
@@ -327,30 +295,30 @@ const style: CSSProperties = {
         <button 
           className="button is-primary is-large"
           onClick={handleOpenLinkRequestModal}
-            style={{
-              background: 'linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%)',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '15px 30px',
-              fontSize: '18px',
-              fontWeight: '600',
-              color: 'white',
-              boxShadow: '0 4px 15px rgba(107, 115, 255, 0.3)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 115, 255, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(107, 115, 255, 0.3)';
-            }}
-          >
-            🎮 Create Link Request
-          </button>
-        </div>
+          style={{
+            background: 'linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%)',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '15px 30px',
+            fontSize: '18px',
+            fontWeight: '600',
+            color: 'white',
+            boxShadow: '0 4px 15px rgba(107, 115, 255, 0.3)',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(107, 115, 255, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(107, 115, 255, 0.3)';
+          }}
+        >
+          🎮 Create Link Request
+        </button>
+      </div>
   
       <div className="columns is-multiline">
         {successFullyLoadedUsers
@@ -358,7 +326,17 @@ const style: CSSProperties = {
               <div className="column is-one-quarter" key={item.id}>
                 <div className="card" style={cardStyle}>
                   <header className="card-header">
-                    <p className="card-header-title">{item.display_name}</p>
+                    <p className="card-header-title" style={{ margin: 0, flex: 1 }}>{item.display_name}</p>
+                    {item.region && (
+                      <span className="card-header-region" style={{ 
+                        color: 'white', 
+                        fontSize: '0.9em', 
+                        opacity: 0.9,
+                        fontWeight: 500
+                      }}>
+                        {item.region}
+                      </span>
+                    )}
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
@@ -393,73 +371,39 @@ const style: CSSProperties = {
                       {/* Horizontal line separator */}
                       <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
-                      {/* Skill Level */}
-                      {item.skill_level && (
+                      {/* Description */}
+                      {item.description && (
                         <div>
-                          <strong>Skill Level:</strong>
-                          <span 
-                            className={`tag ${
-                              item.skill_level === SkillLevel.EXPERT ? 'is-danger' :
-                              item.skill_level === SkillLevel.ADVANCED ? 'is-warning' :
-                              item.skill_level === SkillLevel.INTERMEDIATE ? 'is-info' :
-                              'is-light'
-                            }`}
-                            style={{ marginLeft: '5px', fontSize: '0.75rem' }}
-                          >
-                              {item.skill_level}
-                          </span>
+                          <strong>Description:</strong>
+                          <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '0.9rem', color: '#2C3E50', lineHeight: '1.4' }}>
+                            {item.description}
+                          </p>
                         </div>
                       )}
                     </div>
                   </div>
                   <footer className="card-footer">
-                   {userLoggedIn? (
-                     // Check if this request was created by the current user
-                     item.user_id === userId ? (
-                       // Show delete button for user's own requests
-                       <button 
-                         className={`button card-footer-item ${deletedRequests.has(item.id!) ? 'is-success' : 'is-danger'}`}
-                         onClick={() => handleDeleteLinkRequest(item)}
-                         disabled={deletedRequests.has(item.id!)}
-                       >
-                         {deletedRequests.has(item.id!) ? '✓ Deleted!' : '🗑️ Delete'}
-                       </button>
-                     ) : (
-                       // Show send request button for other users' requests
-                       <button 
-                         className={`button card-footer-item ${sentRequests.has(item.user_id) ? 'is-success' : 'is-primary'}`}
-                         onClick={(event) => handleLinkRequest(event, item)}
-                         disabled={sentRequests.has(item.user_id)}
-                       >
-                         {sentRequests.has(item.user_id) ? '✓ Request Sent!' : 'Send Link Request'}
-                       </button>
-                     )
+                   {userLoggedIn ? (
+                     // Show send request button for other users' requests
+                     <button 
+                       className={`button card-footer-item ${sentRequests.has(item.user_id) ? 'is-success' : 'is-primary'}`}
+                       onClick={(event) => handleLinkRequest(event, item)}
+                       disabled={sentRequests.has(item.user_id)}
+                     >
+                       {sentRequests.has(item.user_id) ? '✓ Request Sent!' : 'Send Link Request'}
+                     </button>
                    ) : (
                      <button className="button card-footer-item" onClick={onButtonClick}>Send Link Request</button>
                    )}
-                    {/* <button className="button card-footer-item">Profile</button> */}
                   </footer>
                 </div>
               </div>
             ))
-          : categoriesList.map((item: SearchResultsItemType) => (
-              <div className="column is-one-quarter" key={item.id}>
-                <div className="card" style={cardStyle}>
-                  <header className="card-header">
-                    <p className="card-header-title">{item.name}</p>
-                  </header>
-                  <div className="card-content" style={cardContentStyle}>
-                    <div className="content">
-                      <p>Game: {item.name}</p>
-                    </div>
-                  </div>
-                  <footer className="card-footer">
-                    <button className="button card-footer-item">Send Link Request</button>
-                    <button className="button card-footer-item">Profile</button>
-                  </footer>
-                </div>
-              </div>
-            ))}
+          : (
+            <div className="has-text-centered" style={{ padding: '60px 20px', width: '100%' }}>
+              <p style={{ fontSize: '1.2rem', color: '#6c757d' }}>Loading link requests...</p>
+            </div>
+          )}
       </div>
     
     </div>

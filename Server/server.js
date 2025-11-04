@@ -1,6 +1,7 @@
 require('dotenv').config(); // Add this FIRST LINE
 const express = require('express');
 const routes = require('./routes');
+const userController = require('./Controllers/UsersController');
 const controller = require('./controller');
 const cors = require('cors');
 const http = require('http');
@@ -21,6 +22,7 @@ app.get('/api', (req, res) => {
 });
 
 app.use('/', routes);
+app.use('/user',userController)
 
 // Create an HTTP server that wraps the Express app
 const server = http.createServer(app);

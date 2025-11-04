@@ -1,0 +1,19 @@
+export enum REGIONS_ENUMS {
+  NORTH_AMERICA = 1,
+  SOUTH_AMERICA = 2,
+  EUROPE = 3,
+  ASIA = 4,
+  AFRICA = 5,
+  OCEANIA = 6,
+  MIDDLE_EAST = 7
+}
+
+export const REGIONS_DESCRIPTIONS: Record<REGIONS_ENUMS, string> = {
+  [REGIONS_ENUMS.NORTH_AMERICA]: 'North America',
+  [REGIONS_ENUMS.SOUTH_AMERICA]: 'South America',
+  [REGIONS_ENUMS.EUROPE]: 'Europe',
+  [REGIONS_ENUMS.ASIA]: 'Asia',
+  [REGIONS_ENUMS.AFRICA]: 'Africa',
+  [REGIONS_ENUMS.OCEANIA]: 'Oceania',
+  [REGIONS_ENUMS.MIDDLE_EAST]: 'Middle East'
+};

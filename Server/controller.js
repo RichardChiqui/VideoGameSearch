@@ -28,7 +28,7 @@ const validateUser = (req, res, callback) => {
 };
 
 const addUser = (req, res) => {
-    const { email, password, username } = req.body;
+    const { email, password, username,region,profile_description } = req.body;
     console.log("Adding brand new user with email:", email);
 
     // Validate email format
@@ -37,7 +37,7 @@ const addUser = (req, res) => {
         return res.status(400).json({ error: "Invalid email format" });
     }
 
-    pool.query(queries.addUser, [username, password, email], (error, results) => {
+    pool.query(queries.addUser, [email, password,username,region,profile_description], (error, results) => {
         if (error) {
             console.error("Add user error:", error);
 
@@ -51,7 +51,7 @@ const addUser = (req, res) => {
         
         // Generate JWT token for the new user
         const token = jwt.sign(
-            { userId: newUser.id, email: newUser.email, display_name: newUser.display_name },
+            { userId: newUser.id, email: newUser.email, display_name: newUser.display_name, region: newUser.region, profile_description: newUser.profile_description },
             JWT_SECRET,
             { expiresIn: '1d' }
         );

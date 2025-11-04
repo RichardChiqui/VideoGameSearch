@@ -1,10 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { act } from "react-dom/test-utils";
+import { REGIONS_ENUMS } from "../enums/RegionsEnums";
 
 interface UserState {
   isAuthenticated: boolean;
   userId: number;
-  username: string;
   userEmail: string;
   display_name: string;
   numberOfCurrentFriendRequests: number;
@@ -12,19 +12,22 @@ interface UserState {
   socketId: string | null; // Add socketId field
   numOfMessages: number;
   newMessage:string;
+  region: REGIONS_ENUMS | undefined;
+  profile_description?: string;
 }
 
 const initialState: UserState = {
   isAuthenticated: false,
   userId: 0,
-  username: '',
   userEmail: '',
   display_name: '',
   numberOfCurrentFriendRequests: 0,
   socketId: null, // Initialize socketId as null
   numberOfCurrentFriends: 0,
   numOfMessages: 0,
-  newMessage:""
+  newMessage:"",
+  region: undefined,
+  profile_description: ''
 };
 
 const userSlice = createSlice({
@@ -35,17 +38,20 @@ const userSlice = createSlice({
     setAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
-    setUserData: (state, action: PayloadAction<{ userId: number; username: string; userEmail: string; display_name: string }>) => {
+    setUserData: (state, action: PayloadAction<{ userId: number; userEmail: string; display_name: string
+      region: REGIONS_ENUMS;
+      profile_description: string;
+     }>) => {
       state.userId = action.payload.userId;
-      state.username = action.payload.username;
       state.userEmail = action.payload.userEmail;
       state.display_name = action.payload.display_name;
+      state.region = action.payload.region;
+      state.profile_description = action.payload.profile_description;
     },
     // Legacy action for backward compatibility (can be removed later)
     userLoggedIn: (state, action: PayloadAction<{ isAuthenticated: boolean; userId: number; username: string; numberOfCurrentFriendRequests: number }>) => {
       state.isAuthenticated = action.payload.isAuthenticated;
       state.userId = action.payload.userId;
-      state.username = action.payload.username;
       state.numberOfCurrentFriendRequests = action.payload.numberOfCurrentFriendRequests;
     },
     setUserId: (state, action: PayloadAction<number>) => {
@@ -60,7 +66,6 @@ const userSlice = createSlice({
     userLoggedOut: (state) => {
       state.isAuthenticated = false;
       state.userId = 0;
-      state.username = '';
       state.userEmail = '';
       state.display_name = '';
       state.numberOfCurrentFriendRequests = 0;
@@ -68,6 +73,8 @@ const userSlice = createSlice({
       state.numOfMessages = 0;
       state.newMessage = '';
       state.socketId = null;
+      state.region = undefined;
+      state.profile_description = '';
     },
     // Friend request actions
     setFriendRequestCount: (state, action: PayloadAction<number>) => {
@@ -91,7 +98,6 @@ const userSlice = createSlice({
     },
     userLoggingOut : (state) =>{
       state.isAuthenticated = false;
-      state.username = '';
       state.userId = 0;
     },
     setCurrentNumberOfFriends :(state,action: PayloadAction<number>) =>{

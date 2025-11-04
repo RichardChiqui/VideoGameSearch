@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { CreateLinkRequestData, SkillLevel } from '../../models/LinkRequest';
+import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { CreateLinkRequestData } from '../../models/LinkRequest';
 import { createLinkRequest } from '../../NetworkCalls/createCalls/createLinkRequest';
 import { Logger, LogLevel } from '../../Logger/Logger';
+import { GAME_NAME_DESCRIPTIONS } from '../../enums/gameNameEnums';
+import { PLAY_STYLE_TAGS } from '../../enums/PlayStyleTagsEnums';
 import '../../StylingSheets/linkRequestModalStyles.css';
 
 interface LinkRequestModalProps {
@@ -14,24 +17,55 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
   const [formData, setFormData] = useState<CreateLinkRequestData>({
     game_name: '',
     tags: [],
-    skill_level: SkillLevel.INTERMEDIATE
+    description: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [newTag, setNewTag] = useState('');
+  const [selectedGameOption, setSelectedGameOption] = useState<string>('');
+  const [otherGameName, setOtherGameName] = useState<string>('');
+  const [tagsDropdownOpen, setTagsDropdownOpen] = useState(false);
+  const tagsDropdownRef = useRef<HTMLDivElement>(null);
+  const tagsButtonRef = useRef<HTMLButtonElement>(null);
+  const [tagsDropdownPos, setTagsDropdownPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
 
-  const skillLevels = [
-    { value: SkillLevel.BEGINNER, label: 'Beginner' },
-    { value: SkillLevel.INTERMEDIATE, label: 'Intermediate' },
-    { value: SkillLevel.ADVANCED, label: 'Advanced' },
-    { value: SkillLevel.EXPERT, label: 'Expert' }
-  ];
+  // Handle click outside to close tags dropdown
+  useEffect(() => {
+    if (!tagsDropdownOpen) return;
 
-  const commonPlaystyleTags = [
-    'Competitive', 'Casual', 'Speedrun', 'Exploration', 'PvP', 'PvE',
-    'Cooperative', 'Solo', 'Team-based', 'Strategy', 'Action', 'RPG',
-    'FPS', 'RTS', 'MOBA', 'Racing', 'Fighting', 'Puzzle'
-  ];
+    const updatePosition = () => {
+      if (tagsButtonRef.current) {
+        const rect = tagsButtonRef.current.getBoundingClientRect();
+        setTagsDropdownPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+      }
+    };
+
+    updatePosition();
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        tagsDropdownRef.current &&
+        !tagsDropdownRef.current.contains(target) &&
+        tagsButtonRef.current &&
+        !tagsButtonRef.current.contains(target)
+      ) {
+        setTagsDropdownOpen(false);
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }, 10);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [tagsDropdownOpen]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -58,18 +92,20 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
     }));
   };
 
-  const handleCustomTagSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTag.trim()) {
-      handleAddTag(newTag.trim());
-      setNewTag('');
+  const handleToggleTag = (tag: string) => {
+    if (formData.tags.includes(tag)) {
+      handleRemoveTag(tag);
+    } else {
+      handleAddTag(tag);
     }
+    // Don't close dropdown on selection to allow multiple selections
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.game_name.trim()) {
+    const effectiveGameName = selectedGameOption === 'OTHER' ? otherGameName.trim() : formData.game_name.trim();
+
+    if (!effectiveGameName) {
       setError('Game name is required');
       return;
     }
@@ -78,7 +114,10 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
     setError('');
 
     try {
-      const response = await createLinkRequest(formData);
+      const response = await createLinkRequest({
+        ...formData,
+        game_name: effectiveGameName
+      });
       
       if (response.success) {
         Logger('Link request created successfully', LogLevel.Info);
@@ -88,8 +127,10 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
         setFormData({
           game_name: '',
           tags: [],
-          skill_level: SkillLevel.INTERMEDIATE
+          description: ''
         });
+        setSelectedGameOption('');
+        setOtherGameName('');
       } else {
         setError(response.error || 'Failed to create link request');
       }
@@ -128,89 +169,217 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
             <label htmlFor="game" className="link-request-modal-label">
               Game Name *
             </label>
-            <input
-              type="text"
+            <select
               id="game"
               name="game_name"
-              value={formData.game_name}
-              onChange={handleInputChange}
-              className="link-request-modal-input"
-              placeholder="Enter the game you want to play"
+              value={selectedGameOption}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedGameOption(value);
+                if (value !== 'OTHER') {
+                  setFormData(prev => ({ ...prev, game_name: value }));
+                  setOtherGameName('');
+                } else {
+                  setFormData(prev => ({ ...prev, game_name: '' }));
+                }
+                setError('');
+              }}
+              className="link-request-modal-select"
               required
               disabled={isLoading}
-            />
+            >
+              <option value="" disabled>Select a game</option>
+              {Object.entries(GAME_NAME_DESCRIPTIONS).map(([id, name]) => (
+                <option key={id} value={name}>{name}</option>
+              ))}
+              <option value="OTHER">Other</option>
+            </select>
+            {selectedGameOption === 'OTHER' && (
+              <div className="link-request-modal-field" style={{ marginTop: '8px' }}>
+                <input
+                  type="text"
+                  value={otherGameName}
+                  onChange={(e) => {
+                    setOtherGameName(e.target.value);
+                    setError('');
+                  }}
+                  className="link-request-modal-input"
+                  placeholder="Enter game name"
+                  disabled={isLoading}
+                />
+              </div>
+            )}
           </div>
 
           <div className="link-request-modal-field">
-            <label htmlFor="skillLevel" className="link-request-modal-label">
-              Skill Level
+            <label htmlFor="description" className="link-request-modal-label">
+              Description
             </label>
-            <select
-              id="skillLevel"
-              name="skill_level"
-              value={formData.skill_level}
-              onChange={handleInputChange}
-              className="link-request-modal-select"
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={(e) => {
+                setFormData(prev => ({
+                  ...prev,
+                  description: e.target.value
+                }));
+                setError('');
+              }}
+              className="link-request-modal-input"
+              placeholder="Enter a description for your link request..."
+              rows={4}
               disabled={isLoading}
-            >
-              {skillLevels.map(level => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="link-request-modal-field">
             <label className="link-request-modal-label">
               Playstyle Tags
             </label>
-            <div className="link-request-modal-tags">
-              {formData.tags.map(tag => (
-                <span key={tag} className="link-request-modal-tag">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="link-request-modal-tag-remove"
-                    disabled={isLoading}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
             
-            <div className="link-request-modal-tag-suggestions">
-              <p className="link-request-modal-tag-label">Quick add:</p>
-              <div className="link-request-modal-tag-buttons">
-                {commonPlaystyleTags.map(tag => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => handleAddTag(tag)}
-                    className="link-request-modal-tag-button"
-                    disabled={isLoading || formData.tags.includes(tag)}
-                  >
+            {/* Selected Tags Display */}
+            {formData.tags.length > 0 && (
+              <div className="link-request-modal-tags" style={{ marginBottom: '10px' }}>
+                {formData.tags.map(tag => (
+                  <span key={tag} className="link-request-modal-tag">
                     {tag}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="link-request-modal-tag-remove"
+                      disabled={isLoading}
+                    >
+                      ×
+                    </button>
+                  </span>
                 ))}
               </div>
-            </div>
+            )}
 
-            <form onSubmit={handleCustomTagSubmit} className="link-request-modal-custom-tag">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add custom tag"
-                className="link-request-modal-input"
+            {/* Tags Dropdown */}
+            <div style={{ position: 'relative', overflow: 'visible' }} onMouseDown={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!tagsDropdownOpen && tagsButtonRef.current) {
+                    const rect = tagsButtonRef.current.getBoundingClientRect();
+                    setTagsDropdownPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+                  }
+                  setTagsDropdownOpen(!tagsDropdownOpen);
+                }}
+                onMouseDown={(e) => {
+                  // Prevent document-level mousedown handler from closing before click
+                  e.stopPropagation();
+                }}
+                className="link-request-modal-select"
+                style={{ 
+                  width: '100%', 
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
                 disabled={isLoading}
-              />
-              <button type="submit" className="link-request-modal-add-tag-btn" disabled={isLoading}>
-                Add
+                ref={tagsButtonRef}
+              >
+                <span>{formData.tags.length > 0 ? `${formData.tags.length} tag${formData.tags.length > 1 ? 's' : ''} selected` : 'Select tags'}</span>
+                <span style={{ transform: tagsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>▼</span>
               </button>
-            </form>
+              
+              {tagsDropdownOpen && ReactDOM.createPortal(
+                <div
+                  ref={tagsDropdownRef}
+                  style={{
+                    position: 'absolute',
+                    top: tagsDropdownPos.top,
+                    left: tagsDropdownPos.left,
+                    minWidth: Math.max(200, tagsDropdownPos.width),
+                    background: 'white',
+                    border: '1px solid #E8F4F8',
+                    borderRadius: '8px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+                    zIndex: 3000,
+                    marginTop: 4,
+                    maxHeight: 300,
+                    overflowY: 'auto',
+                    display: 'block',
+                    visibility: 'visible',
+                    opacity: 1
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  <div style={{ padding: '8px 0', background: 'white' }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 16px',
+                      borderBottom: '1px solid #e8f4f8',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      color: '#2c3e50',
+                      textTransform: 'uppercase'
+                    }}>
+                      <span>Select Tags</span>
+                      {formData.tags.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, tags: [] }));
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#6B73FF',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            padding: '4px 8px',
+                            borderRadius: '4px'
+                          }}
+                        >
+                          Clear All
+                        </button>
+                      )}
+                    </div>
+                    {PLAY_STYLE_TAGS.map(tag => (
+                      <div
+                        key={tag}
+                        onClick={() => handleToggleTag(tag)}
+                        style={{
+                          padding: '12px 16px',
+                          cursor: 'pointer',
+                          transition: 'background 0.3s ease',
+                          color: '#2c3e50',
+                          fontSize: '14px',
+                          backgroundColor: formData.tags.includes(tag) 
+                            ? 'rgba(107, 115, 255, 0.1)' 
+                            : 'transparent',
+                          fontWeight: formData.tags.includes(tag) ? 600 : 400
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!formData.tags.includes(tag)) {
+                            e.currentTarget.style.backgroundColor = '#f8f9fa';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!formData.tags.includes(tag)) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }
+                        }}
+                      >
+                        {formData.tags.includes(tag) && '✓ '}{tag}
+                      </div>
+                    ))}
+                  </div>
+                </div>,
+                document.body
+              )}
+            </div>
           </div>
 
           {error && (
