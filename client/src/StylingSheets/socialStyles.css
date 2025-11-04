@@ -17,9 +17,9 @@
 
 .chat-column.left {
     width: 30%;
-    background: linear-gradient(135deg, #2C5F7C 0%, #4A90A4 100%);
+    background: white;
     border-right: 1px solid #E8F4F8;
-    color: white;
+    color: #2C3E50;
 }
 
 .chat-column.right {
@@ -33,6 +33,9 @@
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 15px;
+    color: #2C3E50;
+    padding: 15px;
+    border-bottom: 1px solid #E8F4F8;
 }
 
 .user-list {
@@ -43,13 +46,13 @@
 .user {
     padding: 12px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    border-bottom: 1px solid #E8F4F8;
+    color: #2C3E50;
     transition: all 0.3s ease;
 }
 
 .user:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
     transform: translateX(4px);
 }
 
@@ -57,7 +60,8 @@
     font-size: 1.25em;
     font-weight: bold;
     padding: 10px 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #E8F4F8;
+    color: #2C3E50;
 }
 
 .messages {
@@ -79,10 +83,11 @@
 }
 
 .message-bubble.sent {
-    background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
-    color: white;
+    background: white;
+    color: #2C3E50;
     align-self: flex-end;
-    box-shadow: 0 2px 8px rgba(107, 115, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid #E8F4F8;
 }
 
 .message-bubble.received {

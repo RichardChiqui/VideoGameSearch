@@ -8,7 +8,7 @@ interface BadgeProps {
 const Badge: React.FC<BadgeProps> = ({ count }) => {
   return (
     <div style={{ position: 'relative' }}>
-      <PersonIcon fontSize="large"/>
+      <PersonIcon fontSize="large" sx={{ color: 'white' }}/>
       {count > 0 && (
         <div
           style={{

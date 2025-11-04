@@ -1,7 +1,7 @@
 .my-requests-page {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%);
+  background: var(--color-accent);
   padding: 20px;
   box-sizing: border-box;
 }
@@ -26,7 +26,7 @@
   font-weight: 700;
   color: #2C3E50;
   margin: 0;
-  background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -36,7 +36,7 @@
   background: none;
   border: none;
   font-size: 2.5rem;
-  color: #6B73FF;
+  color: var(--color-primary);
   cursor: pointer;
   padding: 0;
   width: 40px;
@@ -49,8 +49,10 @@
 }
 
 .my-requests-close-btn:hover {
-  background-color: rgba(107, 115, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--color-highlight);
   transform: rotate(90deg);
+  box-shadow: 0 0 10px var(--color-highlight);
 }
 
 .my-requests-error {

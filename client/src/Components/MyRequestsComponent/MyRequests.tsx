@@ -186,13 +186,15 @@ export default function MyRequests() {
               <div className="column is-one-quarter" key={item.id}>
                 <div className="card" style={cardStyle}>
                   <header className="card-header">
-                    <p className="card-header-title" style={{ margin: 0, flex: 1 }}>{item.display_name}</p>
+                    <p className="card-header-title" style={{ margin: 0, flex: 1, userSelect: 'none', cursor: 'default' }}>{item.display_name}</p>
                     {item.region && (
                       <span className="card-header-region" style={{ 
                         color: 'white', 
                         fontSize: '0.9em', 
                         opacity: 0.9,
-                        fontWeight: 500
+                        fontWeight: 500,
+                        userSelect: 'none',
+                        cursor: 'default'
                       }}>
                         {item.region}
                       </span>
@@ -202,7 +204,7 @@ export default function MyRequests() {
                     <div className="content">
                       {/* Game Information */}
                       {item.game_name && (
-                        <div style={{ marginBottom: '10px' }}>
+                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Game:</strong> {item.game_name}
                         </div>
                       )}
@@ -212,14 +214,14 @@ export default function MyRequests() {
                       
                       {/* Play Style Tags */}
                       {item.tags && item.tags.length > 0 && (
-                        <div style={{ marginBottom: '10px' }}>
+                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Play Style:</strong>
                           <div style={{ marginTop: '5px' }}>
                             {item.tags.map((style, index) => (
                               <span 
                                 key={index}
                                 className="tag is-info is-light" 
-                                style={{ marginRight: '5px', marginBottom: '3px', fontSize: '0.75rem' }}
+                                style={{ marginRight: '5px', marginBottom: '3px', fontSize: '0.75rem', userSelect: 'none', cursor: 'default' }}
                               >
                                 {style}
                               </span>
@@ -233,7 +235,7 @@ export default function MyRequests() {
                       
                       {/* Description */}
                       {item.description && (
-                        <div>
+                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Description:</strong>
                           <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '0.9rem', color: '#2C3E50', lineHeight: '1.4' }}>
                             {item.description}

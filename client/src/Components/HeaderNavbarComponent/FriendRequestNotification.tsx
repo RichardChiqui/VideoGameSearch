@@ -99,7 +99,7 @@ const NotificationsIconComponent = () => {
 
     return (
         <div>
-            <NotificationsIcon onClick={() => setNotifWindowVisible(!notifWindowVisible)} />
+            <NotificationsIcon onClick={() => setNotifWindowVisible(!notifWindowVisible)} sx={{ color: 'white' }} />
             {notifWindowVisible && (
                 <div ref={notifRef} className="notif-window">
                     {friendRequests.length > 0 ? (

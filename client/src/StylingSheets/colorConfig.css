@@ -1,0 +1,18 @@
+/* 
+ * Global Color Configuration
+ * 
+ * Change these hex values to experiment with colors throughout the app.
+ * Primary: Main color for card headers, buttons, and main accents
+ * Secondary: Used for gradients, hover states, and complementary elements
+ * Accent: Background color for sections and containers
+ * Highlight: Glow or hover effects for interactive elements
+ */
+
+:root {
+  /* Change these colors to experiment! */
+  --color-primary: #189BE7;      /* Primary color - card headers, buttons, main accents */
+  --color-secondary: #0A0A0A;    /* Secondary color - gradients, hover states */
+  --color-accent: #0A0A0A;       /* Accent color - background */
+  --color-highlight: #14E7C6;    /* Highlight color - glow or hover effects */
+}
+

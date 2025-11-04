@@ -46,7 +46,7 @@
   background: none;
   border: none;
   font-size: 2em;
-  color: #6B73FF;
+  color: var(--color-primary);
   cursor: pointer;
   padding: 0;
   width: 40px;
@@ -59,8 +59,9 @@
 }
 
 .link-request-modal-close:hover {
-  background: rgba(107, 115, 255, 0.1);
-  color: #5A63E8;
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--color-highlight);
+  box-shadow: 0 0 10px var(--color-highlight);
 }
 
 .link-request-modal-close:disabled {
@@ -104,13 +105,13 @@
 
 .link-request-modal-input:focus,
 .link-request-modal-select:focus {
-  border-color: #6B73FF;
-  box-shadow: 0 0 0 3px rgba(107, 115, 255, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1), 0 0 15px var(--color-highlight);
   transform: translateY(-2px);
 }
 
 .link-request-modal-input::placeholder {
-  color: #6B73FF;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -135,7 +136,7 @@ textarea.link-request-modal-input {
 }
 
 .link-request-modal-tag {
-  background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: white;
   padding: 8px 12px;
   border-radius: 20px;
@@ -144,7 +145,7 @@ textarea.link-request-modal-input {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(107, 115, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .link-request-modal-tag-remove {
@@ -192,8 +193,8 @@ textarea.link-request-modal-input {
 
 .link-request-modal-tag-button {
   background: white;
-  border: 2px solid #E8F4F8;
-  color: #6B73FF;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  color: var(--color-primary);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 14px;
@@ -204,11 +205,11 @@ textarea.link-request-modal-input {
 }
 
 .link-request-modal-tag-button:hover:not(:disabled) {
-  background: #6B73FF;
+  background: var(--color-primary);
   color: white;
-  border-color: #6B73FF;
+  border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(107, 115, 255, 0.3);
+  box-shadow: 0 4px 8px var(--color-highlight);
 }
 
 .link-request-modal-tag-button:disabled {
@@ -230,7 +231,7 @@ textarea.link-request-modal-input {
 }
 
 .link-request-modal-add-tag-btn {
-  background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: white;
   border: none;
   padding: 15px 20px;
@@ -239,14 +240,14 @@ textarea.link-request-modal-input {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(107, 115, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
 
 .link-request-modal-add-tag-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #5A63E8 0%, #8E44AD 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 115, 255, 0.4);
+  box-shadow: 0 4px 12px var(--color-highlight);
 }
 
 .link-request-modal-add-tag-btn:disabled {
@@ -290,27 +291,28 @@ textarea.link-request-modal-input {
 
 .link-request-modal-cancel {
   background: white;
-  color: #6B73FF;
-  border: 2px solid #E8F4F8;
+  color: var(--color-primary);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .link-request-modal-cancel:hover:not(:disabled) {
   background: #f8f9fa;
-  border-color: #6B73FF;
+  border-color: var(--color-primary);
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--color-highlight);
 }
 
 .link-request-modal-submit {
-  background: linear-gradient(135deg, #6B73FF 0%, #9B59B6 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(107, 115, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .link-request-modal-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #5A63E8 0%, #8E44AD 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(107, 115, 255, 0.4);
+  box-shadow: 0 6px 20px var(--color-highlight);
 }
 
 .link-request-modal-submit:disabled {

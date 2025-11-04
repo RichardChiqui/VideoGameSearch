@@ -314,7 +314,7 @@ const MessageBubble = forwardRef<{
     return (
         <div className="message-bubble-container">
             <div className="icon-container" onClick={handleIconClick}>
-                <ChatIcon className="chat-icon" />
+                <ChatIcon sx={{ color: 'white' }} className="chat-icon" />
             </div>
             {messageWindowVisible && (
                 <div className="message-window" ref={messageRef}>
