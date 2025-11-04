@@ -1,6 +1,6 @@
 .topNavbar {
   width: 95%;
-  height: 80px;
+  height: 45px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,6 +31,11 @@
   background-color: #f5f5f5; /* Light background */
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.fr-container:hover {
+  background-color: #e8e8e8;
 }
 
 .username {
@@ -214,7 +219,7 @@
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  z-index: 1;
+  z-index: 10000;
   width: 390px; /* Slightly reduced width */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
@@ -371,14 +376,14 @@
 
 /* Logout item special styling */
 .dropdown-item:last-child {
-  color: #E74C3C;
+  color: #2C3E50;
   font-weight: 600;
   background: transparent !important;
 }
 
 .dropdown-item:last-child:hover {
-  background: linear-gradient(135deg, #FFE8E8 0%, #FFE0E0 100%) !important;
-  color: #E74C3C !important;
+  background: linear-gradient(135deg, #F8F9FA 0%, #E8F4F8 100%) !important;
+  color: #2C3E50 !important;
   transform: translateX(4px);
 }
 

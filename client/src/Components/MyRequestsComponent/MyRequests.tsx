@@ -8,8 +8,10 @@ import { deleteLinkRequest } from '../../NetworkCalls/deleteCalls/deleteLinkRequ
 import { updateLinkRequest } from '../../NetworkCalls/updateCalls/updateLinkRequest';
 import { LinkRequest } from '../../models/LinkRequest';
 import { REGIONS_DESCRIPTIONS, REGIONS_ENUMS } from '../../enums/RegionsEnums';
+import { PLATFORM_OPTIONS } from '../../enums/PlatformEnums';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import LinkRequestModal from '../SearchResultsComponent/LinkRequestModal';
+import HeaderNavBar from '../HeaderNavbarComponent/HeaderNavBar';
 import '../../StylingSheets/searchResultsStyles.css';
 import '../../StylingSheets/myRequestsStyles.css';
 
@@ -61,7 +63,8 @@ export default function MyRequests() {
           tags: req.tags,
           description: req.description || '',
           status: req.status,
-          region: regionDescription
+          region: regionDescription,
+          platform: req.platform
         };
       });
     
@@ -142,7 +145,7 @@ export default function MyRequests() {
     }
   }
 
-  const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
+  const cardStyle: CSSProperties = { minHeight: '280px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
 
   if (isLoading) {
@@ -155,11 +158,25 @@ export default function MyRequests() {
     );
   }
 
+  const handleButtonClick = () => {
+    // Placeholder for login modal
+  };
+
+  const dismissHandler = (event: React.FocusEvent<HTMLDivElement>): void => {
+    // Placeholder for dismiss handler
+  };
+
   return (
-    <div className="my-requests-page">
-      <div className="my-requests-container">
+    <>
+      <HeaderNavBar 
+        onButtonClick={handleButtonClick} 
+        dismissHandlerClick={dismissHandler} 
+        buttonClicked={false}
+      />
+      <div className="my-requests-page">
+        <div className="my-requests-container">
         <div className="my-requests-header">
-          <h1 className="my-requests-title">MY Requests</h1>
+          <h1 className="my-requests-title">My Requests</h1>
           <button 
             className="my-requests-close-btn"
             onClick={() => navigate('/')}
@@ -190,9 +207,9 @@ export default function MyRequests() {
                     {item.region && (
                       <span className="card-header-region" style={{ 
                         color: 'white', 
-                        fontSize: '0.9em', 
+                        fontSize: '0.75em', 
                         opacity: 0.9,
-                        fontWeight: 500,
+                        fontWeight: 'bold',
                         userSelect: 'none',
                         cursor: 'default'
                       }}>
@@ -202,26 +219,35 @@ export default function MyRequests() {
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
-                      {/* Game Information */}
-                      {item.game_name && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
-                          <strong>Game:</strong> {item.game_name}
+                      {/* Game and Platform Information */}
+                      {(item.game_name || item.platform) && (
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          {item.game_name && (
+                            <span style={{ fontSize: '0.75em' }}>
+                              <strong>Game:</strong> {item.game_name}
+                            </span>
+                          )}
+                          {item.platform && (
+                            <span style={{ fontSize: '0.75em' }}>
+                              <strong>Platform:</strong> {item.platform}
+                            </span>
+                          )}
                         </div>
                       )}
                       
                       {/* Horizontal line separator */}
-                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Play Style Tags */}
                       {item.tags && item.tags.length > 0 && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Play Style:</strong>
-                          <div style={{ marginTop: '5px' }}>
+                          <div style={{ marginTop: '4px' }}>
                             {item.tags.map((style, index) => (
                               <span 
                                 key={index}
                                 className="tag is-info is-light" 
-                                style={{ marginRight: '5px', marginBottom: '3px', fontSize: '0.75rem', userSelect: 'none', cursor: 'default' }}
+                                style={{ marginRight: '4px', marginBottom: '2px', fontSize: '0.7rem', userSelect: 'none', cursor: 'default' }}
                               >
                                 {style}
                               </span>
@@ -231,13 +257,13 @@ export default function MyRequests() {
                       )}
                       
                       {/* Horizontal line separator */}
-                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Description */}
                       {item.description && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Description:</strong>
-                          <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '0.9rem', color: '#2C3E50', lineHeight: '1.4' }}>
+                          <p style={{ marginTop: '4px', marginBottom: '0', fontSize: '0.8em', color: '#2C3E50', lineHeight: '1.3' }}>
                             {item.description}
                           </p>
                         </div>
@@ -278,7 +304,8 @@ export default function MyRequests() {
           linkRequest={editingRequest}
         />
       )}
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -294,7 +321,8 @@ const EditLinkRequestModal: React.FC<EditLinkRequestModalProps> = ({ isOpen, onC
   const [formData, setFormData] = useState({
     game_name: linkRequest.game_name || '',
     tags: linkRequest.tags || [],
-    description: linkRequest.description || ''
+    description: linkRequest.description || '',
+    platform: linkRequest.platform || 'Any'
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -451,6 +479,30 @@ const EditLinkRequestModal: React.FC<EditLinkRequestModalProps> = ({ isOpen, onC
                 />
               </div>
             )}
+          </div>
+
+          <div className="link-request-modal-field">
+            <label htmlFor="platform" className="link-request-modal-label">
+              Platform
+            </label>
+            <select
+              id="platform"
+              name="platform"
+              value={formData.platform || 'Any'}
+              onChange={(e) => {
+                setFormData(prev => ({
+                  ...prev,
+                  platform: e.target.value
+                }));
+                setError('');
+              }}
+              className="link-request-modal-select"
+              disabled={isLoading}
+            >
+              {PLATFORM_OPTIONS.map(platform => (
+                <option key={platform} value={platform}>{platform}</option>
+              ))}
+            </select>
           </div>
 
           <div className="link-request-modal-field">

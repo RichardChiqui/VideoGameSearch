@@ -3,7 +3,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 12px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -11,7 +11,7 @@
 
 /* Main Search Input */
 .search-main {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .search-input-container {
@@ -26,10 +26,10 @@
 
 .search-input {
   flex: 1;
-  padding: 16px 20px;
+  padding: 10px 16px;
   border: none;
   outline: none;
-  font-size: 16px;
+  font-size: 14px;
   color: #2c3e50;
   background: transparent;
 }
@@ -40,13 +40,13 @@
 }
 
 .search-button {
-  padding: 16px 20px;
+  padding: 10px 16px;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   border: none;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .search-button:hover {
@@ -62,7 +62,7 @@
 /* Filter Dropdowns */
 .search-filters {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -75,14 +75,14 @@
 .filter-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 6px;
+  padding: 8px 12px;
   background: white;
   border: 2px solid #e8f4f8;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 14px;
+  font-size: 13px;
   color: #2c3e50;
   min-width: 120px;
   justify-content: space-between;
@@ -235,8 +235,8 @@
 
 /* Active Filters Display */
 .active-filters {
-  margin-top: 16px;
-  padding: 12px 16px;
+  margin-top: 10px;
+  padding: 8px 12px;
   background: white;
   border-radius: 8px;
   border: 1px solid #e8f4f8;
@@ -258,12 +258,12 @@
 .filter-chip {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 4px 10px;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: white;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
 }
 

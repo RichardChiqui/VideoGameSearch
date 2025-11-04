@@ -226,7 +226,7 @@ button:hover {
 .error-message{
  
     margin: 0px;
-    color: red;
+    color: #2C3E50;
     height: min-content;
     width: max-content;
     font-size: 10px;

@@ -36,6 +36,8 @@
     color: #2C3E50;
     padding: 15px;
     border-bottom: 1px solid #E8F4F8;
+    user-select: none;
+    cursor: default;
 }
 
 .user-list {
@@ -49,6 +51,7 @@
     border-bottom: 1px solid #E8F4F8;
     color: #2C3E50;
     transition: all 0.3s ease;
+    user-select: none;
 }
 
 .user:hover {
@@ -62,6 +65,8 @@
     padding: 10px 0;
     border-bottom: 1px solid #E8F4F8;
     color: #2C3E50;
+    user-select: none;
+    cursor: default;
 }
 
 .messages {
@@ -80,6 +85,8 @@
     margin: 5px 0;
     border-radius: 20px;
     display: inline-block;
+    user-select: none;
+    cursor: default;
 }
 
 .message-bubble.sent {

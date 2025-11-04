@@ -237,28 +237,28 @@ body {
   }
 
   .errorInput:focus {
-    border-color: #E74C3C;
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    border-color: #2C3E50;
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
     transform: translateY(-2px);
   }
 
   .errorInput::placeholder{
-    color: #E74C3C;
+    color: #2C3E50;
     font-weight: 500;
   }
   .input-error-message{
     margin: 0;
-    color: #E74C3C;
+    color: #2C3E50;
     height: min-content;
     width: max-content;
     font-size: 14px;
     margin-top: -10px;
     margin-bottom: 5px;
     text-align: left;
-    background: rgba(231, 76, 60, 0.1);
+    background: rgba(44, 62, 80, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(44, 62, 80, 0.2);
     width: 100%;
   }
 

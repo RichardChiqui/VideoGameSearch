@@ -3,7 +3,7 @@ const queries = require("../queries");
 
 // CREATE — Add a new link request
 const createLinkRequest = (req, res) => {
-    const { game_name, tags, description } = req.body;
+    const { game_name, tags, description, platform } = req.body;
     const userId = req.user.userId;
 
     console.log("Iknow why ", req.body);
@@ -20,9 +20,12 @@ const createLinkRequest = (req, res) => {
         parsedTags = [];
     }
 
+    // Use platform from request or default to 'Any'
+    const platformValue = platform || 'Any';
+
     pool.query(
         queries.createLinkRequest,
-        [userId, game_name, JSON.stringify(parsedTags), description],
+        [userId, game_name, JSON.stringify(parsedTags), description, platformValue],
         (error, results) => {
             if (error) {
                 console.error("Error creating link request:", error);
@@ -122,10 +125,10 @@ const updateLinkRequestStatus = (req, res) => {
     });
 };
 
-// UPDATE — Update link request (game_name, tags, description)
+// UPDATE — Update link request (game_name, tags, description, platform)
 const updateLinkRequest = (req, res) => {
     const { id } = req.params;
-    const { game_name, tags, description } = req.body;
+    const { game_name, tags, description, platform } = req.body;
     const userId = req.user.userId;
 
     const parsedId = parseInt(id, 10);
@@ -174,6 +177,12 @@ const updateLinkRequest = (req, res) => {
         if (description !== undefined) {
             updateFields.push(`description = $${paramCount}`);
             updateValues.push(description);
+            paramCount++;
+        }
+
+        if (platform !== undefined) {
+            updateFields.push(`platform = $${paramCount}`);
+            updateValues.push(platform);
             paramCount++;
         }
 

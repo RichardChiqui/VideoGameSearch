@@ -81,7 +81,8 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
             tags: req.tags,
             description: req.description || '',
             status: req.status,
-            region: regionDescription
+            region: regionDescription,
+            platform: req.platform
           };
         });
         
@@ -229,7 +230,8 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
             tags: req.tags,
             description: req.description || '',
             status: req.status,
-            region: regionDescription
+            region: regionDescription,
+            platform: req.platform
           };
         });
         
@@ -251,7 +253,7 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
     marginTop: '30px' // Adjust this value based on your needs
   };
 
-  const cardStyle: CSSProperties = { minHeight: '350px', display: 'flex', flexDirection: 'column' };
+  const cardStyle: CSSProperties = { minHeight: '280px', display: 'flex', flexDirection: 'column' };
   const cardContentStyle: CSSProperties = { flex: '1' };
 
   return (
@@ -296,7 +298,7 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
           className="button is-primary is-large create-link-request-btn"
           onClick={handleOpenLinkRequestModal}
         >
-          🎮 Create Link Request
+           Create Link Request
         </button>
       </div>
   
@@ -310,9 +312,9 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
                     {item.region && (
                       <span className="card-header-region" style={{ 
                         color: 'white', 
-                        fontSize: '0.9em', 
+                        fontSize: '0.75em', 
                         opacity: 0.9,
-                        fontWeight: 500,
+                        fontWeight: 'bold',
                         userSelect: 'none',
                         cursor: 'default'
                       }}>
@@ -322,26 +324,35 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
                   </header>
                   <div className="card-content" style={cardContentStyle}>
                     <div className="content">
-                      {/* Game Information */}
-                      {item.game_name && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
-                          <strong>Game:</strong> {item.game_name}
+                      {/* Game and Platform Information */}
+                      {(item.game_name || item.platform) && (
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          {item.game_name && (
+                            <span style={{ fontSize: '0.75em' }}>
+                              <strong>Game:</strong> {item.game_name}
+                            </span>
+                          )}
+                          {item.platform && (
+                            <span style={{ fontSize: '0.75em' }}>
+                              <strong>Platform:</strong> {item.platform}
+                            </span>
+                          )}
                         </div>
                       )}
                       
                       {/* Horizontal line separator */}
-                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Play Style Tags */}
                       {item.tags && item.tags.length > 0 && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Play Style:</strong>
-                          <div style={{ marginTop: '5px' }}>
+                          <div style={{ marginTop: '4px' }}>
                             {item.tags.map((style, index) => (
                               <span 
                                 key={index}
                                 className="tag is-info is-light" 
-                                style={{ marginRight: '5px', marginBottom: '3px', fontSize: '0.75rem', userSelect: 'none', cursor: 'default' }}
+                                style={{ marginRight: '4px', marginBottom: '2px', fontSize: '0.7rem', userSelect: 'none', cursor: 'default' }}
                               >
                                 {style}
                               </span>
@@ -351,13 +362,13 @@ export default function SearchResults({ onButtonClick, buttonClicked, searchFilt
                       )}
                       
                       {/* Horizontal line separator */}
-                      <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
+                      <hr style={{ margin: '8px 0', border: 'none', borderTop: '1px solid #e0e0e0' }} />
                       
                       {/* Description */}
                       {item.description && (
-                        <div style={{ marginBottom: '10px', userSelect: 'none', cursor: 'default' }}>
+                        <div style={{ marginBottom: '8px', userSelect: 'none', cursor: 'default' }}>
                           <strong>Description:</strong>
-                          <p style={{ marginTop: '5px', marginBottom: '0', fontSize: '0.9rem', color: '#2C3E50', lineHeight: '1.4' }}>
+                          <p style={{ marginTop: '4px', marginBottom: '0', fontSize: '0.8em', color: '#2C3E50', lineHeight: '1.3' }}>
                             {item.description}
                           </p>
                         </div>

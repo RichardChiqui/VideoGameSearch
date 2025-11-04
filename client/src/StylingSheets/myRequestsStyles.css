@@ -1,9 +1,10 @@
 .my-requests-page {
   width: 100%;
   min-height: 100vh;
-  background: var(--color-accent);
+  background: white;
   padding: 20px;
   box-sizing: border-box;
+  padding-top: 65px; /* Add padding to account for header */
 }
 
 .my-requests-container {
@@ -56,21 +57,21 @@
 }
 
 .my-requests-error {
-  background-color: #fee;
-  color: #c33;
+  background-color: #F8F9FA;
+  color: #2C3E50;
   padding: 15px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #fcc;
+  border: 1px solid #E8F4F8;
 }
 
 .my-requests-error button {
   background: none;
   border: none;
-  color: #c33;
+  color: #2C3E50;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
@@ -84,7 +85,7 @@
 }
 
 .my-requests-error button:hover {
-  background-color: rgba(204, 51, 51, 0.1);
+  background-color: rgba(44, 62, 80, 0.1);
 }
 
 .my-requests-empty {

@@ -9,6 +9,7 @@ export interface LinkRequest {
   updatedAt?: string;
   display_name: string;
   region?: string;
+  platform?: string;
 }
 
 export enum SkillLevel {
@@ -28,6 +29,7 @@ export interface CreateLinkRequestData {
   game_name: string;
   tags: string[];
   description: string;
+  platform?: string;
 }
 
 export interface LinkRequestResponse {

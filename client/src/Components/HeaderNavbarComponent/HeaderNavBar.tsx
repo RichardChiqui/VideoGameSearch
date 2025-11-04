@@ -204,7 +204,7 @@ export default function HeaderNavBar({ onButtonClick, dismissHandlerClick, butto
                                                         setDropdownVisible(false);
                                                         navigate('/my-requests');
                                                     }}>
-                                                        MY Requests
+                                                        My Requests
                                                     </a>
                                                     <a href="#" className="dropdown-item" onClick={() => setDropdownVisible(false)}>
                                                         Settings

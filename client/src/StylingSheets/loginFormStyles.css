@@ -124,17 +124,17 @@
   
   .error-message{
     margin: 0px;
-    color: #E74C3C;
+    color: #2C3E50;
     height: min-content;
     width: max-content;
     font-size: 14px;
     margin-left: 0;
     margin-top: -15px;
     text-align: center;
-    background: rgba(231, 76, 60, 0.1);
+    background: rgba(44, 62, 80, 0.1);
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(44, 62, 80, 0.2);
   }
 
   .LoginForm{

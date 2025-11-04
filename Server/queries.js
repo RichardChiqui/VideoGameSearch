@@ -58,8 +58,8 @@ WHERE m.fk_toUserId = $1
 
 // queries.js
 const createLinkRequest = `
-    INSERT INTO link_requests (user_id, game_name, tags, description)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO link_requests (user_id, game_name, tags, description, platform)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING *
 `;
 

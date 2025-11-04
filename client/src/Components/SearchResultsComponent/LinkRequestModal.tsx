@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { useDispatch } from 'react-redux';
 import { CreateLinkRequestData } from '../../models/LinkRequest';
 import { createLinkRequest } from '../../NetworkCalls/createCalls/createLinkRequest';
 import { Logger, LogLevel } from '../../Logger/Logger';
 import { GAME_NAME_DESCRIPTIONS } from '../../enums/gameNameEnums';
 import { PLAY_STYLE_TAGS } from '../../enums/PlayStyleTagsEnums';
+import { PLATFORM_OPTIONS } from '../../enums/PlatformEnums';
+import { addLinkRequestNotification } from '../../ReduxStore/NotificationsSlice';
 import '../../StylingSheets/linkRequestModalStyles.css';
 
 interface LinkRequestModalProps {
@@ -14,10 +17,12 @@ interface LinkRequestModalProps {
 }
 
 const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<CreateLinkRequestData>({
     game_name: '',
     tags: [],
-    description: ''
+    description: '',
+    platform: 'Any'
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -119,15 +124,25 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
         game_name: effectiveGameName
       });
       
-      if (response.success) {
+      if (response.success && response.data) {
         Logger('Link request created successfully', LogLevel.Info);
+        
+        // Add notification for the new link request
+        dispatch(addLinkRequestNotification({
+          id: response.data.id || Date.now(),
+          game_name: effectiveGameName,
+          platform: formData.platform || 'Any',
+          createdAt: new Date().toISOString()
+        }));
+        
         onSuccess();
         onClose();
         // Reset form
         setFormData({
           game_name: '',
           tags: [],
-          description: ''
+          description: '',
+          platform: 'Any'
         });
         setSelectedGameOption('');
         setOtherGameName('');
@@ -209,6 +224,30 @@ const LinkRequestModal: React.FC<LinkRequestModalProps> = ({ isOpen, onClose, on
                 />
               </div>
             )}
+          </div>
+
+          <div className="link-request-modal-field">
+            <label htmlFor="platform" className="link-request-modal-label">
+              Platform
+            </label>
+            <select
+              id="platform"
+              name="platform"
+              value={formData.platform || 'Any'}
+              onChange={(e) => {
+                setFormData(prev => ({
+                  ...prev,
+                  platform: e.target.value
+                }));
+                setError('');
+              }}
+              className="link-request-modal-select"
+              disabled={isLoading}
+            >
+              {PLATFORM_OPTIONS.map(platform => (
+                <option key={platform} value={platform}>{platform}</option>
+              ))}
+            </select>
           </div>
 
           <div className="link-request-modal-field">
